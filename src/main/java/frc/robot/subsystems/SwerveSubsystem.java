@@ -93,6 +93,7 @@ public class SwerveSubsystem extends SubsystemBase {
         SwerveModulePosition[] state = {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
         odometer.update(getRotation2d(), state);
         SmartDashboard.putNumber("Robot Heading", getHeading());
+        SmartDashboard.putString("Robot Rotation", getPose().getRotation().toString());
         SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
     }
 
