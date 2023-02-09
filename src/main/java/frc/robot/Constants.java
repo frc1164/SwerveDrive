@@ -73,6 +73,15 @@ public final class Constants {
                 kPhysicalMaxAngularSpeedRadiansPerSecond / 4;
         public static final double kTeleDriveMaxAccelerationUnitsPerSecond = 3;
         public static final double kTeleDriveMaxAngularAccelerationUnitsPerSecond = 3;
+
+        /* Feedforward constants from SysID run on 2/9/23 */
+        public static final double kSRight = 0.0;
+        public static final double kVRight = 0.0;
+        public static final double kARight = 0.0;
+
+        public static final double kSLeft = 0.0;
+        public static final double kVLeft = 0.0;
+        public static final double kALeft = 0.0;
     }
 
     public static final class AutoConstants {

@@ -7,6 +7,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
@@ -55,6 +56,10 @@ public class SwerveSubsystem extends SubsystemBase {
                                                      backLeft.getPosition(), backRight.getPosition()};
     private final SwerveDrivePoseEstimator odometer = new SwerveDrivePoseEstimator(DriveConstants.kDriveKinematics,
             new Rotation2d(0), Position, poseThis);
+
+    // Create two new SimpleMotorFeedforwards (one right and one left) with gains kS, kV, and kA from SysID characterization
+    private SimpleMotorFeedforward feedforwardRight = new SimpleMotorFeedforward(DriveConstants.kSRight, DriveConstants.kVRight, DriveConstants.kARight);
+    private SimpleMotorFeedforward feedforwardLeft = new SimpleMotorFeedforward(DriveConstants.kSLeft, DriveConstants.kVLeft, DriveConstants.kALeft);
 
     public SwerveSubsystem() {
         new Thread(() -> {
@@ -105,9 +110,9 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public void setModuleStates(SwerveModuleState[] desiredStates) {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, DriveConstants.kPhysicalMaxSpeedMetersPerSecond);
-        frontLeft.setDesiredState(desiredStates[0]);
-        frontRight.setDesiredState(desiredStates[1]);
-        backLeft.setDesiredState(desiredStates[2]);
-        backRight.setDesiredState(desiredStates[3]);
+        frontLeft.setDesiredState(desiredStates[0], feedforwardLeft);
+        frontRight.setDesiredState(desiredStates[1], feedforwardRight);
+        backLeft.setDesiredState(desiredStates[2], feedforwardLeft);
+        backRight.setDesiredState(desiredStates[3], feedforwardRight);
     }
 }
