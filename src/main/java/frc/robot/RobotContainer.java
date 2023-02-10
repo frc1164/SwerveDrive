@@ -41,7 +41,8 @@ public class RobotContainer {
     private void configureButtonBindings() {
         /* new JoystickButton(driverJoytick, 2).whenPressed(() -> swerveSubsystem.zeroHeading()); */
         new JoystickButton(driverJoytick, 2).onTrue(new InstantCommand(() -> swerveSubsystem.zeroHeading()));
-    }
+        new JoystickButton(driverJoytick, 11).whileTrue(new InstantCommand(() -> swerveSubsystem.balance()));
+}
 
     public Command getAutonomousCommand() {
         // 1. Create trajectory settings

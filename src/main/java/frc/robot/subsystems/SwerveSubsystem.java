@@ -7,10 +7,12 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj.SerialPort;
+
 
 public class SwerveSubsystem extends SubsystemBase {
     private final SwerveModule frontLeft = new SwerveModule(
@@ -94,6 +96,10 @@ public class SwerveSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Robot Heading", getHeading());
         SmartDashboard.putString("Robot Rotation", getPose().getRotation().toString());
         SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
+
+        SmartDashboard.putNumber("Pitch", gyro.getPitch());
+        SmartDashboard.putNumber("Yaw", gyro.getYaw());
+        SmartDashboard.putNumber("Roll", gyro.getRoll());
     }
 
     public void stopModules() {
@@ -109,5 +115,18 @@ public class SwerveSubsystem extends SubsystemBase {
         frontRight.setDesiredState(desiredStates[1]);
         backLeft.setDesiredState(desiredStates[2]);
         backRight.setDesiredState(desiredStates[3]);
+    }
+
+    public void balance()
+    {
+        SmartDashboard.putString("Balance", "Working");
+        // ChassisSpeeds chassisSpeeds;
+        // double xSpeed = 0.05;
+        // double ySpeed = 0;
+        // double turningSpeed = 0;
+
+        // chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
+        // SwerveModuleState[] moduleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
+        // this.setModuleStates(moduleStates);
     }
 }
