@@ -75,13 +75,13 @@ public final class Constants {
         public static final double kTeleDriveMaxAngularAccelerationUnitsPerSecond = 3;
 
         /* Feedforward constants from SysID run on 2/9/23 */
-        public static final double kSRight = 0.0;
-        public static final double kVRight = 0.0;
-        public static final double kARight = 0.0;
+        public static final double kSRight = 0.099437;
+        public static final double kVRight = 2.6173;
+        public static final double kARight = 0.11195;
 
-        public static final double kSLeft = 0.0;
-        public static final double kVLeft = 0.0;
-        public static final double kALeft = 0.0;
+        public static final double kSLeft = 0.066859;
+        public static final double kVLeft = 2.7183;
+        public static final double kALeft = 0.097679;
     }
 
     public static final class AutoConstants {
@@ -90,8 +90,8 @@ public final class Constants {
                 DriveConstants.kPhysicalMaxAngularSpeedRadiansPerSecond / 10;
         public static final double kMaxAccelerationMetersPerSecondSquared = 1.5;
         public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI / 4;
-        public static final double kPXController = 0.05;
-        public static final double kPYController = 0.05;
+        public static final double kPXController = 0.1;
+        public static final double kPYController = 0.1;
         public static final double kPThetaController = 1.25;
 
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints = //
