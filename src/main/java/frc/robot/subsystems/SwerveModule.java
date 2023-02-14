@@ -95,7 +95,7 @@ public class SwerveModule {
     }
 
     public SwerveModulePosition getPosition() {
-        return new SwerveModulePosition(getDriveVelocity(), new Rotation2d(getTurningPosition()));
+        return new SwerveModulePosition(getDrivePosition(), new Rotation2d(getTurningPosition()));
     }
 
     public SwerveModuleState getState() {
@@ -109,7 +109,7 @@ public class SwerveModule {
         }
         state = SwerveModuleState.optimize(state, getState().angle);
         /* driveMotor.set(state.speedMetersPerSecond / DriveConstants.kPhysicalMaxSpeedMetersPerSecond); Original line */
-        driveMotor.setVoltage(feedforward.calculate(state.speedMetersPerSecond / DriveConstants.kPhysicalMaxSpeedMetersPerSecond));
+        driveMotor.setVoltage(feedforward.calculate(state.speedMetersPerSecond));
         turningMotor.set(turningPidController.calculate(getTurningPosition(), state.angle.getRadians()));
         SmartDashboard.putString("Swerve[" + absoluteEncoder.getDeviceID() + "] state", state.toString());
     }

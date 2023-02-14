@@ -51,13 +51,28 @@ public class RobotContainer {
                         .setKinematics(DriveConstants.kDriveKinematics);
 
         // 2. Generate trajectory
+        
+
         Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
                 new Pose2d(0.0, 0.0, new Rotation2d(0.0)),
                 List.of(
                         new Translation2d(1.0, 0.0),
                         new Translation2d(1.0, -1.0)),
-                new Pose2d(2.0, -1.0, Rotation2d.fromDegrees(180.0)),
+                new Pose2d(2.0, -1.0, Rotation2d.fromDegrees(180)),
                 trajectoryConfig);
+        
+
+
+        /*
+
+        Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
+                new Pose2d(0.0, 0.0, new Rotation2d(0.0)),
+                List.of(
+                        new Translation2d(1.0, 0),
+                        new Translation2d(1.0, 0)),
+                new Pose2d(3.0, 0.0, Rotation2d.fromDegrees(0.0)),
+                trajectoryConfig);
+        */
 
         // 3. Define PID controllers for tracking trajectory
         PIDController xController = new PIDController(AutoConstants.kPXController, 0.0, 0.0);
