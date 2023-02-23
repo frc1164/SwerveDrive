@@ -1,6 +1,9 @@
 package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
+// import com.kauailabs.navx.AHRSProtocol;
+import com.kauailabs.navx.IMUProtocol.GyroUpdate;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -94,11 +97,23 @@ public class SwerveSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        getChassisPitchError();
+
         SwerveModulePosition[] state = {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
         odometer.update(getRotation2d(), state);
         SmartDashboard.putNumber("Robot Heading", getHeading());
         SmartDashboard.putString("Robot Rotation", getPose().getRotation().toString());
         SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
+    
+        // SmartDashboard.putNumber("Pitch", gyro.getPitch());
+        SmartDashboard.putNumber("Yaw", gyro.getYaw());
+        SmartDashboard.putNumber("Roll", gyro.getRoll());
+        SmartDashboard.putNumber("Pitch Rate", gyro.getRawGyroX());
+        SmartDashboard.putNumber("Yaw Rate", gyro.getRawGyroY());
+        SmartDashboard.putNumber("Roll Rate", gyro.getRawGyroZ());
+        SmartDashboard.putNumber("X Acceleration", gyro.getWorldLinearAccelX());
+        SmartDashboard.putNumber("Y Acceleration", gyro.getWorldLinearAccelY());
+
     }
 
     public void stopModules() {
@@ -114,5 +129,28 @@ public class SwerveSubsystem extends SubsystemBase {
         frontRight.setDesiredState(desiredStates[1], feedforwardRight);
         backLeft.setDesiredState(desiredStates[2], feedforwardLeft);
         backRight.setDesiredState(desiredStates[3], feedforwardRight);
+    }
+
+    public void setModuleStates(SwerveModuleState[] desiredStates, boolean withoutFeedforward) {
+        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, DriveConstants.kPhysicalMaxSpeedMetersPerSecond);
+        frontLeft.setDesiredStateWithoutFeedforward(desiredStates[0]);
+        frontRight.setDesiredStateWithoutFeedforward(desiredStates[1]);
+        backLeft.setDesiredStateWithoutFeedforward(desiredStates[2]);
+        backRight.setDesiredStateWithoutFeedforward(desiredStates[3]);
+    }
+    
+    public float getChassisPitch() {
+        return gyro.getPitch();
+    }
+
+    public float getChassisPitchError() {
+        double pitch = (double)gyro.getPitch();
+        SmartDashboard.putNumber("Pitch", pitch);
+        pitch = pitch * Math.PI/180;
+        double g = 1.0;
+        double a = gyro.getWorldLinearAccelX();
+        pitch = pitch - Math.asin(((Math.sin(pitch) * 2.0 * g * Math.cos(pitch) + a) / Math.sqrt(Math.pow(g, 2.0) + Math.pow(Math.sin(pitch), 2.0) + 2.0 * g * Math.sin(pitch) + Math.pow(g, 2.0) * Math.pow(Math.cos(pitch), 2.0)))*(180.0/Math.PI));
+        SmartDashboard.putNumber("Corrected Pitch", pitch);
+        return (float)pitch;
     }
 }
