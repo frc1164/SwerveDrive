@@ -130,14 +130,6 @@ public class SwerveSubsystem extends SubsystemBase {
         backLeft.setDesiredState(desiredStates[2], feedforwardLeft);
         backRight.setDesiredState(desiredStates[3], feedforwardRight);
     }
-
-    public void setModuleStates(SwerveModuleState[] desiredStates, boolean withoutFeedforward) {
-        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, DriveConstants.kPhysicalMaxSpeedMetersPerSecond);
-        frontLeft.setDesiredStateWithoutFeedforward(desiredStates[0]);
-        frontRight.setDesiredStateWithoutFeedforward(desiredStates[1]);
-        backLeft.setDesiredStateWithoutFeedforward(desiredStates[2]);
-        backRight.setDesiredStateWithoutFeedforward(desiredStates[3]);
-    }
     
     public float getChassisPitch() {
         return gyro.getPitch();
