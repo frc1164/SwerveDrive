@@ -20,7 +20,9 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.SwerveJoystickCmd;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.commands.ArmShoulderCmd;
 import frc.robot.commands.BalanceCmd;
 import frc.robot.commands.Clasp;
 import frc.robot.commands.ConePickup;
@@ -39,11 +41,13 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
 
     private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
+    private final ArmSubsystem armSubsystem = new ArmSubsystem();
 
     private final Gripper m_gripper;
     private final CommandXboxController m_controller;
 
     private final Joystick driverJoytick = new Joystick(OIConstants.kDriverControllerPort);
+    private final XboxController armController = new XboxController(1);
 
     public RobotContainer() {
 
@@ -59,7 +63,11 @@ public class RobotContainer {
                 () -> driverJoytick.getRawAxis(OIConstants.kDriverXAxis),
                 () -> driverJoytick.getRawAxis(OIConstants.kDriverRotAxis),
                 () -> !driverJoytick.getRawButton(OIConstants.kDriverFieldOrientedButtonIdx)));
-        
+
+        armSubsystem.setDefaultCommand(new ArmShoulderCmd(
+                armSubsystem, 
+                armController));
+
         configureButtonBindings();
     }
 
