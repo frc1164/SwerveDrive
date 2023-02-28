@@ -23,6 +23,8 @@ public class ArmSubsystem extends SubsystemBase {
   private static CANSparkMax armExtensionMotor;
   private static DigitalInput extensionExtendedLimitSwitch;
   private static DigitalInput extensionRetractedLimitSwitch;
+  private static DigitalInput armShoulderUpperLimitSwitch;
+  private static DigitalInput armShoulderLowerLimitSwitch;
 
   /** Creates a new ArmShoulder. */
   public ArmSubsystem() {
@@ -33,6 +35,8 @@ public class ArmSubsystem extends SubsystemBase {
     armExtensionMotor.setIdleMode(IdleMode.kBrake);
     extensionRetractedLimitSwitch = new DigitalInput(0);
     extensionExtendedLimitSwitch = new DigitalInput(1);
+    armShoulderLowerLimitSwitch = new DigitalInput(2);
+    armShoulderUpperLimitSwitch = new DigitalInput(3);
   }
 
   @Override
@@ -57,23 +61,24 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void setExtensionMotorSpeed(double speed) {
-    if(getArmExtensionExtendedLimitSwitch() && (speed > 0)){
-      armExtensionMotor.set(0);
-    }
-    else if(getArmExtensionRetractedLimitSwitch() && (speed < 0)){
-      armExtensionMotor.set(0);
-    }
-    else {
-      armExtensionMotor.set(speed);
-    }
+    // if(getArmExtensionExtendedLimitSwitch() && (speed > 0)){
+    //   armExtensionMotor.set(0);
+    // }
+    // else if(getArmExtensionRetractedLimitSwitch() && (speed < 0)){
+    //   armExtensionMotor.set(0);
+    // }
+    // else {
+    //   armExtensionMotor.set(speed);
+    // }
+    armExtensionMotor.set(speed);
   }
 
   public boolean getArmShoulderUpperLimitSwitch() {
-    return m_canifier.getGeneralInput(GeneralPin.LIMF);
+    return armShoulderUpperLimitSwitch.get();
   }
 
   public boolean getArmShoulderLowerLimitSwitch() {
-    return m_canifier.getGeneralInput(GeneralPin.LIMR);
+    return armShoulderLowerLimitSwitch.get();
   }
 
   public boolean getArmExtensionExtendedLimitSwitch() {

@@ -21,7 +21,7 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.commands.ArmShoulderCmd;
+import frc.robot.commands.ArmCmd;
 import frc.robot.commands.BalanceCmd;
 import edu.wpi.first.wpilibj.XboxController;
 
@@ -41,7 +41,7 @@ public class RobotContainer {
                 () -> driverJoytick.getRawAxis(OIConstants.kDriverRotAxis),
                 () -> !driverJoytick.getRawButton(OIConstants.kDriverFieldOrientedButtonIdx)));
 
-        armSubsystem.setDefaultCommand(new ArmShoulderCmd(
+        armSubsystem.setDefaultCommand(new ArmCmd(
                 armSubsystem, 
                 armController));
 
