@@ -10,12 +10,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ArmSubsystem;
 
-public class ArmShoulderCmd extends CommandBase {
+public class ArmCmd extends CommandBase {
   private final ArmSubsystem m_subsystem;
   private final XboxController m_controller;
 
   /** Creates a new ArmShoulderCommand. */
-  public ArmShoulderCmd(ArmSubsystem subsystem, XboxController controller) {
+  public ArmCmd(ArmSubsystem subsystem, XboxController controller) {
     m_subsystem = subsystem;
     m_controller = controller;
     addRequirements(subsystem);
@@ -28,9 +28,16 @@ public class ArmShoulderCmd extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    SmartDashboard.putNumber("Raw Axis 0", m_controller.getRawAxis(0));
-    m_subsystem.setExtensionMotorSpeed(m_controller.getRawAxis(0)/4);
-    SmartDashboard.putNumber("Raw Axis 1", m_controller.getRawAxis(1));
+    if(m_controller.getRawAxis(2) > 0.02){
+      m_subsystem.setExtensionMotorSpeed(-m_controller.getRawAxis(2)/4);
+    }
+    else if(m_controller.getRawAxis(3) > 0.02){
+      m_subsystem.setExtensionMotorSpeed(m_controller.getRawAxis(3)/4);
+    }
+    else {
+      m_subsystem.setExtensionMotorSpeed(m_controller.getRawAxis(0));
+    }
+
     m_subsystem.setRotationMotorSpeed(m_controller.getRawAxis(1)/4);
   }
 
