@@ -110,4 +110,10 @@ public final class Constants {
 
         public static final double kDeadband = 0.1;
     }
+
+    public static final class ArmConstants {
+        public static final int armCANifier = 53;
+        public static final int armShoulderMotor = 50;
+        public static final int armExtensionMotor = 51;
+    }
 }
