@@ -33,6 +33,7 @@ public class CubePickup extends CommandBase {
   @Override
   public void execute() {
     m_subsystem.runGripPID(m_subsystem.gripPosition());
+    m_subsystem.Intake(.5);
   }
    // SmartDashboard.putBoolean("Y_BUTTON", m_controller.getYButton());
   
@@ -40,7 +41,7 @@ public class CubePickup extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_subsystem.setClasp(0);
+    m_subsystem.Intake(0);
   }
 
   // Returns true when the command should end.
