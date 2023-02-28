@@ -5,6 +5,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 
+
 public final class Constants {
 
     public static final class ModuleConstants {
@@ -109,5 +110,18 @@ public final class Constants {
         public static final int kDriverFieldOrientedButtonIdx = 12;
 
         public static final double kDeadband = 0.1;
+    }
+
+    public static class GripperC {
+        public static final int rightMotor = 62;
+        public static final int leftMotor = 61;
+        public static final int GripperMotor = 60;
+        public static final int GripperCANifier = 59;
+        public static boolean leftMotorReversed = false;
+        public static boolean rightMotorReversed = true;
+    }
+     
+    public static class OperatorConstants {
+     public static final int kOperatorControllerPort = 1;
     }
 }
