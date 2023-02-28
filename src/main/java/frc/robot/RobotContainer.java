@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
@@ -25,6 +26,8 @@ import frc.robot.commands.BalanceCmd;
 public class RobotContainer {
 
     private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
+
+    SendableChooser<Trajectory> m_chooser = new SendableChooser<>();
 
     private final Joystick driverJoytick = new Joystick(OIConstants.kDriverControllerPort);
 
@@ -37,15 +40,7 @@ public class RobotContainer {
                 () -> !driverJoytick.getRawButton(OIConstants.kDriverFieldOrientedButtonIdx)));
         
         configureButtonBindings();
-    }
 
-    private void configureButtonBindings() {
-        /* new JoystickButton(driverJoytick, 2).whenPressed(() -> swerveSubsystem.zeroHeading()); */
-        new JoystickButton(driverJoytick, 2).onTrue(new InstantCommand(() -> swerveSubsystem.zeroHeading()));
-        new JoystickButton(driverJoytick, 11).whileTrue(new BalanceCmd(swerveSubsystem));
-}
-
-    public Command getAutonomousCommand() {
         // 1. Create trajectory settings
         TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
                 AutoConstants.kMaxSpeedMetersPerSecond,
@@ -53,13 +48,43 @@ public class RobotContainer {
                         .setKinematics(DriveConstants.kDriveKinematics);
 
         // 2. Generate trajectory
-        Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
+        
+        Trajectory trajectory1 = TrajectoryGenerator.generateTrajectory(
                 new Pose2d(0.0, 0.0, new Rotation2d(0.0)),
                 List.of(
                         new Translation2d(1.0, 0.0),
                         new Translation2d(1.0, -1.0)),
                 new Pose2d(2.0, -1.0, Rotation2d.fromDegrees(180.0)),
                 trajectoryConfig);
+                Trajectory trajectory2 = TrajectoryGenerator.generateTrajectory(
+                new Pose2d(0.0, 0.0, new Rotation2d(0.0)),
+                List.of(
+                        new Translation2d(1.0, 0.0),
+                        new Translation2d(1.0, 1.0)),
+                new Pose2d(2.0, 1.0, Rotation2d.fromDegrees(180.0)),
+                trajectoryConfig);
+                Trajectory trajectory3 = TrajectoryGenerator.generateTrajectory(
+                new Pose2d(0.0, 0.0, new Rotation2d(0.0)),
+                List.of(
+                        new Translation2d(1.0, 0.0),
+                        new Translation2d(2.0, 0.0)),
+                new Pose2d(2.0, 0.0, Rotation2d.fromDegrees(0.0)),
+                trajectoryConfig);
+
+        m_chooser.setDefaultOption("TrajOne", trajectory1);
+        m_chooser.addOption("TrajTwo", trajectory2);
+        m_chooser.addOption("TrajThree", trajectory3);
+    }
+
+    private void configureButtonBindings() {
+        /* new JoystickButton(driverJoytick, 2).whenPressed(() -> swerveSubsystem.zeroHeading()); */
+        new JoystickButton(driverJoytick, 2).onTrue(new InstantCommand(() -> swerveSubsystem.zeroHeading()));
+        new JoystickButton(driverJoytick, 11).onTrue(new BalanceCmd(swerveSubsystem));
+}
+
+    public Command getAutonomousCommand() {
+        
+        Trajectory m_trajectory = m_chooser.getSelected();
 
         // 3. Define PID controllers for tracking trajectory
         PIDController xController = new PIDController(AutoConstants.kPXController, 0.0, 0.0);
@@ -70,7 +95,7 @@ public class RobotContainer {
 
         // 4. Construct command to follow trajectory
         SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-                trajectory,
+                m_trajectory,
                 swerveSubsystem::getPose,
                 DriveConstants.kDriveKinematics,
                 xController,
@@ -81,7 +106,7 @@ public class RobotContainer {
 
         // 5. Add some init and wrap-up, and return everything
         return new SequentialCommandGroup(
-                new InstantCommand(() -> swerveSubsystem.resetOdometry(trajectory.getInitialPose())),
+                new InstantCommand(() -> swerveSubsystem.resetOdometry(m_trajectory.getInitialPose())),
                 swerveControllerCommand,
                 new InstantCommand(() -> swerveSubsystem.stopModules()));
     }
