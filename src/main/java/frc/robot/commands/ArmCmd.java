@@ -9,15 +9,16 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ArmSubsystem;
-import java.n.Math; // Consider this library suspect
+import edu.wpi.first.math.controller.PIDController;
+//imporMath; // Consider this library suspect
 
 public class ArmCmd extends CommandBase {
   private final ArmSubsystem m_subsystem;
   private final XboxController m_controller;
 
   // Initilize PID
-  private PIDController ShoulderPID
-  private PIDController ExtendPID
+  private PIDController ShoulderPID;
+  private PIDController ExtendPID;
 
   // Shoulder PID Gains
   private final double ShoulderP = 0;
@@ -71,27 +72,30 @@ public class ArmCmd extends CommandBase {
     Y = r * sin(theta);
 
 
+    double Vx;
+    double Vy;
+
     // Controller Deadband Code - X axis
     if(m_controller.getRawAxis(2) > 0.02){
-      double Vx = m_controller.getRawAxis(2));
+      Vx = m_controller.getRawAxis(2);
     }
     else if(m_controller.getRawAxis(3) > 0.02){
-      double Vx = m_controller.getRawAxis(3);
+      Vx = m_controller.getRawAxis(3);
     }
     else {
-      double Vx = m_controller.getRawAxis(0);
+      Vx = m_controller.getRawAxis(0);
     }
 
 
     // Controller Deadband Code - Y axis
     if(m_controller.getRawAxis(1) > 0.02){
-      double Vx = m_controller.getRawAxis(1));
+      Vy = m_controller.getRawAxis(1);
     }
     else if(m_controller.getRawAxis(1) > 0.02){
-      double Vx = m_controller.getRawAxis(1);
+      Vy = m_controller.getRawAxis(1);
     }
     else {
-      double Vx = m_controller.getRawAxis(1);
+      Vy = m_controller.getRawAxis(1);
     }
 
 
@@ -100,53 +104,54 @@ public class ArmCmd extends CommandBase {
       // Top Limit
       double Ymax = X * java.lang.Math.sin(thetaMax);
 
-      if (Ymax < Y) && (Vx < (Xmin - X) * K_limit){
-        Vy = 0;
+      if ((Ymax < Y) && (Vx < (Ymax - Y) * K_limit)){
+        Vy = (Ymax - Y) * K_limit;
       }
 
       // Bottom Limit
-        // Limit Equation
-        if X > X1{
-          double Ymin = Y_floor;
-        } else if { X < X2
-          double Ymin = YBumper;
-        } else{
-          double Ymin = ((YBumper - Y_floor) / (X1 - X2)) * X + Y_floor;
-        }
-    
-        // Limit
-        if (Ymin > Y) && (Yx < (Ymin - Y) * K_limit){
-          Vy = (Ymin - Y) * K_limit;
-        }
+      // Limit Equation
+      double Ymin;
+      if (X > X1)
+        Ymin = YFloor;
+      else if (X < X2) 
+        Ymin = YBumper;
+      else
+        Ymin = ((YBumper - YFloor) / (X1 - X2)) * X + YFloor;
+      
+  
+      // Limit
+      if ((Ymin > Y) && (Yx < (Ymin - Y) * K_limit)){
+        Vy = (Ymin - Y) * K_limit;
+      }
 
       // Front Limit
-      double Xmax = Math.sqrt(rMax^2 + Y^2);
+      double Xmax = Math.sqrt(Math.pow(rMax, 2) + Math.pow(Y, 2));
 
-      if (Xmax < X) && (Vx > (Xmin - X) * K_limit){
+      if ((Xmax < X) && (Vx > (Xmin - X) * K_limit)){
         Vx = (Xmax - X) * K_limit;
       }
 
       // Back Limit
-      double Xmin = Math.sqrt(rMin^2 + Y^2);
+      double Xmin = Math.sqrt(Math.pow(rMin, 2) + Math.pow(Y, 2));
 
-      if (Xmin > X) && (Vx < (Xmin - X) * K_limit){
+      if ((Xmin > X) && (Vx < (Xmin - X) * K_limit)){
         Vx = (Xmax - X) * K_limit;
       }
 
     // Velocity Limits - X
-    if Math.abs(Vx) < VMax{
+    if (Math.abs(Vx) < VMax) {
       Vx = VxMax * Math.signum(Vx);
     }
 
     // Velocity Limits - Y
-    if Math.abs(Vy) < VMax{
+    if (Math.abs(Vy) < VMax) {
       Vy = VyMax * Math.signum(Vy);
     }
 
 
     // Inverse Kinematics
     double Vtheta =  (sec(theta))^2 * (Vy*X - Vx * y) / X^2;
-    double Vr = (X * Vx + Y * Vy) / sqrt(X^2 + Y^2);
+    double Vr = (X * Vx + Y * Vy) / Math.sqrt(Math.pow(X, 2) + Math.pow(Y, 2)); 
 
     // Velocity PID Controler
     VthetaMotor = VthetaMotor + ShoulderPID.calculate(theta);
