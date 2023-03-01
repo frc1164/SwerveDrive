@@ -126,9 +126,20 @@ public final class Constants {
     }
 
     public static final class ArmConstants {
+        //CAN Values for Arm Hardware
         public static final int armCANifier = 53;
         public static final int armShoulderMotor = 50;
         public static final int armExtensionMotor = 51;
         public static final int CANCoderid = 52;
+
+        //Shoulder Soft Limit Stuff
+        public static final double ShoulderEncoderOffset = 263 * Math.PI/180;
+        public static final double TopShoulderLimit = 268 * Math.PI/180;
+        public static final double BottomShoulderLimit = 205 * Math.PI/180;
+        public static final boolean ShoulderEncoderRevsersed = false;
+
+        //Telescope Limits
+        public static final double TopTelescopeLimit = 125 * 360 * Math.PI/180;
+        public static final double BottomTelescopeLimit = 10 * 360 * Math.PI/180;
     }
 }

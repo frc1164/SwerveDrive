@@ -56,10 +56,11 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void setRotationMotorSpeed(double speed) {
-    if(!getArmShoulderUpperLimitSwitch() && (speed > 0)){
+
+    if(/*!getArmShoulderUpperLimitSwitch() &&*/ (speed > 0) &&(getShoulderPosition() >= ArmConstants.TopShoulderLimit)){
       armShoulderMotor.set(0);
     }
-    else if(!getArmShoulderLowerLimitSwitch() && (speed < 0)){
+    else if(/*!getArmShoulderLowerLimitSwitch() &&*/ (speed < 0) && (getShoulderPosition() <= ArmConstants.BottomShoulderLimit)){
       armShoulderMotor.set(0);
     }
     else {
@@ -68,16 +69,16 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void setExtensionMotorSpeed(double speed) {
-    // if(getArmExtensionExtendedLimitSwitch() && (speed > 0)){
-    //   armExtensionMotor.set(0);
-    // }
-    // else if(getArmExtensionRetractedLimitSwitch() && (speed < 0)){
-    //   armExtensionMotor.set(0);
-    // }
-    // else {
-    //   armExtensionMotor.set(speed);
-    // }
-    armExtensionMotor.set(speed);
+     if(/*getArmExtensionExtendedLimitSwitch() &&*/ (speed > 0) && (getShoulderPosition() >= ArmConstants.TopTelescopeLimit)){
+       armExtensionMotor.set(0);
+     }
+     else if(/*getArmExtensionRetractedLimitSwitch() &&*/ (speed < 0) && (getShoulderPosition() <= ArmConstants.BottomTelescopeLimit)){
+       armExtensionMotor.set(0);
+     }
+     else {
+       armExtensionMotor.set(speed);
+     }
+    //armExtensionMotor.set(speed);
   }
 
   public boolean getArmShoulderUpperLimitSwitch() {
@@ -101,10 +102,12 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public double getShoulderPosition() {
-    return ShoulderEncoder.getAbsolutePosition();
-    /*double angle = ShoulderEncoder.getAbsolutePosition() * Math.PI/180.0;
-    angle -= ArmConstants.ShoulderEncoderOffsetRad;
-    return angle * (ArmConstants.ShoulderEncoderRevsersed ? -1.0 : 1.0);*/
+    double angle = ShoulderEncoder.getAbsolutePosition() * Math.PI/180.0;
+    angle -= ArmConstants.ShoulderEncoderOffset;
+    if (angle > Math.PI) {
+      angle -= Math.PI*2;
+    }
+    return angle * (ArmConstants.ShoulderEncoderRevsersed ? -1.0 : 1.0);
   }
 
 }
