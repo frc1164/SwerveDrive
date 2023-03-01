@@ -35,9 +35,10 @@ public class ArmCmd extends CommandBase {
   private final double X = 0; 
   private final double Y = 0; 
 
-  // Arm Controll Perameters
+  // Arm Control Perameters
   private final double VMax = 1; // (in/s) max speed that the arm can move (1 norm)
-  private final double thetaMax = 1; // (in/s) max speed that the arm can move in the theta direction
+  private final double K_limit = 10;// Arm limit return gain
+
 
   // Arm Position Limits
   private final double thetaMax = 1; // (rad) arm max angle in the theta direction
