@@ -90,8 +90,8 @@ public final class Constants {
                 DriveConstants.kPhysicalMaxAngularSpeedRadiansPerSecond / 2.5;
         public static final double kMaxAccelerationMetersPerSecondSquared = 1.5;
         public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI / 4;
-        public static final double kPXController = 0.046731;
-        public static final double kPYController = 0.046731;
+        public static final double kPXController = 0.1;
+        public static final double kPYController = 0.1;
         public static final double kPThetaController = 10;
 
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints = //
