@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -25,14 +26,18 @@ public class ArmSubsystem extends SubsystemBase {
   private static DigitalInput extensionRetractedLimitSwitch;
   private static DigitalInput armShoulderUpperLimitSwitch;
   private static DigitalInput armShoulderLowerLimitSwitch;
+  private static RelativeEncoder TelescopeEncoder;
+  private static CANCoder ShoulderEncoder;
 
   /** Creates a new ArmShoulder. */
   public ArmSubsystem() {
     m_canifier = new CANifier(ArmConstants.armCANifier);
     armShoulderMotor = new CANSparkMax(ArmConstants.armShoulderMotor, MotorType.kBrushless);
     armShoulderMotor.setIdleMode(IdleMode.kBrake);
+    ShoulderEncoder = new CANCoder(ArmConstants.CANCoderid);
     armExtensionMotor = new CANSparkMax(ArmConstants.armExtensionMotor, MotorType.kBrushless);
     armExtensionMotor.setIdleMode(IdleMode.kBrake);
+    TelescopeEncoder = armExtensionMotor.getEncoder();
     extensionRetractedLimitSwitch = new DigitalInput(0);
     extensionExtendedLimitSwitch = new DigitalInput(1);
     armShoulderLowerLimitSwitch = new DigitalInput(2);
@@ -46,6 +51,8 @@ public class ArmSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("Lower Limit Switch", getArmShoulderLowerLimitSwitch());
     SmartDashboard.putBoolean("Extended Limit Switch", getArmExtensionExtendedLimitSwitch());
     SmartDashboard.putBoolean("Retracted Limit Switch", getArmExtensionRetractedLimitSwitch());
+    SmartDashboard.putNumber("Telescope Position", getTelescopePosition());
+    SmartDashboard.putNumber("Shoulder Position", getShoulderPosition());
   }
 
   public void setRotationMotorSpeed(double speed) {
@@ -88,4 +95,16 @@ public class ArmSubsystem extends SubsystemBase {
   public boolean getArmExtensionRetractedLimitSwitch() {
     return extensionRetractedLimitSwitch.get();
   }
+
+  public double getTelescopePosition() {
+    return TelescopeEncoder.getPosition();
+  }
+
+  public double getShoulderPosition() {
+    return ShoulderEncoder.getAbsolutePosition();
+    /*double angle = ShoulderEncoder.getAbsolutePosition() * Math.PI/180.0;
+    angle -= ArmConstants.ShoulderEncoderOffsetRad;
+    return angle * (ArmConstants.ShoulderEncoderRevsersed ? -1.0 : 1.0);*/
+  }
+
 }
