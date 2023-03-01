@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
@@ -56,24 +57,37 @@ public class RobotContainer {
                         new Translation2d(1.0, -1.0)),
                 new Pose2d(2.0, -1.0, Rotation2d.fromDegrees(180.0)),
                 trajectoryConfig);
-                Trajectory trajectory2 = TrajectoryGenerator.generateTrajectory(
+
+        Trajectory trajectory2 = TrajectoryGenerator.generateTrajectory(
                 new Pose2d(0.0, 0.0, new Rotation2d(0.0)),
                 List.of(
                         new Translation2d(1.0, 0.0),
                         new Translation2d(1.0, 1.0)),
                 new Pose2d(2.0, 1.0, Rotation2d.fromDegrees(180.0)),
                 trajectoryConfig);
-                Trajectory trajectory3 = TrajectoryGenerator.generateTrajectory(
+                
+        Trajectory trajectory3 = TrajectoryGenerator.generateTrajectory(
                 new Pose2d(0.0, 0.0, new Rotation2d(0.0)),
                 List.of(
                         new Translation2d(1.0, 0.0),
                         new Translation2d(2.0, 0.0)),
                 new Pose2d(2.0, 0.0, Rotation2d.fromDegrees(0.0)),
                 trajectoryConfig);
+        //Trajectory trajectory4 = TrajectoryGenerator.generateTrajectory(
+                new Pose2d(0.0, 0.0, new Rotation2d(180.0)),
+                List.of(
+                        //score cube
+                        new Translation2d(-1.0, 0.0),
+                        new Translation2d(-2.0, 0.0)),
+                        //balance?
+                new Pose2d(-2.0, 0.0, Rotation2d.fromDegrees(0.0)),
+                trajectoryConfig);
 
-        m_chooser.setDefaultOption("TrajOne", trajectory1);
-        m_chooser.addOption("TrajTwo", trajectory2);
-        m_chooser.addOption("TrajThree", trajectory3);
+        m_chooser.addOption("TrajRight", trajectory1);
+        m_chooser.addOption("TrajLeft", trajectory2);
+        m_chooser.addOption("TrajStraight", trajectory3);
+        //m_chooser.addOption("TrajBackward", trajectory4);
+        Shuffleboard.getTab("Autonomous").add(m_chooser);
     }
 
     private void configureButtonBindings() {
