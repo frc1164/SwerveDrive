@@ -5,6 +5,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 
+
 public final class Constants {
 
     public static final class ModuleConstants {
@@ -90,8 +91,8 @@ public final class Constants {
                 DriveConstants.kPhysicalMaxAngularSpeedRadiansPerSecond / 2.5;
         public static final double kMaxAccelerationMetersPerSecondSquared = 1.5;
         public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI / 4;
-        public static final double kPXController = 0.046731;
-        public static final double kPYController = 0.046731;
+        public static final double kPXController = 0.1;
+        public static final double kPYController = 0.1;
         public static final double kPThetaController = 10;
 
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints = //
@@ -111,9 +112,34 @@ public final class Constants {
         public static final double kDeadband = 0.1;
     }
 
+    public static class GripperC {
+        public static final int rightMotor = 62;
+        public static final int leftMotor = 61;
+        public static final int GripperMotor = 60;
+        public static final int GripperCANifier = 59;
+        public static boolean leftMotorReversed = false;
+        public static boolean rightMotorReversed = true;
+    }
+     
+    public static class OperatorConstants {
+     public static final int kOperatorControllerPort = 1;
+    }
+
     public static final class ArmConstants {
+        //CAN Values for Arm Hardware
         public static final int armCANifier = 53;
         public static final int armShoulderMotor = 50;
         public static final int armExtensionMotor = 51;
+        public static final int CANCoderid = 52;
+
+        //Shoulder Soft Limit Stuff
+        public static final double ShoulderEncoderOffset = 263 * Math.PI/180;
+        public static final double TopShoulderLimit = 263 * Math.PI/180;
+        public static final double BottomShoulderLimit = 205 * Math.PI/180;
+        public static final boolean ShoulderEncoderRevsersed = false;
+
+        //Telescope Limits
+        public static final double TopTelescopeLimit = 125 * 360 * Math.PI/180;
+        public static final double BottomTelescopeLimit = 10 * 360 * Math.PI/180;
     }
 }
