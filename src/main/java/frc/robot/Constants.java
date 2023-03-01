@@ -129,5 +129,6 @@ public final class Constants {
         public static final int armCANifier = 53;
         public static final int armShoulderMotor = 50;
         public static final int armExtensionMotor = 51;
+        public static final int CANCoderid = 52;
     }
 }
