@@ -57,10 +57,10 @@ public class ArmSubsystem extends SubsystemBase {
 
   public void setRotationMotorSpeed(double speed) {
 
-    if(/*!getArmShoulderUpperLimitSwitch() &&*/ (speed > 0) &&(getShoulderPosition() >= ArmConstants.TopShoulderLimit)){
+    if(/*!getArmShoulderUpperLimitSwitch() &&*/ (speed < 0) &&(getShoulderPosition() >= ArmConstants.TopShoulderLimit)){
       armShoulderMotor.set(0);
     }
-    else if(/*!getArmShoulderLowerLimitSwitch() &&*/ (speed < 0) && (getShoulderPosition() <= ArmConstants.BottomShoulderLimit)){
+    else if(/*!getArmShoulderLowerLimitSwitch() &&*/ (speed > 0) && (getShoulderPosition() <= ArmConstants.BottomShoulderLimit)){
       armShoulderMotor.set(0);
     }
     else {
@@ -69,10 +69,10 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void setExtensionMotorSpeed(double speed) {
-     if(/*getArmExtensionExtendedLimitSwitch() &&*/ (speed > 0) && (getShoulderPosition() >= ArmConstants.TopTelescopeLimit)){
+     if(/*getArmExtensionExtendedLimitSwitch() &&*/ (speed < 0) && (getShoulderPosition() <= ArmConstants.TopTelescopeLimit)){
        armExtensionMotor.set(0);
      }
-     else if(/*getArmExtensionRetractedLimitSwitch() &&*/ (speed < 0) && (getShoulderPosition() <= ArmConstants.BottomTelescopeLimit)){
+     else if(/*getArmExtensionRetractedLimitSwitch() &&*/ (speed > 0) && (getShoulderPosition() >= ArmConstants.BottomTelescopeLimit)){
        armExtensionMotor.set(0);
      }
      else {
