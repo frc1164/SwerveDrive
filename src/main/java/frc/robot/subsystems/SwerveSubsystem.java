@@ -10,14 +10,11 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj.SerialPort;
-
 
 public class SwerveSubsystem extends SubsystemBase {
     private final SwerveModule frontLeft = new SwerveModule(
@@ -147,18 +144,5 @@ public class SwerveSubsystem extends SubsystemBase {
         pitch = pitch - Math.asin(((Math.sin(pitch) * 2.0 * g * Math.cos(pitch) + a) / Math.sqrt(Math.pow(g, 2.0) + Math.pow(Math.sin(pitch), 2.0) + 2.0 * g * Math.sin(pitch) + Math.pow(g, 2.0) * Math.pow(Math.cos(pitch), 2.0)))*(180.0/Math.PI));
         SmartDashboard.putNumber("Corrected Pitch", pitch);
         return (float)pitch;
-    }
-
-    public void balance()
-    {
-        SmartDashboard.putString("Balance", "Working");
-        // ChassisSpeeds chassisSpeeds;
-        // double xSpeed = 0.05;
-        // double ySpeed = 0;
-        // double turningSpeed = 0;
-
-        // chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
-        // SwerveModuleState[] moduleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
-        // this.setModuleStates(moduleStates);
     }
 }

@@ -39,6 +39,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import com.pathplanner.lib.PathPlanner;
 
 public class RobotContainer {
 
@@ -72,31 +73,6 @@ public class RobotContainer {
                 armSubsystem, 
                 armController));
 
-        configureButtonBindings();
-    }
-
-    private void configureButtonBindings() {
-
-        //Sets buttons
-        Trigger aButton = m_controller.a();
-        Trigger bButton = m_controller.b();
-        Trigger yButton = m_controller.y();
-        Trigger xButton = m_controller.x();
-        Trigger lBumper = m_controller.leftBumper();
-        Trigger rBumper = m_controller.rightBumper();
-        //keybinds
-        lBumper.whileTrue(new CubePickup(m_gripper));
-        rBumper.whileTrue(new ConePickup(m_gripper));
-        xButton.whileTrue(new intake (m_gripper));
-        aButton.whileTrue(new output (m_gripper));
-        bButton.onTrue(new InstantCommand(() -> Gripper.gripToggle()));
-
-
-        /* new JoystickButton(driverJoytick, 2).whenPressed(() -> swerveSubsystem.zeroHeading()); */
-        new JoystickButton(driverJoytick, 2).onTrue(new InstantCommand(() -> swerveSubsystem.zeroHeading()));
-        new JoystickButton(driverJoytick, 11).onTrue(new BalanceCmd(swerveSubsystem));
-}
-
         // 1. Create trajectory settings
         TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
                 AutoConstants.kMaxSpeedMetersPerSecond,
@@ -129,20 +105,51 @@ public class RobotContainer {
                 new Pose2d(2.0, 0.0, Rotation2d.fromDegrees(0.0)),
                 trajectoryConfig);
         Trajectory trajectory4 = TrajectoryGenerator.generateTrajectory(
-                new Pose2d(0.0, 0.0, new Rotation2d(180.0)),
+                new Pose2d(0.0, 0.0, new Rotation2d(0.0)),
                 List.of(
-                        //score cube
-                        new Translation2d(-1.0, 0.0),
-                        new Translation2d(-2.0, 0.0)),
-                        //balance?
-                new Pose2d(-2.0, 0.0, Rotation2d.fromDegrees(0.0)),
+                        new Translation2d(0.0, 0.0),
+                        new Translation2d(0.0, 0.0)),
+                new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0.0)),
                 trajectoryConfig);
-
+        Trajectory trajectory5 = (Trajectory) PathPlanner.loadPath("Middle Long", 8,5);
+        Trajectory trajectory6 = (Trajectory) PathPlanner.loadPath("Middle Short", 8,5);
+        Trajectory trajectory7 = (Trajectory) PathPlanner.loadPath("Right Path", 8,5);
+        Trajectory trajectory8 = (Trajectory) PathPlanner.loadPath("Left Path", 8,5);
+       
         m_chooser.addOption("TrajRight", trajectory1);
         m_chooser.addOption("TrajLeft", trajectory2);
         m_chooser.addOption("TrajStraight", trajectory3);
-        //m_chooser.addOption("TrajBackward", trajectory4);
+        m_chooser.addOption("TrajStop", trajectory4);
+        m_chooser.addOption("Middle Long", trajectory5);
+        m_chooser.addOption("Middle Short", trajectory6);
+        m_chooser.addOption("Right Path", trajectory7);
+        m_chooser.addOption("Left Path", trajectory8);
         Shuffleboard.getTab("Autonomous").add(m_chooser);
+        
+
+        configureButtonBindings();
+    }
+
+    private void configureButtonBindings() {
+
+        //Sets buttons
+        Trigger aButton = m_controller.a();
+        Trigger bButton = m_controller.b();
+        Trigger yButton = m_controller.y();
+        Trigger xButton = m_controller.x();
+        Trigger lBumper = m_controller.leftBumper();
+        Trigger rBumper = m_controller.rightBumper();
+        //keybinds
+        lBumper.whileTrue(new CubePickup(m_gripper));
+        rBumper.whileTrue(new ConePickup(m_gripper));
+        xButton.whileTrue(new intake (m_gripper));
+        aButton.whileTrue(new output (m_gripper));
+        bButton.onTrue(new InstantCommand(() -> Gripper.gripToggle()));
+
+
+        /* new JoystickButton(driverJoytick, 2).whenPressed(() -> swerveSubsystem.zeroHeading()); */
+        new JoystickButton(driverJoytick, 2).onTrue(new InstantCommand(() -> swerveSubsystem.zeroHeading()));
+        new JoystickButton(driverJoytick, 11).onTrue(new BalanceCmd(swerveSubsystem));
     }
 
 
