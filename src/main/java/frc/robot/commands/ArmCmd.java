@@ -38,7 +38,7 @@ public class ArmCmd extends CommandBase {
       m_subsystem.setExtensionMotorSpeed(m_controller.getRawAxis(0));
     }
 
-    m_subsystem.setRotationMotorSpeed(m_controller.getRawAxis(1)/4);
+    m_subsystem.setRotationMotorSpeed(m_controller.getRawAxis(1)/2);
   }
 
   // Called once the command ends or is interrupted.
