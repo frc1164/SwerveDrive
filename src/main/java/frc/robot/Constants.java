@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.hal.simulation.SpiReadAutoReceiveBufferCallback;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -83,6 +84,10 @@ public final class Constants {
         public static final double kSRight = 0.099437;
         public static final double kVRight = 2.6173;
         public static final double kARight = 0.11195;
+
+        // Drive/Rotation gain
+        public static final double kRotGain = 3;
+        public static final double kDriveGain = 3;
     }
 
     public static final class AutoConstants {
@@ -106,8 +111,8 @@ public final class Constants {
 
         public static final int kDriverYAxis = 1;
         public static final int kDriverXAxis = 0;
-        public static final int kDriverRotAxis = 2;
-        public static final int kDriverFieldOrientedButtonIdx = 12;
+        public static final int kDriverRotAxis = 5;
+        public static final int kDriverFieldOrientedButtonIdx = 5;
 
         public static final double kDeadband = 0.1;
     }
@@ -134,8 +139,8 @@ public final class Constants {
 
         //Shoulder Soft Limit Stuff
         public static final double ShoulderEncoderOffset = 263 * Math.PI/180;
-        public static final double TopShoulderLimit = 263 * Math.PI/180;
-        public static final double BottomShoulderLimit = 205 * Math.PI/180;
+        public static final double TopShoulderLimit = 0 * Math.PI/180;
+        public static final double BottomShoulderLimit = -1.12;
         public static final boolean ShoulderEncoderRevsersed = false;
 
         //Telescope Limits
