@@ -112,10 +112,10 @@ public class RobotContainer {
                                 new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0.0)),
                                 trajectoryConfig);
 */
-                Trajectory trajectory5 = (Trajectory) PathPlanner.loadPath("Middle Long", 8, 5);
-                Trajectory trajectory6 = (Trajectory) PathPlanner.loadPath("Middle Short", 8, 5);
-                Trajectory trajectory7 = (Trajectory) PathPlanner.loadPath("Right Path", 8, 5);
-                Trajectory trajectory8 = (Trajectory) PathPlanner.loadPath("Left Path", 8, 5);
+                Trajectory trajectory5 = (Trajectory) PathPlanner.loadPath("Middle Long", 2, 1);
+                Trajectory trajectory6 = (Trajectory) PathPlanner.loadPath("Middle Short", 2, 1);
+                Trajectory trajectory7 = (Trajectory) PathPlanner.loadPath("Right Path", 2, 1);
+                Trajectory trajectory8 = (Trajectory) PathPlanner.loadPath("Left Path", 2, 1);
 
     /*         m_chooser.addOption("TrajRight", trajectory1);
                 m_chooser.addOption("TrajLeft", trajectory2);
@@ -125,6 +125,7 @@ public class RobotContainer {
                 m_chooser.addOption("Middle Short", trajectory6);
                 m_chooser.addOption("Right Path", trajectory7);
                 m_chooser.addOption("Left Path", trajectory8);
+                m_chooser.addOption("None", null);
                 Shuffleboard.getTab("Autonomous").add(m_chooser);
 
                 configureButtonBindings();
@@ -157,6 +158,10 @@ public class RobotContainer {
         public Command getAutonomousCommand() {
 
                 Trajectory m_trajectory = m_chooser.getSelected();
+
+                if (m_trajectory == null){
+                        return null;
+                }
 
                 // 3. Define PID controllers for tracking trajectory
                 PIDController xController = new PIDController(AutoConstants.kPXController, 0.0, 0.0);
