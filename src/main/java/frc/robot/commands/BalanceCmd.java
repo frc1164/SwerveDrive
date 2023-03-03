@@ -23,6 +23,7 @@ public class BalanceCmd extends CommandBase {
   private final double balanceP = 0.04;
   private final double balanceI = 0;
   private final double balanceD = .005;
+
   // NOT WORKING
   // private final double balanceP = 0.05;
   // private final double balanceI = 0;

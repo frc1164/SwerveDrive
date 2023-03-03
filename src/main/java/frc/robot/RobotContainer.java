@@ -49,7 +49,7 @@ public class RobotContainer {
         private final Gripper m_gripper;
         private final CommandXboxController m_controller;
 
-        SendableChooser<Trajectory> m_chooser = new SendableChooser<>();
+        SendableChooser<Integer> m_chooser = new SendableChooser<>();
 
         private final Joystick driverJoytick = new Joystick(OIConstants.kDriverControllerPort);
         private final XboxController armController = new XboxController(1);
@@ -117,14 +117,16 @@ public class RobotContainer {
                 Trajectory trajectory7 = (Trajectory) PathPlanner.loadPath("Right Path", 2, 1);
                 Trajectory trajectory8 = (Trajectory) PathPlanner.loadPath("Left Path", 2, 1);
 
+                String traj5S = trajectory5.toString();
+
     /*         m_chooser.addOption("TrajRight", trajectory1);
                 m_chooser.addOption("TrajLeft", trajectory2);
                 m_chooser.addOption("TrajStraight", trajectory3);
                 m_chooser.addOption("TrajStop", trajectory4); */
-                m_chooser.addOption("Middle Long", trajectory5);
-                m_chooser.addOption("Middle Short", trajectory6);
-                m_chooser.addOption("Right Path", trajectory7);
-                m_chooser.addOption("Left Path", trajectory8);
+                m_chooser.addOption("Middle Long", 1);
+                m_chooser.addOption("Middle Short", 2);
+                m_chooser.addOption("Right Path", 3);
+                m_chooser.addOption("Left Path", 4);
                 m_chooser.addOption("None", null);
                 Shuffleboard.getTab("Autonomous").add(m_chooser);
 
@@ -155,10 +157,22 @@ public class RobotContainer {
         }
 
         public Command getAutonomousCommand() {
-                Trajectory m_trajectory = m_chooser.getSelected();
+                 Integer m_choice = m_chooser.getSelected();
+                final Trajectory m_trajectory;
 
-                if (m_trajectory == null){
-                        return null;
+                 if (m_choice == 1){
+                        m_trajectory = (Trajectory) PathPlanner.loadPath("Middle Long", 2, 1);
+                 }
+                 else if (m_choice == 2){
+                        m_trajectory = (Trajectory) PathPlanner.loadPath("Middle Short", 2, 1);
+                 }
+                 else if (m_choice == 3){
+                        m_trajectory = (Trajectory) PathPlanner.loadPath("Right Path", 2, 1);
+                 }
+                 else if (m_choice == 4){
+                        m_trajectory = (Trajectory) PathPlanner.loadPath("Left Path", 2, 1);
+                 }else {
+                        m_trajectory = null;
                 }
 
                 // 3. Define PID controllers for tracking trajectory
@@ -180,9 +194,19 @@ public class RobotContainer {
                                 swerveSubsystem);
 
                 // 5. Add some init and wrap-up, and return everything
-                return new SequentialCommandGroup(
+                if (m_choice != 1){
+
+                        return new SequentialCommandGroup(
                                 new InstantCommand(() -> swerveSubsystem.resetOdometry(m_trajectory.getInitialPose())),
                                 swerveControllerCommand,
                                 new InstantCommand(() -> swerveSubsystem.stopModules()));
-                }
+                } else {
+                        BalanceCmd m_BalanceCmd = new BalanceCmd(swerveSubsystem);
+                        return new SequentialCommandGroup(
+                                new InstantCommand(() -> swerveSubsystem.resetOdometry(m_trajectory.getInitialPose())),
+                                swerveControllerCommand,
+                                m_BalanceCmd,
+                                new InstantCommand(() -> swerveSubsystem.stopModules()));
+                }     
+        }
 }
