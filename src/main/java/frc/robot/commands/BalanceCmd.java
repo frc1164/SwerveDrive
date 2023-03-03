@@ -20,9 +20,13 @@ public class BalanceCmd extends CommandBase {
   private final SlewRateLimiter xLimiter, yLimiter, turningLimiter;
   private PIDController balancePID;
 
-  private final double balanceP = 0.045;
+  private final double balanceP = 0.04;
   private final double balanceI = 0;
-  private final double balanceD = 0.013;
+  private final double balanceD = .005;
+  // NOT WORKING
+  // private final double balanceP = 0.05;
+  // private final double balanceI = 0;
+  // private final double balanceD = 0.001;
 
   /** Creates a new BalanceCmd. */
   public BalanceCmd(SwerveSubsystem swerveSubsystem) {
@@ -46,7 +50,7 @@ public class BalanceCmd extends CommandBase {
   @Override
   public void execute() {
     float pitch = swerveSubsystem.getChassisPitch();
-    double xSpeed = balancePID.calculate(pitch);
+    double xSpeed = balancePID.calculate(-pitch);
     SmartDashboard.putNumber("PID Output", xSpeed);
     double ySpeed = 0;
     double turningSpeed = 0;
