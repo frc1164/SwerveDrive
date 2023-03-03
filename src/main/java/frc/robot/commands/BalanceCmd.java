@@ -24,6 +24,11 @@ public class BalanceCmd extends CommandBase {
   private final double balanceI = 0;
   private final double balanceD = .005;
 
+  // NOT WORKING
+  // private final double balanceP = 0.05;
+  // private final double balanceI = 0;
+  // private final double balanceD = 0.001;
+
   /** Creates a new BalanceCmd. */
   public BalanceCmd(SwerveSubsystem swerveSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.

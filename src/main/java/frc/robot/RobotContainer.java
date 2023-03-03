@@ -147,18 +147,16 @@ public class RobotContainer {
                 rBumper.whileTrue(new ConePickup(m_gripper));
                 xButton.whileTrue(new intake(m_gripper));
                 aButton.whileTrue(new output(m_gripper));
-                bButton.onTrue(new InstantCommand(() -> Gripper.gripToggle()));
 
                 /*
                  * new JoystickButton(driverJoytick, 2).whenPressed(() ->
                  * swerveSubsystem.zeroHeading());
                  */
                 new JoystickButton(driverJoytick, 2).onTrue(new InstantCommand(() -> swerveSubsystem.zeroHeading()));
-                new JoystickButton(driverJoytick, 11).onTrue(new BalanceCmd(swerveSubsystem));
+                //new JoystickButton(driverJoytick, 3).onTrue(new BalanceCmd(swerveSubsystem));
         }
 
         public Command getAutonomousCommand() {
-
                  Integer m_choice = m_chooser.getSelected();
                 final Trajectory m_trajectory;
 

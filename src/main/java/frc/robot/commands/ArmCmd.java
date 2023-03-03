@@ -28,17 +28,22 @@ public class ArmCmd extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(m_controller.getRawAxis(2) > 0.02){
-      m_subsystem.setExtensionMotorSpeed(-m_controller.getRawAxis(2)/4);
+    if(m_controller.getRawAxis(2) > 0.2){
+      m_subsystem.setExtensionMotorSpeed(-m_controller.getRawAxis(2)/2);
     }
-    else if(m_controller.getRawAxis(3) > 0.02){
-      m_subsystem.setExtensionMotorSpeed(m_controller.getRawAxis(3)/4);
+    else if(m_controller.getRawAxis(3) > 0.2){
+      m_subsystem.setExtensionMotorSpeed(m_controller.getRawAxis(3)/2);
     }
     else {
       m_subsystem.setExtensionMotorSpeed(m_controller.getRawAxis(0));
     }
 
-    m_subsystem.setRotationMotorSpeed(m_controller.getRawAxis(1)/4);
+    if(Math.abs(m_controller.getRawAxis(1)) > 0.1){
+      m_subsystem.setRotationMotorSpeed(m_controller.getRawAxis(1)/2);
+    }
+    else{
+      m_subsystem.setRotationMotorSpeed(0);
+    }
   }
 
   // Called once the command ends or is interrupted.
