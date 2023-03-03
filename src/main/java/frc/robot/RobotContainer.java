@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
@@ -37,100 +39,152 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import com.pathplanner.lib.PathPlanner;
 
 public class RobotContainer {
 
-    private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
-    private final ArmSubsystem armSubsystem = new ArmSubsystem();
+        private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
+        private final ArmSubsystem armSubsystem = new ArmSubsystem();
 
-    private final Gripper m_gripper;
-    private final CommandXboxController m_controller;
+        private final Gripper m_gripper;
+        private final CommandXboxController m_controller;
 
-    private final Joystick driverJoytick = new Joystick(OIConstants.kDriverControllerPort);
-    private final XboxController armController = new XboxController(1);
+        SendableChooser<Trajectory> m_chooser = new SendableChooser<>();
 
-    public RobotContainer() {
+        private final Joystick driverJoytick = new Joystick(OIConstants.kDriverControllerPort);
+        private final XboxController armController = new XboxController(1);
 
-        m_gripper = new Gripper();
-        m_controller = new CommandXboxController(OperatorConstants.kOperatorControllerPort);
-    
-        
-        m_gripper.setDefaultCommand(new Clasp(m_gripper, m_controller));
+        public RobotContainer() {
 
-        swerveSubsystem.setDefaultCommand(new SwerveJoystickCmd(
-                swerveSubsystem,
-                () -> driverJoytick.getRawAxis(OIConstants.kDriverYAxis),
-                () -> driverJoytick.getRawAxis(OIConstants.kDriverXAxis),
-                () -> driverJoytick.getRawAxis(OIConstants.kDriverRotAxis),
-                () -> !driverJoytick.getRawButton(OIConstants.kDriverFieldOrientedButtonIdx)));
+                m_gripper = new Gripper();
+                m_controller = new CommandXboxController(OperatorConstants.kOperatorControllerPort);
 
-        armSubsystem.setDefaultCommand(new ArmCmd(
-                armSubsystem, 
-                armController));
+                m_gripper.setDefaultCommand(new Clasp(m_gripper, m_controller));
 
-        configureButtonBindings();
-    }
+                swerveSubsystem.setDefaultCommand(new SwerveJoystickCmd(
+                                swerveSubsystem,
+                                () -> driverJoytick.getRawAxis(OIConstants.kDriverYAxis),
+                                () -> driverJoytick.getRawAxis(OIConstants.kDriverXAxis),
+                                () -> driverJoytick.getRawAxis(OIConstants.kDriverRotAxis),
+                                () -> !driverJoytick.getRawButton(OIConstants.kDriverFieldOrientedButtonIdx)));
 
-    private void configureButtonBindings() {
+                armSubsystem.setDefaultCommand(new ArmCmd(
+                                armSubsystem,
+                                armController));
 
-        //Sets buttons
-        Trigger aButton = m_controller.a();
-        Trigger bButton = m_controller.b();
-        Trigger yButton = m_controller.y();
-        Trigger xButton = m_controller.x();
-        Trigger lBumper = m_controller.leftBumper();
-        Trigger rBumper = m_controller.rightBumper();
-        //keybinds
-        lBumper.whileTrue(new CubePickup(m_gripper));
-        rBumper.whileTrue(new ConePickup(m_gripper));
-        xButton.whileTrue(new intake (m_gripper));
-        aButton.whileTrue(new output (m_gripper));
-        bButton.onTrue(new InstantCommand(() -> Gripper.gripToggle()));
+                // 1. Create trajectory settings
+                TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
+                                AutoConstants.kMaxSpeedMetersPerSecond,
+                                AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+                                .setKinematics(DriveConstants.kDriveKinematics);
 
+                // 2. Generate trajectory
 
-        /* new JoystickButton(driverJoytick, 2).whenPressed(() -> swerveSubsystem.zeroHeading()); */
-        new JoystickButton(driverJoytick, 2).onTrue(new InstantCommand(() -> swerveSubsystem.zeroHeading()));
-        new JoystickButton(driverJoytick, 11).onTrue(new BalanceCmd(swerveSubsystem));
-}
+     /*           Trajectory trajectory1 = TrajectoryGenerator.generateTrajectory(
+                                new Pose2d(0.0, 0.0, new Rotation2d(0.0)),
+                                List.of(
+                                                new Translation2d(1.0, 0.0),
+                                                new Translation2d(1.0, -1.0)),
+                                new Pose2d(2.0, -1.0, Rotation2d.fromDegrees(180.0)),
+                                trajectoryConfig);
 
-    public Command getAutonomousCommand() {
-        // 1. Create trajectory settings
-        TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
-                AutoConstants.kMaxSpeedMetersPerSecond,
-                AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-                        .setKinematics(DriveConstants.kDriveKinematics);
+                 Trajectory trajectory2 = TrajectoryGenerator.generateTrajectory(
+                                new Pose2d(0.0, 0.0, new Rotation2d(0.0)),
+                                List.of(
+                                                new Translation2d(1.0, 0.0),
+                                                new Translation2d(1.0, 1.0)),
+                                new Pose2d(2.0, 1.0, Rotation2d.fromDegrees(180.0)),
+                                trajectoryConfig);
 
-        // 2. Generate trajectory
-        Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
-                new Pose2d(0.0, 0.0, new Rotation2d(0.0)),
-                List.of(
-                        new Translation2d(1.0, 0.0),
-                        new Translation2d(1.0, -1.0)),
-                new Pose2d(2.0, -1.0, Rotation2d.fromDegrees(180.0)),
-                trajectoryConfig);
+                Trajectory trajectory3 = TrajectoryGenerator.generateTrajectory(
+                                new Pose2d(0.0, 0.0, new Rotation2d(0.0)),
+                                List.of(
+                                                new Translation2d(1.0, 0.0),
+                                                new Translation2d(2.0, 0.0)),
+                                new Pose2d(2.0, 0.0, Rotation2d.fromDegrees(0.0)),
+                                trajectoryConfig);
 
-        // 3. Define PID controllers for tracking trajectory
-        PIDController xController = new PIDController(AutoConstants.kPXController, 0.0, 0.0);
-        PIDController yController = new PIDController(AutoConstants.kPYController, 0.0, 0.0);
-        ProfiledPIDController thetaController = new ProfiledPIDController(
-                AutoConstants.kPThetaController, 0.0, 0.0, AutoConstants.kThetaControllerConstraints);
-        thetaController.enableContinuousInput(-Math.PI, Math.PI);
+                Trajectory trajectory4 = TrajectoryGenerator.generateTrajectory(
+                                new Pose2d(0.0, 0.0, new Rotation2d(0.0)),
+                                List.of(
+                                                new Translation2d(0.0, 0.0),
+                                                new Translation2d(0.0, 0.0)),
+                                new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0.0)),
+                                trajectoryConfig);
+*/
+                Trajectory trajectory5 = (Trajectory) PathPlanner.loadPath("Middle Long", 2, 1);
+                Trajectory trajectory6 = (Trajectory) PathPlanner.loadPath("Middle Short", 2, 1);
+                Trajectory trajectory7 = (Trajectory) PathPlanner.loadPath("Right Path", 2, 1);
+                Trajectory trajectory8 = (Trajectory) PathPlanner.loadPath("Left Path", 2, 1);
 
-        // 4. Construct command to follow trajectory
-        SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-                trajectory,
-                swerveSubsystem::getPose,
-                DriveConstants.kDriveKinematics,
-                xController,
-                yController,
-                thetaController,
-                swerveSubsystem::setModuleStates,
-                swerveSubsystem);
+    /*         m_chooser.addOption("TrajRight", trajectory1);
+                m_chooser.addOption("TrajLeft", trajectory2);
+                m_chooser.addOption("TrajStraight", trajectory3);
+                m_chooser.addOption("TrajStop", trajectory4); */
+                m_chooser.addOption("Middle Long", trajectory5);
+                m_chooser.addOption("Middle Short", trajectory6);
+                m_chooser.addOption("Right Path", trajectory7);
+                m_chooser.addOption("Left Path", trajectory8);
+                m_chooser.addOption("None", null);
+                Shuffleboard.getTab("Autonomous").add(m_chooser);
 
-        // 5. Add some init and wrap-up, and return everything
-        return new SequentialCommandGroup(
-                new InstantCommand(() -> swerveSubsystem.resetOdometry(trajectory.getInitialPose())),
-                swerveControllerCommand,
-                new InstantCommand(() -> swerveSubsystem.stopModules()));
-    }
+                configureButtonBindings();
+        }
+
+        private void configureButtonBindings() {
+
+                // Sets buttons
+                Trigger aButton = m_controller.a();
+                Trigger bButton = m_controller.b();
+                Trigger yButton = m_controller.y();
+                Trigger xButton = m_controller.x();
+                Trigger lBumper = m_controller.leftBumper();
+                Trigger rBumper = m_controller.rightBumper();
+                // keybinds
+                lBumper.whileTrue(new CubePickup(m_gripper));
+                rBumper.whileTrue(new ConePickup(m_gripper));
+                xButton.whileTrue(new intake(m_gripper));
+                aButton.whileTrue(new output(m_gripper));
+                bButton.onTrue(new InstantCommand(() -> Gripper.gripToggle()));
+
+                /*
+                 * new JoystickButton(driverJoytick, 2).whenPressed(() ->
+                 * swerveSubsystem.zeroHeading());
+                 */
+                new JoystickButton(driverJoytick, 2).onTrue(new InstantCommand(() -> swerveSubsystem.zeroHeading()));
+                new JoystickButton(driverJoytick, 11).onTrue(new BalanceCmd(swerveSubsystem));
+        }
+
+        public Command getAutonomousCommand() {
+
+                Trajectory m_trajectory = m_chooser.getSelected();
+
+                if (m_trajectory == null){
+                        return null;
+                }
+
+                // 3. Define PID controllers for tracking trajectory
+                PIDController xController = new PIDController(AutoConstants.kPXController, 0.0, 0.0);
+                PIDController yController = new PIDController(AutoConstants.kPYController, 0.0, 0.0);
+                ProfiledPIDController thetaController = new ProfiledPIDController(
+                                AutoConstants.kPThetaController, 0.0, 0.0, AutoConstants.kThetaControllerConstraints);
+                thetaController.enableContinuousInput(-Math.PI, Math.PI);
+
+                // 4. Construct command to follow trajectory
+                SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
+                                m_trajectory,
+                                swerveSubsystem::getPose,
+                                DriveConstants.kDriveKinematics,
+                                xController,
+                                yController,
+                                thetaController,
+                                swerveSubsystem::setModuleStates,
+                                swerveSubsystem);
+
+                // 5. Add some init and wrap-up, and return everything
+                return new SequentialCommandGroup(
+                                new InstantCommand(() -> swerveSubsystem.resetOdometry(m_trajectory.getInitialPose())),
+                                swerveControllerCommand,
+                                new InstantCommand(() -> swerveSubsystem.stopModules()));
+        }
 }
