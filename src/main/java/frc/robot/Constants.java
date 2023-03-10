@@ -147,4 +147,11 @@ public final class Constants {
         public static final double TopTelescopeLimit = 125 * 360 * Math.PI/180;
         public static final double BottomTelescopeLimit = 10 * 360 * Math.PI/180;
     }
+
+    public static final class BalanceConstants {
+        public static final double balanceP = 0.0275;
+        public static final double balanceI = 0;
+        public static final double balanceD = .01;
+    }
 }
+

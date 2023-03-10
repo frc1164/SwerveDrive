@@ -128,7 +128,7 @@ public class RobotContainer {
                 m_chooser.addOption("Right Path", 3);
                 m_chooser.addOption("Left Path", 4);
                 m_chooser.addOption("None", null);
-                Shuffleboard.getTab("Autonomous").add(m_chooser);
+                Shuffleboard.getTab("Auto").add(m_chooser);
 
                 configureButtonBindings();
         }
@@ -153,7 +153,7 @@ public class RobotContainer {
                  * swerveSubsystem.zeroHeading());
                  */
                 new JoystickButton(driverJoytick, 2).onTrue(new InstantCommand(() -> swerveSubsystem.zeroHeading()));
-                //new JoystickButton(driverJoytick, 3).onTrue(new BalanceCmd(swerveSubsystem));
+                new JoystickButton(driverJoytick, 3).onTrue(new BalanceCmd(swerveSubsystem));
         }
 
         public Command getAutonomousCommand() {
@@ -194,7 +194,7 @@ public class RobotContainer {
                                 swerveSubsystem);
 
                 // 5. Add some init and wrap-up, and return everything
-                if (m_choice != 1){
+                if (m_choice != 1 && m_choice != 2){
 
                         return new SequentialCommandGroup(
                                 new InstantCommand(() -> swerveSubsystem.resetOdometry(m_trajectory.getInitialPose())),

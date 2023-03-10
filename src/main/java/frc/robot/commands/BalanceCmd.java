@@ -12,6 +12,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.BalanceConstants;
 import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -20,9 +21,6 @@ public class BalanceCmd extends CommandBase {
   private final SlewRateLimiter xLimiter, yLimiter, turningLimiter;
   private PIDController balancePID;
 
-  private final double balanceP = 0.04;
-  private final double balanceI = 0;
-  private final double balanceD = .005;
 
   // NOT WORKING
   // private final double balanceP = 0.05;
@@ -36,7 +34,7 @@ public class BalanceCmd extends CommandBase {
     this.yLimiter = new SlewRateLimiter(DriveConstants.kTeleDriveMaxAccelerationUnitsPerSecond);
     this.turningLimiter = new SlewRateLimiter(DriveConstants.kTeleDriveMaxAngularAccelerationUnitsPerSecond);
     this.swerveSubsystem = swerveSubsystem;
-    this.balancePID = new PIDController(balanceP, balanceI, balanceD);
+    this.balancePID = new PIDController(BalanceConstants.balanceP, BalanceConstants.balanceI, BalanceConstants.balanceD);
     addRequirements(swerveSubsystem);
     balancePID.setSetpoint(0);
   }
