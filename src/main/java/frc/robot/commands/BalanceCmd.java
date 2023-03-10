@@ -12,6 +12,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.BalanceConstants;
 import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -20,9 +21,11 @@ public class BalanceCmd extends CommandBase {
   private final SlewRateLimiter xLimiter, yLimiter, turningLimiter;
   private PIDController balancePID;
 
-  private final double balanceP = 0.045;
-  private final double balanceI = 0;
-  private final double balanceD = 0.013;
+
+  // NOT WORKING
+  // private final double balanceP = 0.05;
+  // private final double balanceI = 0;
+  // private final double balanceD = 0.001;
 
   /** Creates a new BalanceCmd. */
   public BalanceCmd(SwerveSubsystem swerveSubsystem) {
@@ -31,7 +34,7 @@ public class BalanceCmd extends CommandBase {
     this.yLimiter = new SlewRateLimiter(DriveConstants.kTeleDriveMaxAccelerationUnitsPerSecond);
     this.turningLimiter = new SlewRateLimiter(DriveConstants.kTeleDriveMaxAngularAccelerationUnitsPerSecond);
     this.swerveSubsystem = swerveSubsystem;
-    this.balancePID = new PIDController(balanceP, balanceI, balanceD);
+    this.balancePID = new PIDController(BalanceConstants.balanceP, BalanceConstants.balanceI, BalanceConstants.balanceD);
     addRequirements(swerveSubsystem);
     balancePID.setSetpoint(0);
   }
@@ -46,7 +49,7 @@ public class BalanceCmd extends CommandBase {
   @Override
   public void execute() {
     float pitch = swerveSubsystem.getChassisPitch();
-    double xSpeed = balancePID.calculate(pitch);
+    double xSpeed = balancePID.calculate(-pitch);
     SmartDashboard.putNumber("PID Output", xSpeed);
     double ySpeed = 0;
     double turningSpeed = 0;

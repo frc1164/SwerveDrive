@@ -86,7 +86,7 @@ public final class Constants {
         public static final double kARight = 0.11195;
 
         // Drive/Rotation gain
-        public static final double kRotGain = 3;
+        public static final double kRotGain = 2;
         public static final double kDriveGain = 3;
     }
 
@@ -139,7 +139,7 @@ public final class Constants {
 
         //Shoulder Soft Limit Stuff
         public static final double ShoulderEncoderOffset = 263 * Math.PI/180;
-        public static final double TopShoulderLimit = -1 * Math.PI/180;
+        public static final double TopShoulderLimit = -0.05;
         public static final double BottomShoulderLimit = -1.12;
         public static final boolean ShoulderEncoderRevsersed = false;
 
@@ -147,4 +147,11 @@ public final class Constants {
         public static final double TopTelescopeLimit = 125 * 360 * Math.PI/180;
         public static final double BottomTelescopeLimit = 10 * 360 * Math.PI/180;
     }
+
+    public static final class BalanceConstants {
+        public static final double balanceP = 0.0275;
+        public static final double balanceI = 0;
+        public static final double balanceD = .01;
+    }
 }
+
