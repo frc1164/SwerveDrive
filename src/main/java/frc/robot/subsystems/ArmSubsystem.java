@@ -110,4 +110,11 @@ public class ArmSubsystem extends SubsystemBase {
     return angle * (ArmConstants.ShoulderEncoderRevsersed ? -1.0 : 1.0);
   }
 
+  public double getArmLength() {
+    return ArmConstants.armR0 + ArmConstants.extensionPerRotation * getTelescopePosition();
+  }
+
+  public void resetArmExtension() {
+    TelescopeEncoder.setPosition(0);
+  }
 }

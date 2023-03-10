@@ -8,11 +8,13 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.subsystems.ArmSubsystem;
 
 public class ArmCmd extends CommandBase {
   private final ArmSubsystem m_subsystem;
   private final XboxController m_controller;
+  private double theta, r, x, y;
 
   /** Creates a new ArmShoulderCommand. */
   public ArmCmd(ArmSubsystem subsystem, XboxController controller) {
@@ -44,6 +46,21 @@ public class ArmCmd extends CommandBase {
     else{
       m_subsystem.setRotationMotorSpeed(0);
     }
+
+    // An attempt at accurate arm extension distance
+    if(m_subsystem.getArmExtensionRetractedLimitSwitch()) {
+      m_subsystem.resetArmExtension();
+    }
+
+    // Get arm position
+    theta = m_subsystem.getShoulderPosition();
+    r = m_subsystem.getArmLength();
+    x = r * Math.cos(theta);
+    y = r * Math.sin(theta);
+    SmartDashboard.putNumber("Arm Theta", theta);
+    SmartDashboard.putNumber("Arm r", r);
+    SmartDashboard.putNumber("Arm x", x);
+    SmartDashboard.putNumber("Arm y", y);
   }
 
   // Called once the command ends or is interrupted.

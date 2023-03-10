@@ -1,5 +1,7 @@
 package frc.robot;
 
+import org.opencv.core.Mat.Atable;
+
 import edu.wpi.first.hal.simulation.SpiReadAutoReceiveBufferCallback;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -146,6 +148,10 @@ public final class Constants {
         //Telescope Limits
         public static final double TopTelescopeLimit = 125 * 360 * Math.PI/180;
         public static final double BottomTelescopeLimit = 10 * 360 * Math.PI/180;
+    
+        //Telescope Lenghts
+        public static final double armR0 = 40;
+        public static final double extensionPerRotation = 1;
     }
 
     public static final class BalanceConstants {
