@@ -11,7 +11,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.ArmConstants;
-
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.CANifier.GeneralPin;
@@ -28,6 +28,9 @@ public class ArmSubsystem extends SubsystemBase {
   private static DigitalInput armShoulderLowerLimitSwitch;
   private static RelativeEncoder TelescopeEncoder;
   private static CANCoder ShoulderEncoder;
+  private PIDController thetaPID, radiusPID;
+  private static double tOld, tNew;
+  private static double rOld, rNew, thetaOld, thetaNew, radiusOutput, thetaOutput, rError, thetaError;
 
   /** Creates a new ArmShoulder. */
   public ArmSubsystem() {
@@ -42,6 +45,10 @@ public class ArmSubsystem extends SubsystemBase {
     extensionExtendedLimitSwitch = new DigitalInput(1);
     armShoulderLowerLimitSwitch = new DigitalInput(2);
     armShoulderUpperLimitSwitch = new DigitalInput(3);
+    thetaPID = new PIDController(ArmConstants.thetaP, ArmConstants.thetaI, ArmConstants.thetaD);
+    radiusPID = new PIDController(ArmConstants.radiusP, ArmConstants.radiusI, ArmConstants.radiusD);
+    radiusOutput = 0;
+    thetaOutput = 0;
   }
 
   @Override
@@ -116,5 +123,29 @@ public class ArmSubsystem extends SubsystemBase {
 
   public void resetArmExtension() {
     TelescopeEncoder.setPosition(0);
+  }
+
+  public void setArmVelocity(double theta, double r) {
+    tNew = System.nanoTime()/Math.pow(10, 9);
+    SmartDashboard.putNumber("tNew", tNew);
+    rNew = getArmLength();
+    thetaNew = getShoulderPosition();
+
+    double velocityR = (rOld - rNew)/(tOld - tNew);
+    double velocityTheta = (thetaOld - thetaNew)/(tOld - tNew);
+
+    tOld = tNew;
+    rOld = rNew;
+    theta = 0;
+    rError = r - velocityR;
+    thetaError = velocityTheta;
+    SmartDashboard.putNumber("rError", rError);
+    SmartDashboard.putNumber("thetaError", thetaError);
+    radiusOutput = radiusOutput + radiusPID.calculate(rError);
+    thetaOutput = thetaOutput + thetaPID.calculate(thetaError);
+
+    //setExtensionMotorSpeed(radiusOutput);
+    SmartDashboard.putNumber("Theta output", thetaOutput);
+    //setRotationMotorSpeed(thetaOutput);
   }
 }
