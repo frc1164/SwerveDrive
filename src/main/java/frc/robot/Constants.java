@@ -150,8 +150,16 @@ public final class Constants {
         public static final double BottomTelescopeLimit = 10 * 360 * Math.PI/180;
     
         //Telescope Lenghts
-        public static final double armR0 = 40;
-        public static final double extensionPerRotation = 1;
+        public static final double armR0 = 47;
+        public static final double extensionPerRotation = 0.206;
+
+        // Arm control PID. Yay!
+        public static final double thetaP = 0.001;
+        public static final double thetaI = 0;
+        public static final double thetaD = 0;
+        public static final double radiusP = 0;
+        public static final double radiusI = 0;
+        public static final double radiusD = 0;
     }
 
     public static final class BalanceConstants {

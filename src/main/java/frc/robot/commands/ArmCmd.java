@@ -30,21 +30,20 @@ public class ArmCmd extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(m_controller.getRawAxis(2) > 0.2){
-      m_subsystem.setExtensionMotorSpeed(-m_controller.getRawAxis(2)/2);
-    }
-    else if(m_controller.getRawAxis(3) > 0.2){
-      m_subsystem.setExtensionMotorSpeed(m_controller.getRawAxis(3)/2);
+    if(Math.abs(m_controller.getRawAxis(5)) > 0.1){
+      m_subsystem.setExtensionMotorSpeed(m_controller.getRawAxis(5)/2);
     }
     else {
-      m_subsystem.setExtensionMotorSpeed(m_controller.getRawAxis(0));
+      m_subsystem.setExtensionMotorSpeed(0);
     }
 
-    if(Math.abs(m_controller.getRawAxis(1)) > 0.1){
+    if(Math.abs(m_controller.getRawAxis(1)) > 0.2){
       m_subsystem.setRotationMotorSpeed(m_controller.getRawAxis(1)/2);
+      m_subsystem.setArmVelocity(0, 0);
     }
     else{
       m_subsystem.setRotationMotorSpeed(0);
+      m_subsystem.setArmVelocity(0, 0);
     }
 
     // An attempt at accurate arm extension distance
