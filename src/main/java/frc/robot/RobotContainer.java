@@ -42,6 +42,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import java.util.ArrayList;
@@ -82,10 +83,10 @@ public class RobotContainer {
 
                 // Autonomous stuff
                 // Read in Autonomous trajectories as multiple paths
-                ArrayList<PathPlannerTrajectory> trajectory5 = PathPlanner.loadPathGroup("Middle Long", 2, 1);
-                ArrayList<PathPlannerTrajectory> trajectory6 = PathPlanner.loadPathGroup("Middle Short", 2, 1);
-                ArrayList<PathPlannerTrajectory> trajectory7 = PathPlanner.loadPathGroup("Right Path", 2, 1);
-                ArrayList<PathPlannerTrajectory> trajectory8 = PathPlanner.loadPathGroup("Left Path", 2, 1);
+                List<PathPlannerTrajectory> trajectory5 = PathPlanner.loadPathGroup("Middle Long", 2, 1);
+                List<PathPlannerTrajectory> trajectory6 = PathPlanner.loadPathGroup("Middle Short", 2, 1);
+                List<PathPlannerTrajectory> trajectory7 = PathPlanner.loadPathGroup("Right Path", 2, 1);
+                List<PathPlannerTrajectory> trajectory8 = PathPlanner.loadPathGroup("Left Path", 2, 1);
 
                 // Populate the Event Map (PathPlanner labels paired with commands)
                 eventMap.put("balance", new BalanceCmd(swerveSubsystem));
@@ -93,13 +94,12 @@ public class RobotContainer {
                 // Construct the PathPlanner AutoBuilder (only needs to happen once)
                 SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
                 swerveSubsystem::getPose, // Pose2d supplier
-                swerveSubsystem::resetPose, // Pose2d consumer, used to reset odometry at the beginning of auto
+                swerveSubsystem::resetOdometry, // Pose2d consumer, used to reset odometry at the beginning of auto
                 DriveConstants.kDriveKinematics, // SwerveDriveKinematics
                 new PIDConstants(5.0, 0.0, 0.0), // PID constants to correct for translation error (used to create the X and Y PID controllers)
                 new PIDConstants(0.5, 0.0, 0.0), // PID constants to correct for rotation error (used to create the rotation controller)
                 swerveSubsystem::setModuleStates, // Module states consumer used to output to the drive subsystem
-                eventMap,
-                true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
+                eventMap, true,// Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
                 swerveSubsystem // The drive subsystem. Used to properly set the requirements of path following commands
                 );
 
@@ -139,26 +139,5 @@ public class RobotContainer {
 
         public Command getAutonomousCommand() {
                  return m_chooser.getSelected();
-
-
-                // 3. Define PID controllers for tracking trajectory
-                PIDController xController = new PIDController(AutoConstants.kPXController, 0.0, 0.0);
-                PIDController yController = new PIDController(AutoConstants.kPYController, 0.0, 0.0);
-                ProfiledPIDController thetaController = new ProfiledPIDController(
-                                AutoConstants.kPThetaController, 0.0, 0.0, AutoConstants.kThetaControllerConstraints);
-                thetaController.enableContinuousInput(-Math.PI, Math.PI);
-
-                // 4. Construct command to follow trajectory
-                SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-                                m_trajectory,
-                                swerveSubsystem::getPose,
-                                DriveConstants.kDriveKinematics,
-                                xController,
-                                yController,
-                                thetaController,
-                                swerveSubsystem::setModuleStates,
-                                swerveSubsystem);
-
-        
         }
 }
