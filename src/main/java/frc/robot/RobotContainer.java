@@ -96,8 +96,8 @@ public class RobotContainer {
                 swerveSubsystem::getPose, // Pose2d supplier
                 swerveSubsystem::resetOdometry, // Pose2d consumer, used to reset odometry at the beginning of auto
                 DriveConstants.kDriveKinematics, // SwerveDriveKinematics
-                new PIDConstants(5.0, 0.0, 0.0), // PID constants to correct for translation error (used to create the X and Y PID controllers)
-                new PIDConstants(0.5, 0.0, 0.0), // PID constants to correct for rotation error (used to create the rotation controller)
+                new PIDConstants(AutoConstants.kPXController, 0.0, 0.0), // PID constants to correct for translation error (used to create the X and Y PID controllers)
+                new PIDConstants(AutoConstants.kPThetaController, 0.0, 0.0), // PID constants to correct for rotation error (used to create the rotation controller)
                 swerveSubsystem::setModuleStates, // Module states consumer used to output to the drive subsystem
                 eventMap, true,// Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
                 swerveSubsystem // The drive subsystem. Used to properly set the requirements of path following commands
