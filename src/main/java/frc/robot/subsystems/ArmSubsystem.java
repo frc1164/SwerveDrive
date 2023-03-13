@@ -132,13 +132,14 @@ public class ArmSubsystem extends SubsystemBase {
     thetaNew = getShoulderPosition();
 
     double velocityR = (rOld - rNew)/(tOld - tNew);
-    double velocityTheta = (thetaOld - thetaNew)/(tOld - tNew);
+    double velocityTheta = -(thetaOld - thetaNew)/(tOld - tNew);
 
     tOld = tNew;
     rOld = rNew;
-    theta = 0;
+    thetaOld = thetaNew;
+    //theta = 0;
     rError = r - velocityR;
-    thetaError = velocityTheta;
+    thetaError = velocityTheta - theta;
     SmartDashboard.putNumber("rError", rError);
     SmartDashboard.putNumber("thetaError", thetaError);
     radiusOutput = radiusOutput + radiusPID.calculate(rError);
@@ -146,6 +147,6 @@ public class ArmSubsystem extends SubsystemBase {
 
     //setExtensionMotorSpeed(radiusOutput);
     SmartDashboard.putNumber("Theta output", thetaOutput);
-    //setRotationMotorSpeed(thetaOutput);
+    setRotationMotorSpeed(thetaOutput);
   }
 }

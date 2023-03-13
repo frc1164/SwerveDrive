@@ -39,7 +39,7 @@ public class ArmCmd extends CommandBase {
 
     if(Math.abs(m_controller.getRawAxis(1)) > 0.2){
       m_subsystem.setRotationMotorSpeed(m_controller.getRawAxis(1)/2);
-      m_subsystem.setArmVelocity(0, 0);
+      m_subsystem.setArmVelocity(m_controller.getRawAxis(1), 0);
     }
     else{
       m_subsystem.setRotationMotorSpeed(0);
