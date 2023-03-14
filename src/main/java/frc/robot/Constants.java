@@ -158,7 +158,7 @@ public final class Constants {
         public static final double thetaP = 0.1;
         public static final double thetaI = 0.001;
         public static final double thetaD = 0;
-        public static final double radiusP = 0;
+        public static final double radiusP = 0.05;
         public static final double radiusI = 0;
         public static final double radiusD = 0;
     }

@@ -101,18 +101,18 @@ public class SwerveSubsystem extends SubsystemBase {
 
         SwerveModulePosition[] state = {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
         odometer.update(getRotation2d(), state);
-        SmartDashboard.putNumber("Robot Heading", getHeading());
-        SmartDashboard.putString("Robot Rotation", getPose().getRotation().toString());
-        SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
+        // SmartDashboard.putNumber("Robot Heading", getHeading());
+        // SmartDashboard.putString("Robot Rotation", getPose().getRotation().toString());
+        // SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
     
         // SmartDashboard.putNumber("Pitch", gyro.getPitch());
-        SmartDashboard.putNumber("Yaw", gyro.getYaw());
-        SmartDashboard.putNumber("Roll", gyro.getRoll());
-        SmartDashboard.putNumber("Pitch Rate", gyro.getRawGyroX());
-        SmartDashboard.putNumber("Yaw Rate", gyro.getRawGyroY());
-        SmartDashboard.putNumber("Roll Rate", gyro.getRawGyroZ());
-        SmartDashboard.putNumber("X Acceleration", gyro.getWorldLinearAccelX());
-        SmartDashboard.putNumber("Y Acceleration", gyro.getWorldLinearAccelY());
+        // SmartDashboard.putNumber("Yaw", gyro.getYaw());
+        // SmartDashboard.putNumber("Roll", gyro.getRoll());
+        // SmartDashboard.putNumber("Pitch Rate", gyro.getRawGyroX());
+        // SmartDashboard.putNumber("Yaw Rate", gyro.getRawGyroY());
+        // SmartDashboard.putNumber("Roll Rate", gyro.getRawGyroZ());
+        // SmartDashboard.putNumber("X Acceleration", gyro.getWorldLinearAccelX());
+        // SmartDashboard.putNumber("Y Acceleration", gyro.getWorldLinearAccelY());
 
     }
 

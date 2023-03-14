@@ -14,6 +14,7 @@ import frc.robot.subsystems.ArmSubsystem;
 public class ArmCmd extends CommandBase {
   private final ArmSubsystem m_subsystem;
   private final XboxController m_controller;
+  private double radiusJoystickReading, thetaJoystickReading;
   private double theta, r, x, y;
 
   /** Creates a new ArmShoulderCommand. */
@@ -31,20 +32,20 @@ public class ArmCmd extends CommandBase {
   @Override
   public void execute() {
     if(Math.abs(m_controller.getRawAxis(5)) > 0.1){
-      m_subsystem.setExtensionMotorSpeed(m_controller.getRawAxis(5)/2);
+      radiusJoystickReading = m_controller.getRawAxis(5)/2;
     }
     else {
-      m_subsystem.setExtensionMotorSpeed(0);
+      radiusJoystickReading = 0;
     }
 
     if(Math.abs(m_controller.getRawAxis(1)) > 0.2){
-      m_subsystem.setRotationMotorSpeed(m_controller.getRawAxis(1)/2);
-      m_subsystem.setArmVelocity(m_controller.getRawAxis(1), 0);
+      thetaJoystickReading =  m_controller.getRawAxis(1)/2;
     }
     else{
-      m_subsystem.setRotationMotorSpeed(0);
-      m_subsystem.setArmVelocity(0, 0);
+      thetaJoystickReading = 0;
     }
+
+    m_subsystem.setArmVelocity(thetaJoystickReading, radiusJoystickReading);
 
     // An attempt at accurate arm extension distance
     if(m_subsystem.getArmExtensionRetractedLimitSwitch()) {
@@ -60,6 +61,9 @@ public class ArmCmd extends CommandBase {
     SmartDashboard.putNumber("Arm r", r);
     SmartDashboard.putNumber("Arm x", x);
     SmartDashboard.putNumber("Arm y", y);
+
+    // Inverse Kinematics
+
   }
 
   // Called once the command ends or is interrupted.

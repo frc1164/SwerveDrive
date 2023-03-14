@@ -54,12 +54,12 @@ public class ArmSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putBoolean("Upper Limit Switch", getArmShoulderUpperLimitSwitch());
-    SmartDashboard.putBoolean("Lower Limit Switch", getArmShoulderLowerLimitSwitch());
-    SmartDashboard.putBoolean("Extended Limit Switch", getArmExtensionExtendedLimitSwitch());
-    SmartDashboard.putBoolean("Retracted Limit Switch", getArmExtensionRetractedLimitSwitch());
-    SmartDashboard.putNumber("Telescope Position", getTelescopePosition());
-    SmartDashboard.putNumber("Shoulder Position", getShoulderPosition());
+    // SmartDashboard.putBoolean("Upper Limit Switch", getArmShoulderUpperLimitSwitch());
+    // SmartDashboard.putBoolean("Lower Limit Switch", getArmShoulderLowerLimitSwitch());
+    // SmartDashboard.putBoolean("Extended Limit Switch", getArmExtensionExtendedLimitSwitch());
+    // SmartDashboard.putBoolean("Retracted Limit Switch", getArmExtensionRetractedLimitSwitch());
+    // SmartDashboard.putNumber("Telescope Position", getTelescopePosition());
+    // SmartDashboard.putNumber("Shoulder Position", getShoulderPosition());
   }
 
   public void setRotationMotorSpeed(double speed) {
@@ -127,11 +127,10 @@ public class ArmSubsystem extends SubsystemBase {
 
   public void setArmVelocity(double theta, double r) {
     tNew = System.nanoTime()/Math.pow(10, 9);
-    SmartDashboard.putNumber("tNew", tNew);
     rNew = getArmLength();
     thetaNew = getShoulderPosition();
 
-    double velocityR = (rOld - rNew)/(tOld - tNew);
+    double velocityR = -(rOld - rNew)/(tOld - tNew);
     double velocityTheta = -(thetaOld - thetaNew)/(tOld - tNew);
 
     tOld = tNew;
@@ -145,7 +144,7 @@ public class ArmSubsystem extends SubsystemBase {
     radiusOutput = radiusOutput + radiusPID.calculate(rError);
     thetaOutput = thetaOutput + thetaPID.calculate(thetaError);
 
-    //setExtensionMotorSpeed(radiusOutput);
+    setExtensionMotorSpeed(radiusOutput);
     SmartDashboard.putNumber("Theta output", thetaOutput);
     setRotationMotorSpeed(thetaOutput);
   }
