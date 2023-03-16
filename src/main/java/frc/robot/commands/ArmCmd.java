@@ -38,7 +38,7 @@ public class ArmCmd extends CommandBase {
       radiusJoystickReading = 0;
     }
 
-    if(Math.abs(m_controller.getRawAxis(1)) > 0.2){
+    if(Math.abs(m_controller.getRawAxis(1)) > 0.1){
       thetaJoystickReading =  m_controller.getRawAxis(1);
     }
     else{
@@ -62,13 +62,14 @@ public class ArmCmd extends CommandBase {
     SmartDashboard.putNumber("Arm x", x);
     SmartDashboard.putNumber("Arm y", y);
 
-    radiusJoystickReading = radiusJoystickReading * 10;
-    thetaJoystickReading = thetaJoystickReading * 10;
+    double Vy = radiusJoystickReading * 10;
+    double Vx = thetaJoystickReading * 10;
     SmartDashboard.putNumber("radiusJoystickReading", radiusJoystickReading);
     SmartDashboard.putNumber("thetaJoystickReading", thetaJoystickReading);
+
     // Inverse Kinematics
-    vTheta = (x * radiusJoystickReading - y * thetaJoystickReading) / (Math.pow(x, 2) + Math.pow(y, 2));
-    vR = (x * radiusJoystickReading + y * thetaJoystickReading) / Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));  
+    vTheta = (x * Vy - y * Vx) / (Math.pow(x, 2) + Math.pow(y, 2));
+    vR = (x * Vx + y * Vy) / Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));  
 
     m_subsystem.setArmVelocity(vTheta, vR);
     //m_subsystem.setArmVelocity(thetaJoystickReading, radiusJoystickReading * 10);
