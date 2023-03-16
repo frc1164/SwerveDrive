@@ -46,7 +46,9 @@ public class ArmSubsystem extends SubsystemBase {
     armShoulderLowerLimitSwitch = new DigitalInput(2);
     armShoulderUpperLimitSwitch = new DigitalInput(3);
     thetaPID = new PIDController(ArmConstants.thetaP, ArmConstants.thetaI, ArmConstants.thetaD);
+    //thetaPID = new PIDController(ArmConstants.thetaP, ArmConstants.thetaI, ArmConstants.thetaD);
     radiusPID = new PIDController(ArmConstants.radiusP, ArmConstants.radiusI, ArmConstants.radiusD);
+    //radiusPID = new PIDController(ArmConstants.radiusP, ArmConstants.radiusI, ArmConstants.radiusD);
     radiusOutput = 0;
     thetaOutput = 0;
   }
@@ -66,9 +68,11 @@ public class ArmSubsystem extends SubsystemBase {
 
     if(/*!getArmShoulderUpperLimitSwitch() &&*/ (speed < 0) &&(getShoulderPosition() >= ArmConstants.TopShoulderLimit)){
       armShoulderMotor.set(0);
+      thetaPID.reset();
     }
     else if(/*!getArmShoulderLowerLimitSwitch() &&*/ (speed > 0) && (getShoulderPosition() <= ArmConstants.BottomShoulderLimit)){
       armShoulderMotor.set(0);
+      thetaPID.reset();
     }
     else {
       armShoulderMotor.set(speed);
@@ -78,9 +82,11 @@ public class ArmSubsystem extends SubsystemBase {
   public void setExtensionMotorSpeed(double speed) {
      if(getArmExtensionExtendedLimitSwitch() && (speed > 0)/* && (getShoulderPosition() >= ArmConstants.TopTelescopeLimit) */){
        armExtensionMotor.set(0);
+       radiusPID.reset();
      }
      else if(getArmExtensionRetractedLimitSwitch() && (speed < 0)/* && (getShoulderPosition() <= ArmConstants.BottomTelescopeLimit) */){
        armExtensionMotor.set(0);
+       radiusPID.reset();
      }
      else {
        armExtensionMotor.set(speed);
@@ -136,14 +142,16 @@ public class ArmSubsystem extends SubsystemBase {
     tOld = tNew;
     rOld = rNew;
     thetaOld = thetaNew;
-    //theta = 0;
+    // theta = 0;
+    // r = 0;
     rError = r - velocityR;
     thetaError = velocityTheta - theta;
-    SmartDashboard.putNumber("rError", rError);
-    SmartDashboard.putNumber("thetaError", thetaError);
+    SmartDashboard.putNumber("Vr - Error", rError);
+    SmartDashboard.putNumber("Vtheta - Error", thetaError);
     radiusOutput = radiusOutput + radiusPID.calculate(rError);
     thetaOutput = thetaOutput + thetaPID.calculate(thetaError);
-
+    if(Math.abs(radiusOutput) > 1) radiusOutput = Math.signum(radiusOutput);
+    if(Math.abs(thetaOutput) > 1) thetaOutput = Math.signum(thetaOutput);
     setExtensionMotorSpeed(radiusOutput);
     SmartDashboard.putNumber("Theta output", thetaOutput);
     setRotationMotorSpeed(thetaOutput);

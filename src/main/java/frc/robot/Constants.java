@@ -148,18 +148,18 @@ public final class Constants {
 
         //Telescope Limits
         public static final double TopTelescopeLimit = 125 * 360 * Math.PI/180;
-        public static final double BottomTelescopeLimit = 10 * 360 * Math.PI/180;
+        public static final double BottomTelescopeLimit = -0.95 /* 10 * 360 * Math.PI/180 */ ;
     
         //Telescope Lenghts
-        public static final double armR0 = 47;
+        public static final double armR0 = 32; // 47
         public static final double extensionPerRotation = 0.206;
 
         // Arm control PID. Yay!
         public static final double thetaP = 0.1;
-        public static final double thetaI = 0.001;
+        public static final double thetaI = 0.05;
         public static final double thetaD = 0;
-        public static final double radiusP = 0.05;
-        public static final double radiusI = 0;
+        public static final double radiusP = 0.02;
+        public static final double radiusI = 0.05;
         public static final double radiusD = 0;
     }
 
@@ -169,4 +169,3 @@ public final class Constants {
         public static final double balanceD = .01;
     }
 }
-

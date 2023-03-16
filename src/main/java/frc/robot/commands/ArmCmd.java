@@ -15,7 +15,7 @@ public class ArmCmd extends CommandBase {
   private final ArmSubsystem m_subsystem;
   private final XboxController m_controller;
   private double radiusJoystickReading, thetaJoystickReading;
-  private double theta, r, x, y;
+  private double theta, vTheta, r, vR, x, y;
 
   /** Creates a new ArmShoulderCommand. */
   public ArmCmd(ArmSubsystem subsystem, XboxController controller) {
@@ -32,20 +32,20 @@ public class ArmCmd extends CommandBase {
   @Override
   public void execute() {
     if(Math.abs(m_controller.getRawAxis(5)) > 0.1){
-      radiusJoystickReading = m_controller.getRawAxis(5)/2;
+      radiusJoystickReading = m_controller.getRawAxis(5);
     }
     else {
       radiusJoystickReading = 0;
     }
 
     if(Math.abs(m_controller.getRawAxis(1)) > 0.2){
-      thetaJoystickReading =  m_controller.getRawAxis(1)/2;
+      thetaJoystickReading =  m_controller.getRawAxis(1);
     }
     else{
       thetaJoystickReading = 0;
     }
 
-    m_subsystem.setArmVelocity(thetaJoystickReading, radiusJoystickReading);
+    // m_subsystem.setArmVelocity(thetaJoystickReading, radiusJoystickReading);
 
     // An attempt at accurate arm extension distance
     if(m_subsystem.getArmExtensionRetractedLimitSwitch()) {
@@ -62,8 +62,16 @@ public class ArmCmd extends CommandBase {
     SmartDashboard.putNumber("Arm x", x);
     SmartDashboard.putNumber("Arm y", y);
 
+    radiusJoystickReading = radiusJoystickReading * 10;
+    thetaJoystickReading = thetaJoystickReading * 10;
+    SmartDashboard.putNumber("radiusJoystickReading", radiusJoystickReading);
+    SmartDashboard.putNumber("thetaJoystickReading", thetaJoystickReading);
     // Inverse Kinematics
+    vTheta = (x * radiusJoystickReading - y * thetaJoystickReading) / (Math.pow(x, 2) + Math.pow(y, 2));
+    vR = (x * radiusJoystickReading + y * thetaJoystickReading) / Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));  
 
+    m_subsystem.setArmVelocity(vTheta, vR);
+    //m_subsystem.setArmVelocity(thetaJoystickReading, radiusJoystickReading * 10);
   }
 
   // Called once the command ends or is interrupted.
