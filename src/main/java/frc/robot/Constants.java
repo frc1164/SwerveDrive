@@ -153,6 +153,7 @@ public final class Constants {
         //Telescope Lenghts
         public static final double armR0 = 32; // 47
         public static final double extensionPerRotation = 0.206;
+        public static final double maxArmLength = 58;
 
         // Arm control PID. Yay!
         public static final double thetaP = 0.1;
@@ -161,6 +162,12 @@ public final class Constants {
         public static final double radiusP = 0.02;
         public static final double radiusI = 0.05;
         public static final double radiusD = 0;
+
+        public static final double radiusOutputMax = 20;
+        public static final double thetaOutputMax = 20;
+
+        public static final double pivotPointXDistanceFromFrame = /* 25.5 */ 29; // I don't know yet
+        public static final double pivotPointXDistanceFromBumper = 29; // I don't know yet
     }
 
     public static final class BalanceConstants {
