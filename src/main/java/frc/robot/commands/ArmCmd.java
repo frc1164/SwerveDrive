@@ -9,13 +9,14 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.ArmSubsystem;
 
 public class ArmCmd extends CommandBase {
   private final ArmSubsystem m_subsystem;
   private final XboxController m_controller;
   private double radiusJoystickReading, thetaJoystickReading;
-  private double theta, vTheta, r, vR, x, y;
+  private double theta, vTheta, r, rMax, thetaMax, vRadius, x, y;
 
   /** Creates a new ArmShoulderCommand. */
   public ArmCmd(ArmSubsystem subsystem, XboxController controller) {
@@ -61,18 +62,35 @@ public class ArmCmd extends CommandBase {
     SmartDashboard.putNumber("Arm r", r);
     SmartDashboard.putNumber("Arm x", x);
     SmartDashboard.putNumber("Arm y", y);
+    if(r < ArmConstants.armR0 + 1.5) {
+      vRadius = (r - ArmConstants.armR0 + 1.5) * -5;
+    } 
+    else if(r > ArmConstants.maxArmLength - 1.5) {
+      vRadius = (r - ArmConstants.maxArmLength - 1.5) * -5;
+    } 
+    else {
+      m_subsystem.setExtensionMotorSpeed(radiusJoystickReading);
+    }
 
-    double Vy = radiusJoystickReading * 10;
-    double Vx = thetaJoystickReading * 10;
-    SmartDashboard.putNumber("radiusJoystickReading", radiusJoystickReading);
-    SmartDashboard.putNumber("thetaJoystickReading", thetaJoystickReading);
+    if(r*Math.cos(theta) > ArmConstants.pivotPointXDistanceFromFrame) {
+      rMax = ArmConstants.pivotPointXDistanceFromFrame/Math.sin(theta);
+    } else if(r*Math.cos(theta) < ArmConstants.pivotPointXDistanceFromBumper) {
+      rMax = ArmConstants.pivotPointXDistanceFromBumper/Math.sin(theta);
+    } else {
+      rMax = 0;
+    }
 
-    // Inverse Kinematics
-    vTheta = (x * Vy - y * Vx) / (Math.pow(x, 2) + Math.pow(y, 2));
-    vR = (x * Vx + y * Vy) / Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));  
+    if(theta > ArmConstants.TopShoulderLimit - .5) {
+      vTheta = (theta - ArmConstants.TopShoulderLimit - 1.5) * -5;
+    } 
+    if(r > rMax) {
+      vRadius = (r - rMax) * -5;
+    }
+    else {
+      m_subsystem.setRotationMotorSpeed(thetaJoystickReading);
+    }
 
-    m_subsystem.setArmVelocity(vTheta, vR);
-    //m_subsystem.setArmVelocity(thetaJoystickReading, radiusJoystickReading * 10);
+    m_subsystem.setArmVelocity(vTheta, vRadius);
   }
 
   // Called once the command ends or is interrupted.

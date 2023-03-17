@@ -152,6 +152,12 @@ public class ArmSubsystem extends SubsystemBase {
     thetaOutput = thetaOutput + thetaPID.calculate(thetaError);
     if(Math.abs(radiusOutput) > 1) radiusOutput = Math.signum(radiusOutput);
     if(Math.abs(thetaOutput) > 1) thetaOutput = Math.signum(thetaOutput);
+    if(Math.abs(radiusOutput) > ArmConstants.radiusOutputMax) {
+		  radiusOutput = Math.signum(radiusOutput) * ArmConstants.radiusOutputMax;
+    }
+    if(Math.abs(thetaOutput) > ArmConstants.thetaOutputMax) {
+		  thetaOutput = Math.signum(radiusOutput) * ArmConstants.thetaOutputMax;
+    }
     setExtensionMotorSpeed(radiusOutput);
     SmartDashboard.putNumber("Theta output", thetaOutput);
     setRotationMotorSpeed(thetaOutput);
