@@ -6,10 +6,14 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.networktables.*;
+import frc.robot.RobotContainer;
 
 public class Limelight extends SubsystemBase {
+  public SendableChooser<Integer> m_pipilineSet = new SendableChooser<>();
+
   /** Creates a new Limelight. */
 
   NetworkTable table = NetworkTableInstance.getDefault().getTable("Limelight"); 
@@ -37,6 +41,5 @@ public void setLLPipeline(int pipelineNumber){
     SmartDashboard.putNumber("X offset", getTX());
     SmartDashboard.putNumber("Y offset", getTY());
     SmartDashboard.putNumber("A offset", getTA());
+      Integer m_pipelineChoice = RobotContainer.m_pipilineSet.getSelected();
   }
-
-}

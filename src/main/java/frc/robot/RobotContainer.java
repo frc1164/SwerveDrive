@@ -130,6 +130,7 @@ public class RobotContainer {
                 m_chooser.addOption("None", null);
                 Shuffleboard.getTab("Auto").add(m_chooser);
 
+
                 configureButtonBindings();
         }
 
