@@ -53,24 +53,20 @@ public class RobotContainer {
 
         private final Joystick driverJoytick = new Joystick(OIConstants.kDriverControllerPort);
         private final XboxController armController = new XboxController(1);
-        private final CommandXboxController m_driveController;
 
         public RobotContainer() {
 
                 m_gripper = new Gripper();
                 m_controller = new CommandXboxController(OperatorConstants.kOperatorControllerPort);
-                m_driveController = new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
                 m_gripper.setDefaultCommand(new Clasp(m_gripper, m_controller));
 
-                Trigger driveXButton = m_driveController.x();
-
                 swerveSubsystem.setDefaultCommand(new SwerveJoystickCmd(
                                 swerveSubsystem,
-                                () -> m_driveController.getRawAxis(OIConstants.kDriverYAxis),
-                                () -> m_driveController.getRawAxis(OIConstants.kDriverXAxis),
-                                () -> m_driveController.getRawAxis(OIConstants.kDriverRotAxis),
-                                () -> false));
+                                () -> driverJoytick.getRawAxis(OIConstants.kDriverYAxis),
+                                () -> driverJoytick.getRawAxis(OIConstants.kDriverXAxis),
+                                () -> driverJoytick.getRawAxis(OIConstants.kDriverRotAxis),
+                                () -> !driverJoytick.getRawButton(OIConstants.kDriverFieldOrientedButtonIdx)));
 
                 armSubsystem.setDefaultCommand(new ArmCmd(
                                 armSubsystem,
