@@ -32,8 +32,11 @@ public class ArmCmd extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(Math.abs(m_controller.getRawAxis(5)) > 0.1){
-      radiusJoystickReading = m_controller.getRawAxis(5);
+    if(Math.abs(m_controller.getRawAxis(2)) > 0.1){
+      radiusJoystickReading = m_controller.getRawAxis(2);
+    }
+    else if(Math.abs(m_controller.getRawAxis(3)) > 0.1){
+      radiusJoystickReading = -m_controller.getRawAxis(3);
     }
     else {
       radiusJoystickReading = 0;
@@ -62,35 +65,38 @@ public class ArmCmd extends CommandBase {
     SmartDashboard.putNumber("Arm r", r);
     SmartDashboard.putNumber("Arm x", x);
     SmartDashboard.putNumber("Arm y", y);
-    if(r < ArmConstants.armR0 + 1.5) {
-      vRadius = (r - ArmConstants.armR0 + 1.5) * -5;
-    } 
-    else if(r > ArmConstants.maxArmLength - 1.5) {
-      vRadius = (r - ArmConstants.maxArmLength - 1.5) * -5;
-    } 
-    else {
-      m_subsystem.setExtensionMotorSpeed(radiusJoystickReading);
-    }
 
-    if(r*Math.cos(theta) > ArmConstants.pivotPointXDistanceFromFrame) {
-      rMax = ArmConstants.pivotPointXDistanceFromFrame/Math.sin(theta);
-    } else if(r*Math.cos(theta) < ArmConstants.pivotPointXDistanceFromBumper) {
-      rMax = ArmConstants.pivotPointXDistanceFromBumper/Math.sin(theta);
-    } else {
-      rMax = 0;
-    }
+    // Soft Limits
 
-    if(theta > ArmConstants.TopShoulderLimit - .5) {
-      vTheta = (theta - ArmConstants.TopShoulderLimit - 1.5) * -5;
-    } 
-    if(r > rMax) {
-      vRadius = (r - rMax) * -5;
-    }
-    else {
-      m_subsystem.setRotationMotorSpeed(thetaJoystickReading);
-    }
+    // if(r < ArmConstants.armR0 + 1.5) {
+    //   vRadius = (r - ArmConstants.armR0 + 1.5) * -5;
+    // } 
+    // else if(r > ArmConstants.maxArmLength - 1.5) {
+    //   vRadius = (r - ArmConstants.maxArmLength - 1.5) * -5;
+    // } 
+    // else {
+    //   m_subsystem.setExtensionMotorSpeed(radiusJoystickReading);
+    // }
 
-    m_subsystem.setArmVelocity(vTheta, vRadius);
+    // if(r*Math.cos(theta) > ArmConstants.pivotPointXDistanceFromFrame) {
+    //   rMax = ArmConstants.pivotPointXDistanceFromFrame/Math.sin(theta);
+    // } else if(r*Math.cos(theta) < ArmConstants.pivotPointXDistanceFromBumper) {
+    //   rMax = ArmConstants.pivotPointXDistanceFromBumper/Math.sin(theta);
+    // } else {
+    //   rMax = 0;
+    // }
+
+    // if(theta > ArmConstants.TopShoulderLimit - .5) {
+    //   vTheta = (theta - ArmConstants.TopShoulderLimit - 1.5) * -5;
+    // } 
+    // if(r > rMax) {
+    //   vRadius = (r - rMax) * -5;
+    // }
+    // else {
+    //   m_subsystem.setRotationMotorSpeed(thetaJoystickReading);
+    // }
+
+    m_subsystem.setArmVelocity(thetaJoystickReading, radiusJoystickReading*10);
   }
 
   // Called once the command ends or is interrupted.

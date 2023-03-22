@@ -104,7 +104,7 @@ public class Gripper extends SubsystemBase {
             // We are going down but bottom limit is not tripped so go at commanded speed
             clasp.set(speed);  
         }
-       }
+      }
 }
     
   public static void initreverseLeft(){
@@ -117,32 +117,32 @@ public class Gripper extends SubsystemBase {
       claspEncoder.setPosition(0);
   }
 
-  public static void gripToggle() {
-  while (true) {
-    if (!getGripperCLSDLimitSwitch()){
+  // public static void gripToggle() {
+  // while (true) {
+  //   if (!getGripperCLSDLimitSwitch()){
       
-      while (getGripperOPENLimitSwitch()){
-        clasp.set(.1);
-      }
+  //     while (getGripperOPENLimitSwitch()){
+  //       clasp.set(.1);
+  //     }
 
-      clasp.set(0);
+  //     clasp.set(0);
 
-    }
-    if(!getGripperOPENLimitSwitch()){
+  //   }
+  //   if(!getGripperOPENLimitSwitch()){
 
       
 
-      while (getGripperCLSDLimitSwitch()){
-        clasp.set(-.1);
-      }
+  //     while (getGripperCLSDLimitSwitch()){
+  //       clasp.set(-.1);
+  //     }
       
-      clasp.set(0);
+  //     clasp.set(0);
 
-    }else{
-      clasp.set(.1);
-    }
-  }
-  }
+  //   }else{
+  //     clasp.set(.1);
+  //   }
+  // }
+  // }
 
 public static boolean getGripperCLSDLimitSwitch() {
     return m_canifier.getGeneralInput(GeneralPin.LIMF);
@@ -164,8 +164,8 @@ public static boolean getGripperOPENLimitSwitch() {
   public void periodic() {
     // This method will be called once per scheduler run
     // SmartDashboard.putNumber("Gripper Encoder", claspEncoder.getPosition());
-    // SmartDashboard.putBoolean("CLSD Limit Switch", getGripperCLSDLimitSwitch());
-    // SmartDashboard.putBoolean("OPEN Limit Switch", getGripperOPENLimitSwitch());
+    SmartDashboard.putBoolean("CLSD Limit Switch", getGripperCLSDLimitSwitch());
+    SmartDashboard.putBoolean("OPEN Limit Switch", getGripperOPENLimitSwitch());
     setgripEncoder();
     //gripper range is (85.0272 units to other end as is -need to check polarity-)
   }

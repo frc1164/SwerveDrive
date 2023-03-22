@@ -142,7 +142,7 @@ public final class Constants {
         //Shoulder Soft Limit Stuff
         public static final double ShoulderEncoderOffset = 263 * Math.PI/180;
         //public static final double TopShoulderLimit = -0.05;
-        public static final double TopShoulderLimit = -0.1;
+        public static final double TopShoulderLimit = 0.1;
         public static final double BottomShoulderLimit = -1.12;
         public static final boolean ShoulderEncoderRevsersed = false;
 
@@ -159,7 +159,7 @@ public final class Constants {
         public static final double thetaP = 0.1;
         public static final double thetaI = 0.05;
         public static final double thetaD = 0;
-        public static final double radiusP = 0.02;
+        public static final double radiusP = 0.01;
         public static final double radiusI = 0.05;
         public static final double radiusD = 0;
 
