@@ -11,7 +11,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.ArmConstants;
-
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.CANifier.GeneralPin;
@@ -28,6 +28,9 @@ public class ArmSubsystem extends SubsystemBase {
   private static DigitalInput armShoulderLowerLimitSwitch;
   private static RelativeEncoder TelescopeEncoder;
   private static CANCoder ShoulderEncoder;
+  private PIDController thetaPID, radiusPID;
+  private static double tOld, tNew;
+  private static double rOld, rNew, thetaOld, thetaNew, radiusOutput, thetaOutput, rError, thetaError;
 
   /** Creates a new ArmShoulder. */
   public ArmSubsystem() {
@@ -42,26 +45,34 @@ public class ArmSubsystem extends SubsystemBase {
     extensionExtendedLimitSwitch = new DigitalInput(1);
     armShoulderLowerLimitSwitch = new DigitalInput(2);
     armShoulderUpperLimitSwitch = new DigitalInput(3);
+    thetaPID = new PIDController(ArmConstants.thetaP, ArmConstants.thetaI, ArmConstants.thetaD);
+    //thetaPID = new PIDController(ArmConstants.thetaP, ArmConstants.thetaI, ArmConstants.thetaD);
+    radiusPID = new PIDController(ArmConstants.radiusP, ArmConstants.radiusI, ArmConstants.radiusD);
+    //radiusPID = new PIDController(ArmConstants.radiusP, ArmConstants.radiusI, ArmConstants.radiusD);
+    radiusOutput = 0;
+    thetaOutput = 0;
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putBoolean("Upper Limit Switch", getArmShoulderUpperLimitSwitch());
-    SmartDashboard.putBoolean("Lower Limit Switch", getArmShoulderLowerLimitSwitch());
-    SmartDashboard.putBoolean("Extended Limit Switch", getArmExtensionExtendedLimitSwitch());
-    SmartDashboard.putBoolean("Retracted Limit Switch", getArmExtensionRetractedLimitSwitch());
-    SmartDashboard.putNumber("Telescope Position", getTelescopePosition());
-    SmartDashboard.putNumber("Shoulder Position", getShoulderPosition());
+    // SmartDashboard.putBoolean("Upper Limit Switch", getArmShoulderUpperLimitSwitch());
+    // SmartDashboard.putBoolean("Lower Limit Switch", getArmShoulderLowerLimitSwitch());
+    // SmartDashboard.putBoolean("Extended Limit Switch", getArmExtensionExtendedLimitSwitch());
+    // SmartDashboard.putBoolean("Retracted Limit Switch", getArmExtensionRetractedLimitSwitch());
+    // SmartDashboard.putNumber("Telescope Position", getTelescopePosition());
+    // SmartDashboard.putNumber("Shoulder Position", getShoulderPosition());
   }
 
   public void setRotationMotorSpeed(double speed) {
 
     if(/*!getArmShoulderUpperLimitSwitch() &&*/ (speed < 0) &&(getShoulderPosition() >= ArmConstants.TopShoulderLimit)){
       armShoulderMotor.set(0);
+      thetaPID.reset();
     }
     else if(/*!getArmShoulderLowerLimitSwitch() &&*/ (speed > 0) && (getShoulderPosition() <= ArmConstants.BottomShoulderLimit)){
       armShoulderMotor.set(0);
+      thetaPID.reset();
     }
     else {
       armShoulderMotor.set(speed);
@@ -71,9 +82,11 @@ public class ArmSubsystem extends SubsystemBase {
   public void setExtensionMotorSpeed(double speed) {
      if(getArmExtensionExtendedLimitSwitch() && (speed > 0)/* && (getShoulderPosition() >= ArmConstants.TopTelescopeLimit) */){
        armExtensionMotor.set(0);
+       //radiusPID.reset();
      }
      else if(getArmExtensionRetractedLimitSwitch() && (speed < 0)/* && (getShoulderPosition() <= ArmConstants.BottomTelescopeLimit) */){
        armExtensionMotor.set(0);
+       //radiusPID.reset();
      }
      else {
        armExtensionMotor.set(speed);
@@ -110,4 +123,43 @@ public class ArmSubsystem extends SubsystemBase {
     return angle * (ArmConstants.ShoulderEncoderRevsersed ? -1.0 : 1.0);
   }
 
+  public double getArmLength() {
+    return ArmConstants.armR0 + ArmConstants.extensionPerRotation * getTelescopePosition();
+  }
+
+  public void resetArmExtension() {
+    TelescopeEncoder.setPosition(0);
+  }
+
+  public void setArmVelocity(double theta, double r) {
+    tNew = System.nanoTime()/Math.pow(10, 9);
+    rNew = getArmLength();
+    thetaNew = getShoulderPosition();
+
+    double velocityR = -(rOld - rNew)/(tOld - tNew);
+    double velocityTheta = -(thetaOld - thetaNew)/(tOld - tNew);
+
+    tOld = tNew;
+    rOld = rNew;
+    thetaOld = thetaNew;
+    // theta = 0;
+    // r = 0;
+    rError = r - velocityR;
+    thetaError = velocityTheta - theta;
+    SmartDashboard.putNumber("Vr - Error", rError);
+    SmartDashboard.putNumber("Vtheta - Error", thetaError);
+    radiusOutput = radiusOutput + radiusPID.calculate(rError);
+    thetaOutput = thetaOutput + thetaPID.calculate(thetaError);
+    if(Math.abs(radiusOutput) > 1) radiusOutput = Math.signum(radiusOutput);
+    if(Math.abs(thetaOutput) > 1) thetaOutput = Math.signum(thetaOutput);
+    // if(Math.abs(radiusOutput) > ArmConstants.radiusOutputMax) {
+		//   radiusOutput = Math.signum(radiusOutput) * ArmConstants.radiusOutputMax;
+    // }
+    // if(Math.abs(thetaOutput) > ArmConstants.thetaOutputMax) {
+		//   thetaOutput = Math.signum(radiusOutput) * ArmConstants.thetaOutputMax;
+    // }
+    setExtensionMotorSpeed(radiusOutput);
+    SmartDashboard.putNumber("Theta output", thetaOutput);
+    setRotationMotorSpeed(thetaOutput);
+  }
 }

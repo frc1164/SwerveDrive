@@ -33,9 +33,12 @@ public class Clasp extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double contOut = m_controller.getRawAxis(5)/4;
-    SmartDashboard.putNumber("Sped of Grip", m_controller.getRawAxis(5)/4);
-    m_subsystem.setClasp(contOut);
+    if(Math.abs(m_controller.getRawAxis(5)) > 0.2){
+      m_subsystem.setClasp(m_controller.getRawAxis(5)/4);
+    }
+    else {
+      m_subsystem.setClasp(0);
+    }
   }
 
   // Called once the command ends or is interrupted.

@@ -8,11 +8,15 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.ArmSubsystem;
 
 public class ArmCmd extends CommandBase {
   private final ArmSubsystem m_subsystem;
   private final XboxController m_controller;
+  private double radiusJoystickReading, thetaJoystickReading;
+  private double theta, vTheta, r, rMax, thetaMax, vRadius, x, y;
 
   /** Creates a new ArmShoulderCommand. */
   public ArmCmd(ArmSubsystem subsystem, XboxController controller) {
@@ -28,22 +32,71 @@ public class ArmCmd extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(m_controller.getRawAxis(2) > 0.2){
-      m_subsystem.setExtensionMotorSpeed(-m_controller.getRawAxis(2)/2);
+    if(Math.abs(m_controller.getRawAxis(2)) > 0.1){
+      radiusJoystickReading = m_controller.getRawAxis(2);
     }
-    else if(m_controller.getRawAxis(3) > 0.2){
-      m_subsystem.setExtensionMotorSpeed(m_controller.getRawAxis(3)/2);
+    else if(Math.abs(m_controller.getRawAxis(3)) > 0.1){
+      radiusJoystickReading = -m_controller.getRawAxis(3);
     }
     else {
-      m_subsystem.setExtensionMotorSpeed(m_controller.getRawAxis(0));
+      radiusJoystickReading = 0;
     }
 
     if(Math.abs(m_controller.getRawAxis(1)) > 0.1){
-      m_subsystem.setRotationMotorSpeed(m_controller.getRawAxis(1)/2);
+      thetaJoystickReading =  m_controller.getRawAxis(1);
     }
     else{
-      m_subsystem.setRotationMotorSpeed(0);
+      thetaJoystickReading = 0;
     }
+
+    // m_subsystem.setArmVelocity(thetaJoystickReading, radiusJoystickReading);
+
+    // An attempt at accurate arm extension distance
+    if(m_subsystem.getArmExtensionRetractedLimitSwitch()) {
+      m_subsystem.resetArmExtension();
+    }
+
+    // Get arm position
+    theta = m_subsystem.getShoulderPosition();
+    r = m_subsystem.getArmLength();
+    x = r * Math.cos(theta);
+    y = r * Math.sin(theta);
+    SmartDashboard.putNumber("Arm Theta", theta);
+    SmartDashboard.putNumber("Arm r", r);
+    SmartDashboard.putNumber("Arm x", x);
+    SmartDashboard.putNumber("Arm y", y);
+
+    // Soft Limits
+
+    // if(r < ArmConstants.armR0 + 1.5) {
+    //   vRadius = (r - ArmConstants.armR0 + 1.5) * -5;
+    // } 
+    // else if(r > ArmConstants.maxArmLength - 1.5) {
+    //   vRadius = (r - ArmConstants.maxArmLength - 1.5) * -5;
+    // } 
+    // else {
+    //   m_subsystem.setExtensionMotorSpeed(radiusJoystickReading);
+    // }
+
+    // if(r*Math.cos(theta) > ArmConstants.pivotPointXDistanceFromFrame) {
+    //   rMax = ArmConstants.pivotPointXDistanceFromFrame/Math.sin(theta);
+    // } else if(r*Math.cos(theta) < ArmConstants.pivotPointXDistanceFromBumper) {
+    //   rMax = ArmConstants.pivotPointXDistanceFromBumper/Math.sin(theta);
+    // } else {
+    //   rMax = 0;
+    // }
+
+    // if(theta > ArmConstants.TopShoulderLimit - .5) {
+    //   vTheta = (theta - ArmConstants.TopShoulderLimit - 1.5) * -5;
+    // } 
+    // if(r > rMax) {
+    //   vRadius = (r - rMax) * -5;
+    // }
+    // else {
+    //   m_subsystem.setRotationMotorSpeed(thetaJoystickReading);
+    // }
+
+    m_subsystem.setArmVelocity(thetaJoystickReading, radiusJoystickReading*10);
   }
 
   // Called once the command ends or is interrupted.

@@ -1,5 +1,7 @@
 package frc.robot;
 
+import org.opencv.core.Mat.Atable;
+
 import edu.wpi.first.hal.simulation.SpiReadAutoReceiveBufferCallback;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -139,13 +141,33 @@ public final class Constants {
 
         //Shoulder Soft Limit Stuff
         public static final double ShoulderEncoderOffset = 263 * Math.PI/180;
-        public static final double TopShoulderLimit = -0.05;
+        //public static final double TopShoulderLimit = -0.05;
+        public static final double TopShoulderLimit = 0.1;
         public static final double BottomShoulderLimit = -1.12;
         public static final boolean ShoulderEncoderRevsersed = false;
 
         //Telescope Limits
         public static final double TopTelescopeLimit = 125 * 360 * Math.PI/180;
-        public static final double BottomTelescopeLimit = 10 * 360 * Math.PI/180;
+        public static final double BottomTelescopeLimit = -0.95 /* 10 * 360 * Math.PI/180 */ ;
+    
+        //Telescope Lenghts
+        public static final double armR0 = 32; // 47
+        public static final double extensionPerRotation = 0.206;
+        public static final double maxArmLength = 58;
+
+        // Arm control PID. Yay!
+        public static final double thetaP = 0.1;
+        public static final double thetaI = 0.05;
+        public static final double thetaD = 0;
+        public static final double radiusP = 0.01;
+        public static final double radiusI = 0.05;
+        public static final double radiusD = 0;
+
+        public static final double radiusOutputMax = 20;
+        public static final double thetaOutputMax = 20;
+
+        public static final double pivotPointXDistanceFromFrame = /* 25.5 */ 29; // I don't know yet
+        public static final double pivotPointXDistanceFromBumper = 29; // I don't know yet
     }
 
     public static final class BalanceConstants {
@@ -154,4 +176,3 @@ public final class Constants {
         public static final double balanceD = .01;
     }
 }
-
