@@ -50,7 +50,7 @@ public class ArmCmd extends CommandBase {
     }
 
     // m_subsystem.setArmVelocity(thetaJoystickReading, radiusJoystickReading);
-
+    radiusJoystickReading *= 10;
     // An attempt at accurate arm extension distance
     if(m_subsystem.getArmExtensionRetractedLimitSwitch()) {
       m_subsystem.resetArmExtension();
@@ -66,37 +66,41 @@ public class ArmCmd extends CommandBase {
     SmartDashboard.putNumber("Arm x", x);
     SmartDashboard.putNumber("Arm y", y);
 
-    // Soft Limits
+    // Soft Limits - Retracted
+    if(radiusJoystickReading > 10 * (r - ArmConstants.armRetractedSoftStop)) {
+      vRadius = (r - ArmConstants.armR0 + 1.5) * -10;
+    } 
+    // Soft Limits - Extended
+    else if(radiusJoystickReading > 10 * (r - ArmConstants.armExtendedSoftStop)) {
+      vRadius = (r - ArmConstants.armExtendedSoftStop) * -10;
+    } 
+    else {
+      vRadius = radiusJoystickReading;
+    }
 
-    // if(r < ArmConstants.armR0 + 1.5) {
-    //   vRadius = (r - ArmConstants.armR0 + 1.5) * -5;
-    // } 
-    // else if(r > ArmConstants.maxArmLength - 1.5) {
-    //   vRadius = (r - ArmConstants.maxArmLength - 1.5) * -5;
-    // } 
-    // else {
-    //   m_subsystem.setExtensionMotorSpeed(radiusJoystickReading);
-    // }
+    // Soft Limits - Floor
+    if(r*Math.cos(theta) > ArmConstants.pivotPointXDistanceFromFloor) {
+      rMax = ArmConstants.pivotPointXDistanceFromFloor/Math.sin(theta);
+    } 
+    // Soft Limits - Bumper
+    else if(r*Math.cos(theta) < ArmConstants.pivotPointXDistanceFromBumper) {
+      rMax = ArmConstants.pivotPointXDistanceFromBumper/Math.sin(theta);
+    } 
+    else {
+      rMax = -(ArmConstants.pivotPointXDistanceFromBumper*ArmConstants.pivotPointYDistanceFromFloor - ArmConstants.pivotPointXDistanceFromFloor*ArmConstants.pivotPointYDistanceFromBumper) / (ArmConstants.pivotPointYDistanceFromBumper*Math.cos(theta) - ArmConstants.pivotPointYDistanceFromFloor*Math.cos(theta) - ArmConstants.pivotPointXDistanceFromBumper*Math.sin(theta) + ArmConstants.pivotPointXDistanceFromFloor*Math.sin(theta));
 
-    // if(r*Math.cos(theta) > ArmConstants.pivotPointXDistanceFromFrame) {
-    //   rMax = ArmConstants.pivotPointXDistanceFromFrame/Math.sin(theta);
-    // } else if(r*Math.cos(theta) < ArmConstants.pivotPointXDistanceFromBumper) {
-    //   rMax = ArmConstants.pivotPointXDistanceFromBumper/Math.sin(theta);
-    // } else {
-    //   rMax = 0;
-    // }
+    }
 
-    // if(theta > ArmConstants.TopShoulderLimit - .5) {
-    //   vTheta = (theta - ArmConstants.TopShoulderLimit - 1.5) * -5;
-    // } 
-    // if(r > rMax) {
-    //   vRadius = (r - rMax) * -5;
-    // }
-    // else {
-    //   m_subsystem.setRotationMotorSpeed(thetaJoystickReading);
-    // }
+    // Soft Limit - Top
+    if(thetaJoystickReading > 10 * ArmConstants.TopShoulderSoftStop) {
+      vTheta = (theta - ArmConstants.TopShoulderSoftStop) * -5;
+    } 
+    // Soft Limit - Bumper/Floor
+    if(r > rMax) {
+      vRadius = (r - rMax) * -5;
+    }
 
-    m_subsystem.setArmVelocity(thetaJoystickReading, radiusJoystickReading*10);
+    m_subsystem.setArmVelocity(vTheta, vRadius);
   }
 
   // Called once the command ends or is interrupted.
