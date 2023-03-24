@@ -56,15 +56,18 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private final AHRS gyro = new AHRS(SerialPort.Port.kUSB);
 
-    // These are no longer needed since odometry was moved outside this subsystem. Delete if successful
+    // This is no longer needed since odometry was moved outside this subsystem. Delete if successful
     // private final Pose2d poseThis = new Pose2d();
-    // private final SwerveModulePosition[] Position = {frontLeft.getPosition(), frontRight.getPosition(), 
-    //                                                 backLeft.getPosition(), backRight.getPosition()};
+
     //private final SwerveDrivePoseEstimator odometer = new SwerveDrivePoseEstimator(DriveConstants.kDriveKinematics,
     //        new Rotation2d(0), Position, poseThis);
 
     // Get new singleton odometry class for tracking robot pose
     RobotOdometry odometer = RobotOdometry.getInstance();
+
+    //This is now defined and used in the periodic() method and can possibly be deleted
+    //private final SwerveModulePosition[] positions = {frontLeft.getPosition(), frontRight.getPosition(), 
+    //  backLeft.getPosition(), backRight.getPosition()};
 
     // Create a new Field2d object for plotting pose
     private final Field2d m_field = new Field2d();
@@ -80,6 +83,8 @@ public class SwerveSubsystem extends SubsystemBase {
                 zeroHeading();
             } catch (Exception e) {
             }
+            //This is new. Added to initialize the odometry. Not sure about the getPose() call... It feels a little recursive...
+            resetOdometry(getPose());
         }).start();
     }
 
@@ -87,14 +92,17 @@ public class SwerveSubsystem extends SubsystemBase {
         gyro.reset();
     }
 
+    // Gets the robot heading in degrees
     public double getHeading() {
         return Math.IEEEremainder(gyro.getAngle(), 360);
     }
 
+    // Gets the robot heading as a Rotation2d
     public Rotation2d getRotation2d() {
         return Rotation2d.fromDegrees(getHeading());
     }
 
+    // Gets the estimated pose from the odometer
     public Pose2d getPose() {
         return odometer.getPoseEstimator().getEstimatedPosition();
     }
@@ -108,8 +116,8 @@ public class SwerveSubsystem extends SubsystemBase {
     public void periodic() {
         getChassisPitchError();
 
-        SwerveModulePosition[] state = {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
-        odometer.getPoseEstimator().update(getRotation2d(), state);
+        SwerveModulePosition[] positions = {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
+        odometer.getPoseEstimator().update(getRotation2d(), positions);
 
         SmartDashboard.putString("Alliance Color", DriverStation.getAlliance().name());
         m_field.setRobotPose(this.getPose());

@@ -95,7 +95,7 @@ public class SwerveModule {
     }
 
     public SwerveModulePosition getPosition() {
-        return new SwerveModulePosition(getDrivePosition(), new Rotation2d(getTurningPosition()));
+        return new SwerveModulePosition(getDrivePosition() * ModuleConstants.kDriveEncoderRot2Meter, new Rotation2d(getTurningPosition()));
     }
 
     public SwerveModuleState getState() {

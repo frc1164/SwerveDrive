@@ -21,6 +21,7 @@ public class RobotOdometry {
       new SwerveModulePosition(),
       new SwerveModulePosition()
     };
+    
     private RobotOdometry() {
       estimator =
           new SwerveDrivePoseEstimator(
