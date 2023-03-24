@@ -24,6 +24,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.Vision;
 import frc.robot.commands.ArmCmd;
 import frc.robot.commands.BalanceCmd;
 import frc.robot.commands.Clasp;
@@ -53,6 +54,8 @@ public class RobotContainer {
 
         private final Joystick driverJoytick = new Joystick(OIConstants.kDriverControllerPort);
         private final XboxController armController = new XboxController(1);
+
+        private final Vision m_Vision = new Vision("limelight");;
 
         public RobotContainer() {
 
