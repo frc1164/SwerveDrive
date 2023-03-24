@@ -30,7 +30,8 @@ public class ArmSubsystem extends SubsystemBase {
   private static CANCoder ShoulderEncoder;
   private PIDController thetaPID, radiusPID;
   private static double tOld, tNew;
-  private static double rOld, rNew, thetaOld, thetaNew, radiusOutput, thetaOutput, rError, thetaError;
+  private static double rOld, rNew, thetaOld, thetaNew, radiusOutput, thetaOutput, rError, thetaError, theta, r;
+  private static boolean armSetpoint;
 
   /** Creates a new ArmShoulder. */
   public ArmSubsystem() {
@@ -161,5 +162,23 @@ public class ArmSubsystem extends SubsystemBase {
     setExtensionMotorSpeed(radiusOutput);
     SmartDashboard.putNumber("Theta output", thetaOutput);
     setRotationMotorSpeed(thetaOutput);
+  }
+
+  public void armControl(double theta, double r) {
+    if(armSetpoint){
+      armSetpoint = false;
+    }
+    setArmVelocity(theta, r);
+  }
+
+  public void setArmSetpoint(double x, double y) {
+    double theta, r;
+
+    if(!armSetpoint){
+      armSetpoint = true;
+    }
+
+    theta = Math.atan(y / x);
+    r = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
   }
 }
