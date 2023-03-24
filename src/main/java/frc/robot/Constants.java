@@ -153,10 +153,10 @@ public final class Constants {
         public static final double BottomTelescopeLimit = -0.95 /* 10 * 360 * Math.PI/180 */ ;
     
         //Telescope Lenghts
-        public static final double armR0 = 32;
-        public static final double armRetractedSoftStop = 33.5;
-        public static final double maxArmLength = 58;
-        public static final double armExtendedSoftStop = 56.5;
+        public static final double armR0 = 46;
+        public static final double armRetractedSoftStop = 47.5;
+        public static final double maxArmLength = 72;
+        public static final double armExtendedSoftStop = 70.5;
         public static final double extensionPerRotation = 0.206;
 
         // Arm control PID. Yay!
@@ -170,10 +170,10 @@ public final class Constants {
         public static final double radiusOutputMax = 20;
         public static final double thetaOutputMax = 20;
 
-        public static final double pivotPointXDistanceFromFloor = 29;
+        public static final double pivotPointXDistanceFromFloor = 44;
         public static final double pivotPointXDistanceFromBumper = 29;
-        public static final double pivotPointYDistanceFromFloor = 0;
-        public static final double pivotPointYDistanceFromBumper = 0;
+        public static final double pivotPointYDistanceFromFloor = -36;
+        public static final double pivotPointYDistanceFromBumper = -30;
     }
 
     public static final class BalanceConstants {
