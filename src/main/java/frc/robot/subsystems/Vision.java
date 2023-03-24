@@ -102,26 +102,28 @@ public class Vision extends SubsystemBase {
         updateValues();
 
         SmartDashboard.putBoolean("Vision Identified Tag", hasTargets());
+        SmartDashboard.putBoolean("Is good target", isGoodTarget());
 
         // if the limelight has a target
-        if (hasTargets() && isGoodTarget()) {
+       /*  if (hasTargets() && isGoodTarget()) {
             // grab data off network tables and clean it up a bit
 
             Pose2d currentPosition = odometer.getPoseEstimator().getEstimatedPosition();
             Pose2d visionPose = getVisionEstimatedPose();
 
             // if the data is good, use it to update the pose estimator
-            if (visionPose.getX() != 0 && visionPose.getY() != 0 &&
+            if (visionPose.getX() != 0 && visionPose.getY() != 0) // &&
 
             // these check if vision is within a meter of our estimated pose otherwise we
             // ignore it
-            Math.abs(currentPosition.getX() - visionPose.getX()) < 1 &&    
-            Math.abs(currentPosition.getY() - visionPose.getY()) < 1) {
+            // Math.abs(currentPosition.getX() - visionPose.getX()) < 1 &&    
+            // Math.abs(currentPosition.getY() - visionPose.getY()) < 1) {
       
             // Add the vision measurement to the singleton PoseEstimator
             odometer.getPoseEstimator().addVisionMeasurement(visionPose, getLatency());
                 
-            }
+            } */
+            Pose2d visionPose = getVisionEstimatedPose();
+            odometer.getPoseEstimator().addVisionMeasurement(visionPose, getLatency());
         }
     }
-}
