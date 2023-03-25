@@ -120,6 +120,7 @@ public final class Constants {
     }
 
     public static class GripperC {
+        public static final int TimeOfFlightSensor = 63;
         public static final int rightMotor = 62;
         public static final int leftMotor = 61;
         public static final int GripperMotor = 60;
