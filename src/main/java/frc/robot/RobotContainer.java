@@ -29,6 +29,7 @@ import frc.robot.commands.BalanceCmd;
 import frc.robot.commands.Clasp;
 import frc.robot.commands.ConePickup;
 import frc.robot.commands.CubePickup;
+import frc.robot.commands.ScoreGridTop;
 import frc.robot.commands.intake;
 import frc.robot.commands.output;
 import frc.robot.Constants.GripperC;
@@ -142,11 +143,17 @@ public class RobotContainer {
                 Trigger xButton = m_controller.x();
                 Trigger lBumper = m_controller.leftBumper();
                 Trigger rBumper = m_controller.rightBumper();
+                Trigger lDPad = m_controller.povLeft();
+                Trigger rDPad = m_controller.povRight();
+                Trigger uDPad = m_controller.povUp();
+                Trigger dDPad = m_controller.povDown();
+
                 // keybinds
                 lBumper.whileTrue(new CubePickup(m_gripper));
                 rBumper.whileTrue(new ConePickup(m_gripper));
                 xButton.whileTrue(new intake(m_gripper));
                 aButton.whileTrue(new output(m_gripper));
+                lDPad.onTrue(new ScoreGridTop(armSubsystem));
 
                 /*
                  * new JoystickButton(driverJoytick, 2).whenPressed(() ->
