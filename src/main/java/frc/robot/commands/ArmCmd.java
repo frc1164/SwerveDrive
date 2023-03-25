@@ -79,19 +79,19 @@ public class ArmCmd extends CommandBase {
     else {
       vRadius = radiusJoystickReading;
     }
-    // rMax = 10000;
-    // // Soft Limits - Floor
-    // if(r*Math.cos(theta) > ArmConstants.pivotPointXDistanceFromFloor) {
-    //   rMax = ArmConstants.pivotPointXDistanceFromFloor/Math.sin(theta);
-    // } 
-    // // Soft Limits - Bumper
-    // else if(r*Math.cos(theta) < ArmConstants.pivotPointXDistanceFromBumper) {
-    //   rMax = ArmConstants.pivotPointXDistanceFromBumper/Math.sin(theta);
-    // } 
-    // else {
-    //   rMax = -(ArmConstants.pivotPointXDistanceFromBumper*ArmConstants.pivotPointYDistanceFromFloor - ArmConstants.pivotPointXDistanceFromFloor*ArmConstants.pivotPointYDistanceFromBumper) / (ArmConstants.pivotPointYDistanceFromBumper*Math.cos(theta) - ArmConstants.pivotPointYDistanceFromFloor*Math.cos(theta) - ArmConstants.pivotPointXDistanceFromBumper*Math.sin(theta) + ArmConstants.pivotPointXDistanceFromFloor*Math.sin(theta));
+    rMax = 10000;
+    // Soft Limits - Floor
+    if(r*Math.cos(theta) > ArmConstants.pivotPointXDistanceFromFloor) {
+      rMax = ArmConstants.pivotPointXDistanceFromFloor/Math.sin(theta);
+    } 
+    // Soft Limits - Bumper
+    else if(r*Math.cos(theta) < ArmConstants.pivotPointXDistanceFromBumper) {
+      rMax = ArmConstants.pivotPointXDistanceFromBumper/Math.sin(theta);
+    } 
+    else {
+      rMax = -(ArmConstants.pivotPointXDistanceFromBumper*ArmConstants.pivotPointYDistanceFromFloor - ArmConstants.pivotPointXDistanceFromFloor*ArmConstants.pivotPointYDistanceFromBumper) / (ArmConstants.pivotPointYDistanceFromBumper*Math.cos(theta) - ArmConstants.pivotPointYDistanceFromFloor*Math.cos(theta) - ArmConstants.pivotPointXDistanceFromBumper*Math.sin(theta) + ArmConstants.pivotPointXDistanceFromFloor*Math.sin(theta));
 
-    // }
+    }
 
     // Soft Limit - Top
     if(thetaJoystickReading < 4 * (theta - ArmConstants.TopShoulderSoftStop)) {
@@ -102,7 +102,7 @@ public class ArmCmd extends CommandBase {
     //   vRadius = (r - rMax) * -1;
     // }
 
-    m_subsystem.setArmVelocity(vTheta, vRadius);
+    m_subsystem.armControl(vTheta, vRadius);
   }
 
   // Called once the command ends or is interrupted.
