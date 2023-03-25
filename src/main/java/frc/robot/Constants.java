@@ -167,13 +167,17 @@ public final class Constants {
         public static final double radiusI = 0.05;
         public static final double radiusD = 0;
 
+        // Arm Soft Limit Locations
         public static final double radiusOutputMax = 20;
         public static final double thetaOutputMax = 20;
 
-        public static final double pivotPointXDistanceFromFloor = 44;
-        public static final double pivotPointXDistanceFromBumper = 29;
-        public static final double pivotPointYDistanceFromFloor = -36;
-        public static final double pivotPointYDistanceFromBumper = -30;
+        //public static final double pivotPointXDistanceFromFloor = 44;
+        //public static final double pivotPointXDistanceFromBumper = 29;
+        public static final double thetaBumper = 29;
+        public static final double yFloor = -36;
+        public static final double yBumper = -30;
+        //public static final double pivotPointYDistanceFromFloor = -36;
+        //public static final double pivotPointYDistanceFromBumper = -30;
     }
 
     public static final class BalanceConstants {
