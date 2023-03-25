@@ -25,7 +25,7 @@ public class ArmSubsystem extends SubsystemBase {
   private static DigitalInput armShoulderLowerLimitSwitch;
   private static RelativeEncoder TelescopeEncoder;
   private static CANCoder ShoulderEncoder;
-  private PIDController thetaPID, radiusPID, setpointXPid, setpointYPid;
+  private PIDController thetaPID, radiusPID, setpointThetaPid, setpointRadiusPid;
   private static double tOld, tNew;
   private static double rOld, rNew, thetaOld, thetaNew, radiusOutput, thetaOutput, rError, thetaError, theta, r, setpointX, setpointY;
   private static boolean armSetpoint;
@@ -46,8 +46,8 @@ public class ArmSubsystem extends SubsystemBase {
     //thetaPID = new PIDController(ArmConstants.thetaP, ArmConstants.thetaI, ArmConstants.thetaD);
     radiusPID = new PIDController(ArmConstants.radiusP, ArmConstants.radiusI, ArmConstants.radiusD);
     //radiusPID = new PIDController(ArmConstants.radiusP, ArmConstants.radiusI, ArmConstants.radiusD);
-    setpointXPid = new PIDController(0.1, 0, 0);
-    setpointYPid = new PIDController(0.1, 0, 0);
+    setpointThetaPid = new PIDController(2, 0, 0);
+    setpointRadiusPid = new PIDController(10, 0, 0);
     radiusOutput = 0;
     thetaOutput = 0;
   }
@@ -152,6 +152,8 @@ public class ArmSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Vtheta - Error", thetaError);
     radiusOutput = radiusOutput + radiusPID.calculate(rError);
     thetaOutput = thetaOutput + thetaPID.calculate(thetaError);
+   
+    // Motor Limit
     if(Math.abs(radiusOutput) > 1) radiusOutput = Math.signum(radiusOutput);
     if(Math.abs(thetaOutput) > 1) thetaOutput = Math.signum(thetaOutput);
     // if(Math.abs(radiusOutput) > ArmConstants.radiusOutputMax) {
@@ -184,9 +186,15 @@ public class ArmSubsystem extends SubsystemBase {
     setpointTheta = Math.atan(y / x);
     setpointR = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
 
-    vTheta = setpointXPid.calculate((setpointTheta - getShoulderPosition()));
-    vR = setpointYPid.calculate(setpointR - getArmLength());
-
+    vTheta = setpointThetaPid.calculate((setpointTheta - getShoulderPosition()));
+    vR = setpointRadiusPid.calculate(setpointR - getArmLength());
+    if(Math.abs(vTheta) > 1) {
+      vTheta = Math.signum(vTheta);
+    }
+    // if(Math.abs(vR) > 15) {
+    //   vTheta = Math.signum(vTheta)*15;
+    // }
+      vR=0;
     setArmVelocity(vTheta, vR);
   }
 }
