@@ -16,7 +16,7 @@ public class ArmCmd extends CommandBase {
   private final ArmSubsystem m_subsystem;
   private final XboxController m_controller;
   private double radiusJoystickReading, thetaJoystickReading;
-  private double theta, vTheta, r, rMax, thetaMax, vRadius, x, y;
+  private double theta, vTheta, r, rMax, thetaMax, vRadius, x, y, thetaLimit;
 
   /** Creates a new ArmShoulderCommand. */
   public ArmCmd(ArmSubsystem subsystem, XboxController controller) {
@@ -79,28 +79,29 @@ public class ArmCmd extends CommandBase {
     else {
       vRadius = radiusJoystickReading;
     }
-    // rMax = 10000;
-    // // Soft Limits - Floor
-    // if(r*Math.cos(theta) > ArmConstants.pivotPointXDistanceFromFloor) {
-    //   rMax = ArmConstants.pivotPointXDistanceFromFloor/Math.sin(theta);
-    // } 
-    // // Soft Limits - Bumper
-    // else if(r*Math.cos(theta) < ArmConstants.pivotPointXDistanceFromBumper) {
-    //   rMax = ArmConstants.pivotPointXDistanceFromBumper/Math.sin(theta);
-    // } 
-    // else {
-    //   rMax = -(ArmConstants.pivotPointXDistanceFromBumper*ArmConstants.pivotPointYDistanceFromFloor - ArmConstants.pivotPointXDistanceFromFloor*ArmConstants.pivotPointYDistanceFromBumper) / (ArmConstants.pivotPointYDistanceFromBumper*Math.cos(theta) - ArmConstants.pivotPointYDistanceFromFloor*Math.cos(theta) - ArmConstants.pivotPointXDistanceFromBumper*Math.sin(theta) + ArmConstants.pivotPointXDistanceFromFloor*Math.sin(theta));
-
+    
+    // // Soft Limits - Floor/Bumper
+    // if (r < (ArmConstants.yBumper / Math.sin(ArmConstants.thetaBumper))) {
+    //   thetaLimit = Math.asin(ArmConstants.yBumper / r); // Bumper Limit
     // }
+    // else if (r > (ArmConstants.yFloor / Math.sin(ArmConstants.thetaBumper))) {
+    //   thetaLimit = Math.asin(ArmConstants.yFloor / r); //Floor Limit
+    // }
+    // else {
+    //   thetaLimit = ArmConstants.thetaBumper; // In-between Limit
+    // }
+
+
+    // if(thetaJoystickReading > 1 * (theta - thetaLimit)) {   
+    //   vTheta = (theta - thetaLimit) * 1;  // floor/bumper limit speed
+    // } 
+
 
     // Soft Limit - Top
     if(thetaJoystickReading < 4 * (theta - ArmConstants.TopShoulderSoftStop)) {
       vTheta = (theta - ArmConstants.TopShoulderSoftStop) * 4;
     } 
-    // // Soft Limit - Bumper/Floor
-    // if(vRadius > -1 * (vRadius - rMax)) {
-    //   vRadius = (r - rMax) * -1;
-    // }
+
 
     m_subsystem.setArmVelocity(vTheta, vRadius);
   }
