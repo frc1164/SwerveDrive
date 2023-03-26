@@ -80,7 +80,7 @@ public class ArmCmd extends CommandBase {
       vRadius = radiusJoystickReading;
     }
     
-    // Soft Limits - Floor/Bumper
+    // Soft Limits - Floor/Bumper - Find Limit Position
     if (r < (ArmConstants.yBumper / Math.sin(ArmConstants.thetaBumper))) {
       thetaLimit = Math.asin(ArmConstants.yBumper / r); // Bumper Limit
     }
@@ -92,13 +92,14 @@ public class ArmCmd extends CommandBase {
     }
     SmartDashboard.putNumber("Theta Limit", thetaLimit);
 
-    if(thetaJoystickReading > 4 * (theta - thetaLimit)) {   
-      vTheta = (theta - thetaLimit) * 4;  // floor/bumper limit speed
+    // Soft Limits - Floor/Bumper - Set Speed
+    if(thetaJoystickReading > 5 * (theta - thetaLimit)) {   
+      vTheta = (theta - thetaLimit) * 5;  // floor/bumper limit speed
     } 
 
     // Soft Limit - Top
-    if(thetaJoystickReading < 4 * (theta - ArmConstants.TopShoulderSoftStop)) {
-      vTheta = (theta - ArmConstants.TopShoulderSoftStop) * 4;
+    if(thetaJoystickReading < 5 * (theta - ArmConstants.TopShoulderSoftStop)) {
+      vTheta = (theta - ArmConstants.TopShoulderSoftStop) * 5;
     } 
 
     

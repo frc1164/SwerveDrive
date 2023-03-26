@@ -29,6 +29,9 @@ public class ArmSubsystem extends SubsystemBase {
   private static double tOld, tNew;
   private static double rOld, rNew, thetaOld, thetaNew, radiusOutput, thetaOutput, rError, thetaError, theta, r, setpointX, setpointY;
   private static boolean armSetpoint;
+  private static boolean limitSwitchTrigered = false;
+  private static double sysStartTime = System.nanoTime() / Math.pow(10, 9);
+  
 
   /** Creates a new ArmShoulder. */
   public ArmSubsystem() {
@@ -134,18 +137,33 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void setArmVelocity(double theta, double r) {
-    tNew = System.nanoTime()/Math.pow(10, 9);
+    // Read in system data
+    tNew = System.nanoTime() / Math.pow(10, 9);
     rNew = getArmLength();
     thetaNew = getShoulderPosition();
 
+
+    // Check if Limit switch has ever been hit - 5 second time limit
+    if ((limitSwitchTrigered == false) || (tNew - sysStartTime > 5)){
+      if (getArmExtensionRetractedLimitSwitch() == true) {
+        limitSwitchTrigered = true;
+        resetArmExtension();
+      }
+      else{
+        r = -3; // command an extention velocity of -3in/sec
+      }
+  
+    }
+
+    // Calculate Arm Velocity
     double velocityR = -(rOld - rNew)/(tOld - tNew);
     double velocityTheta = -(thetaOld - thetaNew)/(tOld - tNew);
-
     tOld = tNew;
     rOld = rNew;
     thetaOld = thetaNew;
-    // theta = 0;
-    // r = 0;
+
+
+    // Control arm speed
     rError = r - velocityR;
     thetaError = velocityTheta - theta;
     SmartDashboard.putNumber("Vr - Error", rError);
