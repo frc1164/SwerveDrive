@@ -84,7 +84,7 @@ public class SwerveSubsystem extends SubsystemBase {
             } catch (Exception e) {
             }
             //This is new. Added to initialize the odometry. Not sure about the getPose() call... It feels a little recursive...
-            resetOdometry(getPose());
+            //resetOdometry(getPose());
         }).start();
     }
 

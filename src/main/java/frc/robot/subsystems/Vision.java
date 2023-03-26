@@ -105,7 +105,7 @@ public class Vision extends SubsystemBase {
         SmartDashboard.putBoolean("Is good target", isGoodTarget());
 
         // if the limelight has a target
-       /*  if (hasTargets() && isGoodTarget()) {
+        if (hasTargets()) {   //Originally if (hasTargets() && isGoodTarget()). isGoodTarget() never proves true for some reason
             // grab data off network tables and clean it up a bit
 
             Pose2d currentPosition = odometer.getPoseEstimator().getEstimatedPosition();
@@ -122,8 +122,6 @@ public class Vision extends SubsystemBase {
             // Add the vision measurement to the singleton PoseEstimator
             odometer.getPoseEstimator().addVisionMeasurement(visionPose, getLatency());
                 
-            } */
-            Pose2d visionPose = getVisionEstimatedPose();
-            odometer.getPoseEstimator().addVisionMeasurement(visionPose, getLatency());
+            }
         }
     }
