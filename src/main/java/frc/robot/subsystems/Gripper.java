@@ -8,7 +8,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import frc.robot.GamePiece;
+import frc.robot.Setpoint;
 import frc.robot.Constants.GripperC;
+import frc.robot.GamePiece.GamePieceType;
+import frc.robot.Setpoint.ClaspState;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.XboxController;
@@ -31,7 +36,8 @@ public class Gripper extends SubsystemBase {
 
   public PIDController gripPID;
 
-
+  private Setpoint m_setPoint;
+  private ClaspState m_Claspstate;
 
   private static CANifier m_canifier;
   private boolean m_openSwitch;
@@ -117,6 +123,22 @@ public class Gripper extends SubsystemBase {
       claspEncoder.setPosition(0);
   }
 
+  // Note: This is incomplete. It may make more sense to just call an input or eject method depending GamePieceType... Talk to Eric
+  public void updateAllGripperSetpoints(Setpoint setpoint) {
+    m_setPoint = setpoint;
+    try{
+    if (GamePiece.getGamePiece().equals(GamePieceType.Cone)) {
+      m_Claspstate = m_setPoint.claspCone;
+      //Do what ever needs to be done for a Cone. Check Setpoint. (if "IN" do nothing. If "OUT", open Clasp)
+    } else if (GamePiece.getGamePiece().equals(GamePieceType.Cube)) {
+      m_Claspstate = m_setPoint.claspCube;
+      //Do what ever needs to be done for a Cube. Check Setpoint. (if "IN" do nothing. If "OUT", open Clasp)
+    }
+  } catch (NullPointerException npe){
+     System.out.println(npe);
+  }
+  }
+  
   // public static void gripToggle() {
   // while (true) {
   //   if (!getGripperCLSDLimitSwitch()){

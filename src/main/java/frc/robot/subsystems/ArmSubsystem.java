@@ -10,7 +10,10 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.GamePiece;
+import frc.robot.Setpoint;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.GamePiece.GamePieceType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import com.ctre.phoenix.CANifier;
@@ -31,7 +34,9 @@ public class ArmSubsystem extends SubsystemBase {
   private static boolean armSetpoint;
   private static boolean limitSwitchTrigered = false;
   private static double sysStartTime = System.nanoTime() / Math.pow(10, 9);
-  
+
+  //Setpoint variables
+  private static Setpoint m_setPoint;
 
   /** Creates a new ArmShoulder. */
   public ArmSubsystem() {
@@ -53,6 +58,8 @@ public class ArmSubsystem extends SubsystemBase {
     setpointRadiusPid = new PIDController(10, 0, 0);
     radiusOutput = 0;
     thetaOutput = 0;
+    //Set m_setPoint to null so joystick works
+    m_setPoint = null;
   }
 
   @Override
@@ -64,11 +71,32 @@ public class ArmSubsystem extends SubsystemBase {
     // SmartDashboard.putBoolean("Retracted Limit Switch", getArmExtensionRetractedLimitSwitch());
     // SmartDashboard.putNumber("Telescope Position", getTelescopePosition());
     // SmartDashboard.putNumber("Shoulder Position", getShoulderPosition());
-    if(armSetpoint) {
+    if(m_setPoint != null) {
       setArmSetpoint(setpointX, setpointY);
     }
   }
 
+    // This extracts Cone or Cube-specific setpoints from the Setpoint object. Use Liam's setArmSetpoint (setPointX, setPointY) to drive to them.
+    public void updateAllArmSetpoints(Setpoint setpoint) {
+      m_setPoint = setpoint;
+      try{
+      if (GamePiece.getGamePiece().equals(GamePieceType.Cone)) {
+        setpointX = m_setPoint.X_Cone;
+        setpointY = m_setPoint.Y_Cone;
+      } else if (GamePiece.getGamePiece().equals(GamePieceType.Cube)) {
+        setpointX = m_setPoint.X_Cube;
+        setpointY = m_setPoint.Y_Cube;
+      }
+    } catch (NullPointerException npe){
+       System.out.println(npe);
+    }
+    }
+
+  // Just a stub for now to let us compile...
+  public boolean setpointTolerance(){
+    return true;
+  }
+    
   public void setRotationMotorSpeed(double speed) {
 
     if(/*!getArmShoulderUpperLimitSwitch() &&*/ (speed < 0) &&(getShoulderPosition() >= ArmConstants.TopShoulderLimit)){

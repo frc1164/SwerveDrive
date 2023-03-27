@@ -7,6 +7,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import frc.robot.Setpoint.ArmState;
+import frc.robot.Setpoint.ClaspState;
 
 
 public final class Constants {
@@ -108,6 +110,25 @@ public final class Constants {
                         kMaxAngularAccelerationRadiansPerSecondSquared);
     }
 
+        // Predefined Arm/clasp setpoints. NOTE: These are placeholders and need real numbers assigned!!! Do not use them as-is.
+        public static final class ArmSetpoints{
+            public static final Setpoint TEST_SETPOINT_HIGHER = new Setpoint(50, -20, ClaspState.IN, 50, -20, ClaspState.OUT, ArmState.OTHER);
+            public static final Setpoint TEST_SETPOINT_LOWER = new Setpoint(50, -20, ClaspState.IN, 50, -20, ClaspState.OUT, ArmState.OTHER);
+        
+            public static final Setpoint STOWED = new Setpoint(0, 0, ClaspState.IN, 0, 0, ClaspState.OUT, ArmState.STOWED);
+            public static final Setpoint FLOOR = new Setpoint(0, 0, ClaspState.IN, 0, 0, ClaspState.OUT, ArmState.FLOOR);
+            public static final Setpoint MID_NODE = new Setpoint(0, 0, ClaspState.IN, 0, 0, ClaspState.OUT, ArmState.MID_NODE);
+            public static final Setpoint MID_NODE_PLACED = new Setpoint(0, 0, ClaspState.IN, 0, 0, ClaspState.OUT, ArmState.MID_NODE_PLACED);
+            public static final Setpoint MID_NODE_PLACED_AND_SCORED = new Setpoint(0, 0, ClaspState.OUT, 0, 0, ClaspState.OUT, ArmState.MID_NODE_PLACED);
+            public static final Setpoint TOP_NODE = new Setpoint(0, 0, ClaspState.IN, 0, 0, ClaspState.OUT, ArmState.TOP_NODE);
+            public static final Setpoint TOP_NODE_PLACED = new Setpoint(0, 0, ClaspState.IN, 0, 0, ClaspState.OUT, ArmState.TOP_NODE_PLACED);
+            public static final Setpoint TOP_NODE_PLACED_AND_SCORED = new Setpoint(0, 0, ClaspState.OUT, 0, 0, ClaspState.OUT, ArmState.TOP_NODE_PLACED);
+            public static final Setpoint SUBSTATION = new Setpoint(0, 0, ClaspState.IN, 0, 0, ClaspState.OUT, ArmState.SUBSTATION);
+            public static final Setpoint FLOOR_HOVER = new Setpoint(0, 0, ClaspState.IN, 0, 0, ClaspState.OUT, ArmState.OTHER);
+            public static final Setpoint FLOOR_INTAKING = new Setpoint(0, 0, ClaspState.IN, 0, 0, ClaspState.OUT, ArmState.FLOOR);
+            
+          }
+          
     public static final class OIConstants {
         public static final int kDriverControllerPort = 0;
 

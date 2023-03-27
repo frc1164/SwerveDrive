@@ -21,6 +21,7 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.GamePiece.GamePieceType;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -30,6 +31,7 @@ import frc.robot.commands.Clasp;
 import frc.robot.commands.ConePickup;
 import frc.robot.commands.CubePickup;
 import frc.robot.commands.ScoreGridTop;
+import frc.robot.commands.Score_Grid_High;
 import frc.robot.commands.intake;
 import frc.robot.commands.output;
 import frc.robot.Constants.GripperC;
@@ -49,6 +51,8 @@ public class RobotContainer {
 
         private final Gripper m_gripper;
         private final CommandXboxController m_controller;
+
+        private final GamePieceType m_GamePiece = GamePiece.getGamePiece();
 
         SendableChooser<Integer> m_chooser = new SendableChooser<>();
 
@@ -72,6 +76,9 @@ public class RobotContainer {
                 armSubsystem.setDefaultCommand(new ArmCmd(
                                 armSubsystem,
                                 armController));
+
+                //Set default GamePiece, since we can only preload cones at the moment
+                m_GamePiece.setGamePiece(GamePieceType.Cone);
 
                 // 1. Create trajectory settings
                 TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
@@ -153,7 +160,9 @@ public class RobotContainer {
                 rBumper.whileTrue(new ConePickup(m_gripper));
                 xButton.whileTrue(new intake(m_gripper));
                 aButton.whileTrue(new output(m_gripper));
-                lDPad.onTrue(new ScoreGridTop(armSubsystem));
+                
+                //Temporarily bind autonomous commands. For testing commands only!
+                lDPad.onTrue(new Score_Grid_High(armSubsystem, m_gripper));
 
                 /*
                  * new JoystickButton(driverJoytick, 2).whenPressed(() ->
