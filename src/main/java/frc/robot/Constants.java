@@ -172,8 +172,8 @@ public final class Constants {
         public static final double thetaOutputMax = 20;
 
         public static final double thetaBumper = -0.88;
-        public static final double yFloor = -43;
-        public static final double yBumper = -37.5;
+        public static final double yFloor = -40;
+        public static final double yBumper = -36.0;
  
     }
 
