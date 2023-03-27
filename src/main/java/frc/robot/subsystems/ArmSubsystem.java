@@ -10,7 +10,10 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.GamePiece;
+import frc.robot.Setpoint;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.GamePiece.GamePieceType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import com.ctre.phoenix.CANifier;
@@ -31,6 +34,9 @@ public class ArmSubsystem extends SubsystemBase {
   private PIDController thetaPID, radiusPID;
   private static double tOld, tNew;
   private static double rOld, rNew, thetaOld, thetaNew, radiusOutput, thetaOutput, rError, thetaError;
+  private static Setpoint m_setPoint;
+  private static double setPointX;
+  private static double setPointY;
 
   /** Creates a new ArmShoulder. */
   public ArmSubsystem() {
@@ -62,6 +68,22 @@ public class ArmSubsystem extends SubsystemBase {
     // SmartDashboard.putBoolean("Retracted Limit Switch", getArmExtensionRetractedLimitSwitch());
     // SmartDashboard.putNumber("Telescope Position", getTelescopePosition());
     // SmartDashboard.putNumber("Shoulder Position", getShoulderPosition());
+  }
+
+  // This extracts Cone or Cube-specific setpoints from the Setpoint object. Use Liam's setArmSetpoint (setPointX, setPointY) to drive to them.
+  public void updateAllArmSetpoints(Setpoint setpoint) {
+    m_setPoint = setpoint;
+    try{
+    if (GamePiece.getGamePiece() == GamePieceType.Cone) {
+      setPointX = setpoint.X_Cone;
+      setPointY = setpoint.Y_Cone;
+    } else if (GamePiece.getGamePiece() == GamePieceType.Cube) {
+      setPointX = setpoint.X_Cube;
+      setPointY = setpoint.Y_Cube;
+    }
+  } catch (NullPointerException npe){
+     System.out.println(npe);
+  }
   }
 
   public void setRotationMotorSpeed(double speed) {

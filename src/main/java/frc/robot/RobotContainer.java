@@ -11,16 +11,20 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import frc.robot.Constants.ArmSetpoints;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.GamePiece;
+import frc.robot.GamePiece.GamePieceType;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -30,6 +34,7 @@ import frc.robot.commands.BalanceCmd;
 import frc.robot.commands.Clasp;
 import frc.robot.commands.ConePickup;
 import frc.robot.commands.CubePickup;
+import frc.robot.commands.Score_Grid_High;
 import frc.robot.commands.intake;
 import frc.robot.commands.output;
 import frc.robot.Constants.GripperC;
@@ -49,6 +54,8 @@ public class RobotContainer {
 
         private final Gripper m_gripper;
         private final CommandXboxController m_controller;
+        
+        private final GamePieceType m_GamePiece = GamePiece.getGamePiece();
 
         SendableChooser<Integer> m_chooser = new SendableChooser<>();
 
@@ -57,7 +64,7 @@ public class RobotContainer {
 
         private final Vision m_Vision = new Vision("limelight");;
 
-        public RobotContainer() {
+        public RobotContainer() throws InterruptedException {
 
                 m_gripper = new Gripper();
                 m_controller = new CommandXboxController(OperatorConstants.kOperatorControllerPort);
@@ -74,6 +81,8 @@ public class RobotContainer {
                 armSubsystem.setDefaultCommand(new ArmCmd(
                                 armSubsystem,
                                 armController));
+
+                m_GamePiece.setGamePiece(GamePieceType.Cone);
 
                 // 1. Create trajectory settings
                 TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
@@ -136,7 +145,7 @@ public class RobotContainer {
                 configureButtonBindings();
         }
 
-        private void configureButtonBindings() {
+        private void configureButtonBindings() throws InterruptedException {
 
                 // Sets buttons
                 Trigger aButton = m_controller.a();
@@ -145,11 +154,16 @@ public class RobotContainer {
                 Trigger xButton = m_controller.x();
                 Trigger lBumper = m_controller.leftBumper();
                 Trigger rBumper = m_controller.rightBumper();
+
+                Trigger lDPad = m_controller.povLeft();
+
                 // keybinds
                 lBumper.whileTrue(new CubePickup(m_gripper));
                 rBumper.whileTrue(new ConePickup(m_gripper));
                 xButton.whileTrue(new intake(m_gripper));
                 aButton.whileTrue(new output(m_gripper));
+
+                lDPad.onTrue(new Score_Grid_High(armSubsystem, m_gripper));
 
                 /*
                  * new JoystickButton(driverJoytick, 2).whenPressed(() ->

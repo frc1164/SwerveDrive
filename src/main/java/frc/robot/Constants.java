@@ -111,8 +111,8 @@ public final class Constants {
 
     // Predefined Arm/clasp setpoints. NOTE: These are placeholders and need real numbers assigned!!! Do not use them as-is.
     public static final class ArmSetpoints{
-        public static final Setpoint TEST_SETPOINT_HIGHER = new Setpoint(0, 0, ClaspState.IN, 0, 0, ClaspState.OUT, ArmState.OTHER);
-        public static final Setpoint TEST_SETPOINT_LOWER = new Setpoint(0, 0, ClaspState.IN, 0, 0, ClaspState.OUT, ArmState.OTHER);
+        public static final Setpoint TEST_SETPOINT_HIGHER = new Setpoint(50, -20, ClaspState.IN, 50, -20, ClaspState.OUT, ArmState.OTHER);
+        public static final Setpoint TEST_SETPOINT_LOWER = new Setpoint(50, -20, ClaspState.IN, 50, -20, ClaspState.OUT, ArmState.OTHER);
     
         public static final Setpoint STOWED = new Setpoint(0, 0, ClaspState.IN, 0, 0, ClaspState.OUT, ArmState.STOWED);
         public static final Setpoint FLOOR = new Setpoint(0, 0, ClaspState.IN, 0, 0, ClaspState.OUT, ArmState.FLOOR);
