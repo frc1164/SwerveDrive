@@ -6,20 +6,20 @@ package frc.robot;
 
 /** Class to define setpoints for arm and clasp.*/
 public class Setpoint {
-    public double shoulderCone;
-    public double extensionCone;
+    public double X_Cone;
+    public double Y_Cone;
     public ClaspState claspCone;
-    public double shoulderCube;
-    public double extensionCube;
+    public double X_Cube;
+    public double Y_Cube;
     public ClaspState claspCube;
     public ArmState state;
    
-    public Setpoint(double shoulderCone, double extensionCone, ClaspState claspCone, double shoulderCube, double extensionCube, ClaspState claspCube, ArmState state) {
-        this.shoulderCone = shoulderCone;
-        this.extensionCone = extensionCone;
+    public Setpoint(double X_Cone, double Y_Cone, ClaspState claspCone, double X_Cube, double Y_Cube, ClaspState claspCube, ArmState state) {
+        this.X_Cone = X_Cone;
+        this.Y_Cone = Y_Cone;
         this.claspCone = claspCone;
-        this.shoulderCube = shoulderCube;
-        this.extensionCube = extensionCube;
+        this.X_Cube = X_Cube;
+        this.Y_Cube = Y_Cube;
         this.claspCube = claspCube;
         this.state = state;
     }
