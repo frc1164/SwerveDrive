@@ -52,8 +52,13 @@ public class Gripper extends SubsystemBase {
   }
   
   public void Intake(double speed) {
-    rightDrive.set(speed);
-    leftDrive.set(speed);
+    if (ToF.getRange()<130){
+      rightDrive.set(0);
+      leftDrive.set(0);
+    }else{
+      rightDrive.set(speed);
+      leftDrive.set(speed);
+    }
   }
   
   
