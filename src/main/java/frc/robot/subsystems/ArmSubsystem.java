@@ -80,15 +80,13 @@ public class ArmSubsystem extends SubsystemBase {
     public void updateAllArmSetpoints(Setpoint setpoint) {
       m_setPoint = setpoint;
       try{
-      // if (GamePiece.getGamePiece().equals(GamePieceType.Cone)) {
-      //   setpointX = m_setPoint.X_Cone;
-      //   setpointY = m_setPoint.Y_Cone;
-      // } else if (GamePiece.getGamePiece().equals(GamePieceType.Cube)) {
-      //   setpointX = m_setPoint.X_Cube;
-      //   setpointY = m_setPoint.Y_Cube;
-      // }
-      setpointX = m_setPoint.X_Cone;
-      setpointY = m_setPoint.Y_Cone;
+        if (GamePiece.getGamePiece().equals(GamePieceType.Cone)) {
+         setpointX = m_setPoint.X_Cone;
+         setpointY = m_setPoint.Y_Cone;
+       } else if (GamePiece.getGamePiece().equals(GamePieceType.Cube)) {
+         setpointX = m_setPoint.X_Cube;
+         setpointY = m_setPoint.Y_Cube;
+       }
     } catch (NullPointerException npe){
        System.out.println(npe);
     }
