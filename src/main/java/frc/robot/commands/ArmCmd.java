@@ -34,7 +34,7 @@ public class ArmCmd extends CommandBase {
   public void execute() {
     
     // Read Extention Joystick
-    deadBand = 0.1;
+    deadBand = OIConstants.kDeadband;
 
     if(Math.abs(m_controller.getRawAxis(2)) > deadBand){ // Determine which button is pressed
       radiusJoystickReading = m_controller.getRawAxis(2);
@@ -53,7 +53,6 @@ public class ArmCmd extends CommandBase {
 
     // Read Shoulder Joystick
     thetaJoystickReading =  m_controller.getRawAxis(1);
-    deadBand = 0.1;
 
 
     if (Math.abs(thetaJoystickReading) > deadBand){
