@@ -93,8 +93,13 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
   // Just a stub for now to let us compile...
-  public boolean setpointTolerance(){
-    return true;
+  public boolean setpointTolerance() {
+    double x = r * Math.cos(theta);
+    double y = r * Math.sin(theta);
+    if((setpointX + ArmConstants.setpointTolerance >= x) && (setpointX - ArmConstants.setpointTolerance <= x) && (setpointY + ArmConstants.setpointTolerance >= y) && (setpointY - ArmConstants.setpointTolerance <= y)) {
+      return true;
+    }
+    return false;  
   }
     
   public void setRotationMotorSpeed(double speed) {

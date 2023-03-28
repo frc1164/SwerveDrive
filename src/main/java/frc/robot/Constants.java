@@ -195,7 +195,9 @@ public final class Constants {
         public static final double thetaBumper = -0.88;
         public static final double yFloor = -43;
         public static final double yBumper = -37.5;
- 
+
+        // Setpoints
+        public static final double setpointTolerance = 0.5;
     }
 
     public static final class BalanceConstants {
