@@ -16,7 +16,7 @@ public class ArmCmd extends CommandBase {
   private final ArmSubsystem m_subsystem;
   private final XboxController m_controller;
   private double radiusJoystickReading, thetaJoystickReading;
-  private double theta, vTheta, r, rMax, thetaMax, vRadius, x, y, thetaLimit;
+  private double theta, vTheta, r, rMax, thetaMax, vRadius, x, y, thetaLimit, deadBand;
 
   /** Creates a new ArmShoulderCommand. */
   public ArmCmd(ArmSubsystem subsystem, XboxController controller) {
@@ -32,22 +32,45 @@ public class ArmCmd extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(Math.abs(m_controller.getRawAxis(2)) > 0.1){
+    
+    // Read Extention Joystick
+    deadBand = 0.1;
+
+    if(Math.abs(m_controller.getRawAxis(2)) > deadBand){ // Determine which button is pressed
       radiusJoystickReading = m_controller.getRawAxis(2);
     }
-    else if(Math.abs(m_controller.getRawAxis(3)) > 0.1){
+    else if(Math.abs(m_controller.getRawAxis(3)) > deadBand){
       radiusJoystickReading = -m_controller.getRawAxis(3);
     }
     else {
       radiusJoystickReading = 0;
     }
 
-    if(Math.abs(m_controller.getRawAxis(1)) > 0.1){
-      thetaJoystickReading =  m_controller.getRawAxis(1);
+    if (Math.abs(radiusJoystickReading) > deadBand) { // Set speed with deadband curve
+      radiusJoystickReading = 1 / (1-deadBand) *  (radiusJoystickReading - (Math.signum(radiusJoystickReading) * deadBand));
     }
-    else{
+
+
+    // Read Shoulder Joystick
+    thetaJoystickReading =  m_controller.getRawAxis(1);
+    deadBand = 0.1;
+
+
+    if (Math.abs(thetaJoystickReading) > deadBand){
+      thetaJoystickReading = 1 / (1-deadBand) *  (thetaJoystickReading - (Math.signum(thetaJoystickReading) * deadBand));
+    }
+    else {
       thetaJoystickReading = 0;
     }
+
+    // if(Math.abs(m_controller.getRawAxis(1)) > 0.1){
+    //   thetaJoystickReading =  m_controller.getRawAxis(1);
+    // }
+    // else{
+    //   thetaJoystickReading = 0;
+    // }
+
+  
 
     // m_subsystem.setArmVelocity(thetaJoystickReading, radiusJoystickReading);
     radiusJoystickReading *= 15;

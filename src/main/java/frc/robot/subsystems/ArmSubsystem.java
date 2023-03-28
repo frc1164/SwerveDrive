@@ -143,7 +143,7 @@ public class ArmSubsystem extends SubsystemBase {
     thetaNew = getShoulderPosition();
 
 
-    // Check if Limit switch has ever been hit - 5 second time limit
+    // Initilize Arm
     SmartDashboard.putBoolean("Limit Switch Trigger", limitSwitchTrigered);
     SmartDashboard.putNumber("sysStartTime", sysStartTime);
     if (limitSwitchTrigered == false){
