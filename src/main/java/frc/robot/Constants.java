@@ -146,8 +146,10 @@ public final class Constants {
         //Shoulder Soft Limit Stuff
         public static final double ShoulderEncoderOffset = 263 * Math.PI/180;
         //public static final double TopShoulderLimit = -0.05;
-        public static final double TopShoulderLimit = 0.1;
+        public static final double TopShoulderLimit = 0.22;
+        public static final double TopShoulderSoftStop = 0.1;
         public static final double BottomShoulderLimit = -1.12;
+        public static final double BottomShoulderSoftStop = -1.17;
         public static final boolean ShoulderEncoderRevsersed = false;
 
         //Telescope Limits
@@ -155,9 +157,11 @@ public final class Constants {
         public static final double BottomTelescopeLimit = -0.95 /* 10 * 360 * Math.PI/180 */ ;
     
         //Telescope Lenghts
-        public static final double armR0 = 32; // 47
+        public static final double armR0 = 46;
+        public static final double armRetractedSoftStop = 46.5;
+        public static final double maxArmLength = 72;
+        public static final double armExtendedSoftStop = 71.5;
         public static final double extensionPerRotation = 0.206;
-        public static final double maxArmLength = 58;
 
         // Arm control PID. Yay!
         public static final double thetaP = 0.1;
@@ -167,11 +171,14 @@ public final class Constants {
         public static final double radiusI = 0.05;
         public static final double radiusD = 0;
 
+        // Arm Soft Limit Locations
         public static final double radiusOutputMax = 20;
         public static final double thetaOutputMax = 20;
 
-        public static final double pivotPointXDistanceFromFrame = /* 25.5 */ 29; // I don't know yet
-        public static final double pivotPointXDistanceFromBumper = 29; // I don't know yet
+        public static final double thetaBumper = -0.88;
+        public static final double yFloor = -41;
+        public static final double yBumper = -36.0;
+ 
     }
 
     public static final class BalanceConstants {

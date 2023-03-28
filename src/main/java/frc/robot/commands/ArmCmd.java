@@ -16,7 +16,7 @@ public class ArmCmd extends CommandBase {
   private final ArmSubsystem m_subsystem;
   private final XboxController m_controller;
   private double radiusJoystickReading, thetaJoystickReading;
-  private double theta, vTheta, r, rMax, thetaMax, vRadius, x, y;
+  private double theta, vTheta, r, rMax, thetaMax, vRadius, x, y, thetaLimit;
 
   /** Creates a new ArmShoulderCommand. */
   public ArmCmd(ArmSubsystem subsystem, XboxController controller) {
@@ -50,7 +50,7 @@ public class ArmCmd extends CommandBase {
     }
 
     // m_subsystem.setArmVelocity(thetaJoystickReading, radiusJoystickReading);
-
+    radiusJoystickReading *= 15;
     // An attempt at accurate arm extension distance
     if(m_subsystem.getArmExtensionRetractedLimitSwitch()) {
       m_subsystem.resetArmExtension();
@@ -65,38 +65,45 @@ public class ArmCmd extends CommandBase {
     SmartDashboard.putNumber("Arm r", r);
     SmartDashboard.putNumber("Arm x", x);
     SmartDashboard.putNumber("Arm y", y);
+    vTheta = thetaJoystickReading;
+    vRadius = radiusJoystickReading;
 
-    // Soft Limits
+    // Soft Limits - Retracted
+    if(radiusJoystickReading > 5 * (r - ArmConstants.armRetractedSoftStop)) {
+      vRadius = (r - ArmConstants.armRetractedSoftStop) * 5;
+    } 
+    // Soft Limits - Extended
+    else if(radiusJoystickReading < 5 * (r - ArmConstants.armExtendedSoftStop)) {
+      vRadius = (r - ArmConstants.armExtendedSoftStop) * 5;
+    } 
+    else {
+      vRadius = radiusJoystickReading;
+    }
+    
+    // Soft Limits - Floor/Bumper - Find Limit Position
+    if (r < (ArmConstants.yBumper / Math.sin(ArmConstants.thetaBumper))) {
+      thetaLimit = Math.asin(ArmConstants.yBumper / r); // Bumper Limit
+    }
+    else if (r > (ArmConstants.yFloor / Math.sin(ArmConstants.thetaBumper))) {
+      thetaLimit = Math.asin(ArmConstants.yFloor / r); //Floor Limit
+    }
+    else {
+      thetaLimit = ArmConstants.thetaBumper; // In-between Limit
+    }
+    SmartDashboard.putNumber("Theta Limit", thetaLimit);
 
-    // if(r < ArmConstants.armR0 + 1.5) {
-    //   vRadius = (r - ArmConstants.armR0 + 1.5) * -5;
-    // } 
-    // else if(r > ArmConstants.maxArmLength - 1.5) {
-    //   vRadius = (r - ArmConstants.maxArmLength - 1.5) * -5;
-    // } 
-    // else {
-    //   m_subsystem.setExtensionMotorSpeed(radiusJoystickReading);
-    // }
+    // Soft Limits - Floor/Bumper - Set Speed
+    if(thetaJoystickReading > 5 * (theta - thetaLimit)) {   
+      vTheta = (theta - thetaLimit) * 5;  // floor/bumper limit speed
+    } 
 
-    // if(r*Math.cos(theta) > ArmConstants.pivotPointXDistanceFromFrame) {
-    //   rMax = ArmConstants.pivotPointXDistanceFromFrame/Math.sin(theta);
-    // } else if(r*Math.cos(theta) < ArmConstants.pivotPointXDistanceFromBumper) {
-    //   rMax = ArmConstants.pivotPointXDistanceFromBumper/Math.sin(theta);
-    // } else {
-    //   rMax = 0;
-    // }
+    // Soft Limit - Top
+    if(thetaJoystickReading < 5 * (theta - ArmConstants.TopShoulderSoftStop)) {
+      vTheta = (theta - ArmConstants.TopShoulderSoftStop) * 5;
+    } 
 
-    // if(theta > ArmConstants.TopShoulderLimit - .5) {
-    //   vTheta = (theta - ArmConstants.TopShoulderLimit - 1.5) * -5;
-    // } 
-    // if(r > rMax) {
-    //   vRadius = (r - rMax) * -5;
-    // }
-    // else {
-    //   m_subsystem.setRotationMotorSpeed(thetaJoystickReading);
-    // }
-
-    m_subsystem.setArmVelocity(thetaJoystickReading, radiusJoystickReading*10);
+    
+    m_subsystem.armControl(vTheta, vRadius);
   }
 
   // Called once the command ends or is interrupted.

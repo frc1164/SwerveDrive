@@ -14,12 +14,9 @@ import frc.robot.Constants.ArmConstants;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import com.ctre.phoenix.CANifier;
-import com.ctre.phoenix.CANifier.GeneralPin;
-import com.ctre.phoenix.CANifier.PinValues;
 import com.ctre.phoenix.sensors.*;
 
 public class ArmSubsystem extends SubsystemBase {
-  private static CANifier m_canifier;
   private static CANSparkMax armShoulderMotor;
   private static CANSparkMax armExtensionMotor;
   private static DigitalInput extensionExtendedLimitSwitch;
@@ -28,13 +25,16 @@ public class ArmSubsystem extends SubsystemBase {
   private static DigitalInput armShoulderLowerLimitSwitch;
   private static RelativeEncoder TelescopeEncoder;
   private static CANCoder ShoulderEncoder;
-  private PIDController thetaPID, radiusPID;
+  private PIDController thetaPID, radiusPID, setpointThetaPid, setpointRadiusPid;
   private static double tOld, tNew;
-  private static double rOld, rNew, thetaOld, thetaNew, radiusOutput, thetaOutput, rError, thetaError;
+  private static double rOld, rNew, thetaOld, thetaNew, radiusOutput, thetaOutput, rError, thetaError, theta, r, setpointX, setpointY;
+  private static boolean armSetpoint;
+  private static boolean limitSwitchTrigered = false;
+  private static double sysStartTime = System.nanoTime() / Math.pow(10, 9);
+  
 
   /** Creates a new ArmShoulder. */
   public ArmSubsystem() {
-    m_canifier = new CANifier(ArmConstants.armCANifier);
     armShoulderMotor = new CANSparkMax(ArmConstants.armShoulderMotor, MotorType.kBrushless);
     armShoulderMotor.setIdleMode(IdleMode.kBrake);
     ShoulderEncoder = new CANCoder(ArmConstants.CANCoderid);
@@ -49,6 +49,8 @@ public class ArmSubsystem extends SubsystemBase {
     //thetaPID = new PIDController(ArmConstants.thetaP, ArmConstants.thetaI, ArmConstants.thetaD);
     radiusPID = new PIDController(ArmConstants.radiusP, ArmConstants.radiusI, ArmConstants.radiusD);
     //radiusPID = new PIDController(ArmConstants.radiusP, ArmConstants.radiusI, ArmConstants.radiusD);
+    setpointThetaPid = new PIDController(2, 0, 0);
+    setpointRadiusPid = new PIDController(10, 0, 0);
     radiusOutput = 0;
     thetaOutput = 0;
   }
@@ -62,6 +64,9 @@ public class ArmSubsystem extends SubsystemBase {
     // SmartDashboard.putBoolean("Retracted Limit Switch", getArmExtensionRetractedLimitSwitch());
     // SmartDashboard.putNumber("Telescope Position", getTelescopePosition());
     // SmartDashboard.putNumber("Shoulder Position", getShoulderPosition());
+    if(armSetpoint) {
+      setArmSetpoint(setpointX, setpointY);
+    }
   }
 
   public void setRotationMotorSpeed(double speed) {
@@ -132,24 +137,43 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void setArmVelocity(double theta, double r) {
-    tNew = System.nanoTime()/Math.pow(10, 9);
+    // Read in system data
+    tNew = System.nanoTime() / Math.pow(10, 9);
     rNew = getArmLength();
     thetaNew = getShoulderPosition();
 
+
+    // Check if Limit switch has ever been hit - 5 second time limit
+    SmartDashboard.putBoolean("Limit Switch Trigger", limitSwitchTrigered);
+    SmartDashboard.putNumber("sysStartTime", sysStartTime);
+    if (limitSwitchTrigered == false){
+      if (getArmExtensionRetractedLimitSwitch()) {
+        limitSwitchTrigered = true;
+        resetArmExtension();
+      }
+      else{
+        r = 3; // command an extention velocity of 3in/sec
+        theta = 0;
+      }
+    }
+
+    // Calculate Arm Velocity
     double velocityR = -(rOld - rNew)/(tOld - tNew);
     double velocityTheta = -(thetaOld - thetaNew)/(tOld - tNew);
-
     tOld = tNew;
     rOld = rNew;
     thetaOld = thetaNew;
-    // theta = 0;
-    // r = 0;
+
+
+    // Control arm speed
     rError = r - velocityR;
     thetaError = velocityTheta - theta;
     SmartDashboard.putNumber("Vr - Error", rError);
     SmartDashboard.putNumber("Vtheta - Error", thetaError);
     radiusOutput = radiusOutput + radiusPID.calculate(rError);
     thetaOutput = thetaOutput + thetaPID.calculate(thetaError);
+   
+    // Motor Limit
     if(Math.abs(radiusOutput) > 1) radiusOutput = Math.signum(radiusOutput);
     if(Math.abs(thetaOutput) > 1) thetaOutput = Math.signum(thetaOutput);
     // if(Math.abs(radiusOutput) > ArmConstants.radiusOutputMax) {
@@ -161,5 +185,36 @@ public class ArmSubsystem extends SubsystemBase {
     setExtensionMotorSpeed(radiusOutput);
     SmartDashboard.putNumber("Theta output", thetaOutput);
     setRotationMotorSpeed(thetaOutput);
+  }
+
+  public void armControl(double theta, double r) {
+    if(armSetpoint && (Math.abs(theta) > 0 || Math.abs(r) > 0)){
+      armSetpoint = false;
+    }
+    setArmVelocity(theta, r);
+  }
+
+  public void setArmSetpoint(double x, double y) {
+    double setpointTheta, setpointR, vTheta, vR;
+    setpointX = x;
+    setpointY = y;
+
+    if(!armSetpoint){
+      armSetpoint = true;
+    }
+
+    setpointTheta = Math.atan(y / x);
+    setpointR = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+
+    vTheta = setpointThetaPid.calculate((setpointTheta - getShoulderPosition()));
+    vR = setpointRadiusPid.calculate(setpointR - getArmLength());
+    if(Math.abs(vTheta) > 1) {
+      vTheta = Math.signum(vTheta);
+    }
+    // if(Math.abs(vR) > 15) {
+    //   vTheta = Math.signum(vTheta)*15;
+    // }
+      vR=0;
+    setArmVelocity(vTheta, vR);
   }
 }
