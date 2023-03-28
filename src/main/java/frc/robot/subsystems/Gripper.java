@@ -163,7 +163,7 @@ public static boolean getGripperOPENLimitSwitch() {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    // SmartDashboard.putNumber("Gripper Encoder", claspEncoder.getPosition());
+    SmartDashboard.putNumber("Gripper Encoder", claspEncoder.getPosition());
     SmartDashboard.putBoolean("CLSD Limit Switch", getGripperCLSDLimitSwitch());
     SmartDashboard.putBoolean("OPEN Limit Switch", getGripperOPENLimitSwitch());
     setgripEncoder();
