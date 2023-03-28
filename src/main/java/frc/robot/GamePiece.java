@@ -9,10 +9,7 @@ public class GamePiece {
     public static GamePieceType gamePiece;
     public static enum GamePieceType{
         Cone, Cube, None;
-
-        public void setGamePiece(GamePieceType cone2) {
         }
-    }
 
     public static void setGamePiece(GamePieceType gamePieceType){
         gamePiece = gamePieceType;

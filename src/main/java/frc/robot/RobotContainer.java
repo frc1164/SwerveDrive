@@ -21,6 +21,7 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.GamePiece;
 import frc.robot.GamePiece.GamePieceType;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.subsystems.ArmSubsystem;
@@ -78,7 +79,7 @@ public class RobotContainer {
                                 armController));
 
                 //Set default GamePiece, since we can only preload cones at the moment
-                //m_GamePiece.setGamePiece(GamePieceType.Cone);
+                GamePiece.setGamePiece(GamePieceType.Cone);
 
                 // 1. Create trajectory settings
                 TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
