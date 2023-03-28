@@ -128,15 +128,26 @@ public class Gripper extends SubsystemBase {
     m_setPoint = setpoint;
     try{
     if (GamePiece.getGamePiece().equals(GamePieceType.Cone)) {
+      //Get the gripper state
       m_Claspstate = m_setPoint.claspCone;
-      //Do what ever needs to be done for a Cone. Check Setpoint. (if "IN" do nothing. If "OUT", open Clasp)
-    } else if (GamePiece.getGamePiece().equals(GamePieceType.Cube)) {
+    } 
+    else if (GamePiece.getGamePiece().equals(GamePieceType.Cube)) {
       m_Claspstate = m_setPoint.claspCube;
-      //Do what ever needs to be done for a Cube. Check Setpoint. (if "IN" do nothing. If "OUT", open Clasp)
     }
-  } catch (NullPointerException npe){
+    } catch (NullPointerException npe){
      System.out.println(npe);
-  }
+    }
+    
+    //Note: These numbers are almost certainly wrong
+    switch (m_Claspstate) {
+      case PRELOAD:  this.setgripPID(-16.5);
+               break;
+      case SET:  this.setgripPID(-82);
+               break;
+      case OPEN:  this.setgripPID(-82);
+               break;
+      default: break;
+    }
   }
   
   // public static void gripToggle() {
@@ -190,5 +201,10 @@ public static boolean getGripperOPENLimitSwitch() {
     SmartDashboard.putBoolean("OPEN Limit Switch", getGripperOPENLimitSwitch());
     setgripEncoder();
     //gripper range is (85.0272 units to other end as is -need to check polarity-)
+
+    //Drive to a Clasp setpoint for Autonomous. Note: We should probably test for Autonomous mode here to keep this from messing with Teleop behavior.
+    if(m_setPoint != null) {
+      this.runGripPID(this.gripPosition());
+    }
   }
 }

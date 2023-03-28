@@ -31,6 +31,6 @@ public class Setpoint {
 
     // Enumerated type ClaspState
     public enum ClaspState{
-        IN, OUT
+        PRELOAD, SET, OPEN
     }
 }
