@@ -52,7 +52,7 @@ public class RobotContainer {
         private final Gripper m_gripper;
         private final CommandXboxController m_controller;
 
-        private final GamePieceType m_GamePiece = GamePiece.getGamePiece();
+        //private final GamePiece m_GamePiece = GamePiece.getGamePiece();
 
         SendableChooser<Integer> m_chooser = new SendableChooser<>();
 
@@ -78,7 +78,7 @@ public class RobotContainer {
                                 armController));
 
                 //Set default GamePiece, since we can only preload cones at the moment
-                m_GamePiece.setGamePiece(GamePieceType.Cone);
+                //m_GamePiece.setGamePiece(GamePieceType.Cone);
 
                 // 1. Create trajectory settings
                 TrajectoryConfig trajectoryConfig = new TrajectoryConfig(

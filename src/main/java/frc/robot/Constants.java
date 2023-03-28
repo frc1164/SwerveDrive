@@ -115,14 +115,14 @@ public final class Constants {
             public static final Setpoint TEST_SETPOINT_HIGHER = new Setpoint(50, -20, ClaspState.IN, 50, -20, ClaspState.OUT, ArmState.OTHER);
             public static final Setpoint TEST_SETPOINT_LOWER = new Setpoint(50, -20, ClaspState.IN, 50, -20, ClaspState.OUT, ArmState.OTHER);
         
-            public static final Setpoint STOWED = new Setpoint(0, 0, ClaspState.IN, 0, 0, ClaspState.OUT, ArmState.STOWED);
+            public static final Setpoint STOWED = new Setpoint(30, -36, ClaspState.IN, 30, -36, ClaspState.OUT, ArmState.STOWED);
             public static final Setpoint FLOOR = new Setpoint(0, 0, ClaspState.IN, 0, 0, ClaspState.OUT, ArmState.FLOOR);
             public static final Setpoint MID_NODE = new Setpoint(0, 0, ClaspState.IN, 0, 0, ClaspState.OUT, ArmState.MID_NODE);
             public static final Setpoint MID_NODE_PLACED = new Setpoint(0, 0, ClaspState.IN, 0, 0, ClaspState.OUT, ArmState.MID_NODE_PLACED);
             public static final Setpoint MID_NODE_PLACED_AND_SCORED = new Setpoint(0, 0, ClaspState.OUT, 0, 0, ClaspState.OUT, ArmState.MID_NODE_PLACED);
             public static final Setpoint TOP_NODE = new Setpoint(0, 0, ClaspState.IN, 0, 0, ClaspState.OUT, ArmState.TOP_NODE);
-            public static final Setpoint TOP_NODE_PLACED = new Setpoint(0, 0, ClaspState.IN, 0, 0, ClaspState.OUT, ArmState.TOP_NODE_PLACED);
-            public static final Setpoint TOP_NODE_PLACED_AND_SCORED = new Setpoint(0, 0, ClaspState.OUT, 0, 0, ClaspState.OUT, ArmState.TOP_NODE_PLACED);
+            public static final Setpoint TOP_NODE_PLACED = new Setpoint(50, -10, ClaspState.IN, 50, -10, ClaspState.OUT, ArmState.TOP_NODE_PLACED);
+            public static final Setpoint TOP_NODE_PLACED_AND_SCORED = new Setpoint(50, -10, ClaspState.OUT, 50, -10, ClaspState.OUT, ArmState.TOP_NODE_PLACED);
             public static final Setpoint SUBSTATION = new Setpoint(0, 0, ClaspState.IN, 0, 0, ClaspState.OUT, ArmState.SUBSTATION);
             public static final Setpoint FLOOR_HOVER = new Setpoint(0, 0, ClaspState.IN, 0, 0, ClaspState.OUT, ArmState.OTHER);
             public static final Setpoint FLOOR_INTAKING = new Setpoint(0, 0, ClaspState.IN, 0, 0, ClaspState.OUT, ArmState.FLOOR);

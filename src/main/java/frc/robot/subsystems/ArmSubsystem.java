@@ -80,19 +80,20 @@ public class ArmSubsystem extends SubsystemBase {
     public void updateAllArmSetpoints(Setpoint setpoint) {
       m_setPoint = setpoint;
       try{
-      if (GamePiece.getGamePiece().equals(GamePieceType.Cone)) {
-        setpointX = m_setPoint.X_Cone;
-        setpointY = m_setPoint.Y_Cone;
-      } else if (GamePiece.getGamePiece().equals(GamePieceType.Cube)) {
-        setpointX = m_setPoint.X_Cube;
-        setpointY = m_setPoint.Y_Cube;
-      }
+      // if (GamePiece.getGamePiece().equals(GamePieceType.Cone)) {
+      //   setpointX = m_setPoint.X_Cone;
+      //   setpointY = m_setPoint.Y_Cone;
+      // } else if (GamePiece.getGamePiece().equals(GamePieceType.Cube)) {
+      //   setpointX = m_setPoint.X_Cube;
+      //   setpointY = m_setPoint.Y_Cube;
+      // }
+      setpointX = m_setPoint.X_Cone;
+      setpointY = m_setPoint.Y_Cone;
     } catch (NullPointerException npe){
        System.out.println(npe);
     }
     }
 
-  // Just a stub for now to let us compile...
   public boolean setpointTolerance() {
     double x = r * Math.cos(theta);
     double y = r * Math.sin(theta);
@@ -219,8 +220,9 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void armControl(double theta, double r) {
-    if(armSetpoint && (Math.abs(theta) > 0 || Math.abs(r) > 0)){
+    if(m_setPoint != null && (Math.abs(theta) > 0 || Math.abs(r) > 0)){
       armSetpoint = false;
+      m_setPoint = null;
     }
     setArmVelocity(theta, r);
   }
