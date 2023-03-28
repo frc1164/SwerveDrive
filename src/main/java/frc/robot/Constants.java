@@ -9,6 +9,8 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Setpoint.ArmState;
 import frc.robot.Setpoint.ClaspState;
+import edu.wpi.first.wpilibj2.command.Command;
+import java.util.HashMap;
 
 
 public final class Constants {
@@ -108,6 +110,7 @@ public final class Constants {
                 new TrapezoidProfile.Constraints(
                         kMaxAngularSpeedRadiansPerSecond,
                         kMaxAngularAccelerationRadiansPerSecondSquared);
+    
     }
 
         // Predefined Arm/clasp setpoints. NOTE: These are placeholders and need real numbers assigned!!! Do not use them as-is.
@@ -163,8 +166,8 @@ public final class Constants {
         //Shoulder Soft Limit Stuff
         public static final double ShoulderEncoderOffset = 263 * Math.PI/180;
         //public static final double TopShoulderLimit = -0.05;
-        public static final double TopShoulderLimit = 0.1;
-        public static final double TopShoulderSoftStop = 0.05;
+        public static final double TopShoulderLimit = 0.22;
+        public static final double TopShoulderSoftStop = 0.1;
         public static final double BottomShoulderLimit = -1.12;
         public static final double BottomShoulderSoftStop = -1.17;
         public static final boolean ShoulderEncoderRevsersed = false;
@@ -193,8 +196,8 @@ public final class Constants {
         public static final double thetaOutputMax = 20;
 
         public static final double thetaBumper = -0.88;
-        public static final double yFloor = -43;
-        public static final double yBumper = -37.5;
+        public static final double yFloor = -41;
+        public static final double yBumper = -36.0;
 
         // Setpoints
         public static final double setpointTolerance = 0.5;

@@ -176,15 +176,17 @@ public class ArmSubsystem extends SubsystemBase {
 
 
     // Check if Limit switch has ever been hit - 5 second time limit
-    if ((limitSwitchTrigered == false) || (tNew - sysStartTime > 5)){
-      if (getArmExtensionRetractedLimitSwitch() == true) {
+    SmartDashboard.putBoolean("Limit Switch Trigger", limitSwitchTrigered);
+    SmartDashboard.putNumber("sysStartTime", sysStartTime);
+    if (limitSwitchTrigered == false){
+      if (getArmExtensionRetractedLimitSwitch()) {
         limitSwitchTrigered = true;
         resetArmExtension();
       }
       else{
-        r = -3; // command an extention velocity of -3in/sec
+        r = 3; // command an extention velocity of 3in/sec
+        theta = 0;
       }
-  
     }
 
     // Calculate Arm Velocity

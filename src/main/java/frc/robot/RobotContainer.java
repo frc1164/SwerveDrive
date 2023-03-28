@@ -36,6 +36,7 @@ import frc.robot.commands.Score_Grid_High;
 import frc.robot.commands.intake;
 import frc.robot.commands.output;
 import frc.robot.Constants.GripperC;
+import frc.robot.Constants.AutoConstants;
 import frc.robot.subsystems.Gripper;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -44,6 +45,12 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.auto.PIDConstants;
+import com.pathplanner.lib.auto.SwerveAutoBuilder;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class RobotContainer {
 
@@ -53,9 +60,9 @@ public class RobotContainer {
         private final Gripper m_gripper;
         private final CommandXboxController m_controller;
 
-        //private final GamePiece m_GamePiece = GamePiece.getGamePiece();
+        SendableChooser<Command> m_chooser = new SendableChooser<>();
 
-        SendableChooser<Integer> m_chooser = new SendableChooser<>();
+        public final HashMap<String, Command> eventMap = new HashMap<>();
 
         private final Joystick driverJoytick = new Joystick(OIConstants.kDriverControllerPort);
         private final XboxController armController = new XboxController(1);
@@ -78,64 +85,33 @@ public class RobotContainer {
                                 armSubsystem,
                                 armController));
 
-                //Set default GamePiece, since we can only preload cones at the moment
-                GamePiece.setGamePiece(GamePieceType.Cone);
+                // Autonomous stuff
+                // Read in Autonomous trajectories as multiple paths
+                List<PathPlannerTrajectory> trajectory5 = PathPlanner.loadPathGroup("Middle Long", 2, 1);
+                List<PathPlannerTrajectory> trajectory6 = PathPlanner.loadPathGroup("Middle Short", 2, 1);
+                List<PathPlannerTrajectory> trajectory7 = PathPlanner.loadPathGroup("Right Path", 2, 1);
+                List<PathPlannerTrajectory> trajectory8 = PathPlanner.loadPathGroup("Left Path", 2, 1);
 
-                // 1. Create trajectory settings
-                TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
-                                AutoConstants.kMaxSpeedMetersPerSecond,
-                                AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-                                .setKinematics(DriveConstants.kDriveKinematics);
+                // Populate the Event Map (PathPlanner labels paired with commands)
+                eventMap.put("balance", new BalanceCmd(swerveSubsystem));
 
-                // 2. Generate trajectory
+                // Construct the PathPlanner AutoBuilder (only needs to happen once)
+                SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
+                swerveSubsystem::getPose, // Pose2d supplier
+                swerveSubsystem::resetOdometry, // Pose2d consumer, used to reset odometry at the beginning of auto
+                DriveConstants.kDriveKinematics, // SwerveDriveKinematics
+                new PIDConstants(AutoConstants.kPXController, 0.0, 0.0), // PID constants to correct for translation error (used to create the X and Y PID controllers)
+                new PIDConstants(AutoConstants.kPThetaController, 0.0, 0.0), // PID constants to correct for rotation error (used to create the rotation controller)
+                swerveSubsystem::setModuleStates, // Module states consumer used to output to the drive subsystem
+                eventMap, true,// Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
+                swerveSubsystem // The drive subsystem. Used to properly set the requirements of path following commands
+                );
 
-     /*           Trajectory trajectory1 = TrajectoryGenerator.generateTrajectory(
-                                new Pose2d(0.0, 0.0, new Rotation2d(0.0)),
-                                List.of(
-                                                new Translation2d(1.0, 0.0),
-                                                new Translation2d(1.0, -1.0)),
-                                new Pose2d(2.0, -1.0, Rotation2d.fromDegrees(180.0)),
-                                trajectoryConfig);
-
-                 Trajectory trajectory2 = TrajectoryGenerator.generateTrajectory(
-                                new Pose2d(0.0, 0.0, new Rotation2d(0.0)),
-                                List.of(
-                                                new Translation2d(1.0, 0.0),
-                                                new Translation2d(1.0, 1.0)),
-                                new Pose2d(2.0, 1.0, Rotation2d.fromDegrees(180.0)),
-                                trajectoryConfig);
-
-                Trajectory trajectory3 = TrajectoryGenerator.generateTrajectory(
-                                new Pose2d(0.0, 0.0, new Rotation2d(0.0)),
-                                List.of(
-                                                new Translation2d(1.0, 0.0),
-                                                new Translation2d(2.0, 0.0)),
-                                new Pose2d(2.0, 0.0, Rotation2d.fromDegrees(0.0)),
-                                trajectoryConfig);
-
-                Trajectory trajectory4 = TrajectoryGenerator.generateTrajectory(
-                                new Pose2d(0.0, 0.0, new Rotation2d(0.0)),
-                                List.of(
-                                                new Translation2d(0.0, 0.0),
-                                                new Translation2d(0.0, 0.0)),
-                                new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0.0)),
-                                trajectoryConfig);
-*/
-                Trajectory trajectory5 = (Trajectory) PathPlanner.loadPath("Middle Long", 2, 1);
-                Trajectory trajectory6 = (Trajectory) PathPlanner.loadPath("Middle Short", 2, 1);
-                Trajectory trajectory7 = (Trajectory) PathPlanner.loadPath("Right Path", 2, 1);
-                Trajectory trajectory8 = (Trajectory) PathPlanner.loadPath("Left Path", 2, 1);
-
-                String traj5S = trajectory5.toString();
-
-    /*         m_chooser.addOption("TrajRight", trajectory1);
-                m_chooser.addOption("TrajLeft", trajectory2);
-                m_chooser.addOption("TrajStraight", trajectory3);
-                m_chooser.addOption("TrajStop", trajectory4); */
-                m_chooser.addOption("Middle Long", 1);
-                m_chooser.addOption("Middle Short", 2);
-                m_chooser.addOption("Right Path", 3);
-                m_chooser.addOption("Left Path", 4);
+                //Populate the Sendable Chooser with calls to autoBuilder with specific tractories
+                m_chooser.addOption("Middle Long", autoBuilder.fullAuto(trajectory5));
+                m_chooser.addOption("Middle Short", autoBuilder.fullAuto(trajectory6));
+                m_chooser.addOption("Right Path", autoBuilder.fullAuto(trajectory7));
+                m_chooser.addOption("Left Path", autoBuilder.fullAuto(trajectory8));
                 m_chooser.addOption("None", null);
                 Shuffleboard.getTab("Auto").add(m_chooser);
 
@@ -174,56 +150,6 @@ public class RobotContainer {
         }
 
         public Command getAutonomousCommand() {
-                 Integer m_choice = m_chooser.getSelected();
-                final Trajectory m_trajectory;
-
-                 if (m_choice == 1){
-                        m_trajectory = (Trajectory) PathPlanner.loadPath("Middle Long", 2, 1);
-                 }
-                 else if (m_choice == 2){
-                        m_trajectory = (Trajectory) PathPlanner.loadPath("Middle Short", 2, 1);
-                 }
-                 else if (m_choice == 3){
-                        m_trajectory = (Trajectory) PathPlanner.loadPath("Right Path", 2, 1);
-                 }
-                 else if (m_choice == 4){
-                        m_trajectory = (Trajectory) PathPlanner.loadPath("Left Path", 2, 1);
-                 }else {
-                        m_trajectory = null;
-                }
-
-                // 3. Define PID controllers for tracking trajectory
-                PIDController xController = new PIDController(AutoConstants.kPXController, 0.0, 0.0);
-                PIDController yController = new PIDController(AutoConstants.kPYController, 0.0, 0.0);
-                ProfiledPIDController thetaController = new ProfiledPIDController(
-                                AutoConstants.kPThetaController, 0.0, 0.0, AutoConstants.kThetaControllerConstraints);
-                thetaController.enableContinuousInput(-Math.PI, Math.PI);
-
-                // 4. Construct command to follow trajectory
-                SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-                                m_trajectory,
-                                swerveSubsystem::getPose,
-                                DriveConstants.kDriveKinematics,
-                                xController,
-                                yController,
-                                thetaController,
-                                swerveSubsystem::setModuleStates,
-                                swerveSubsystem);
-
-                // 5. Add some init and wrap-up, and return everything
-                if (m_choice != 1 && m_choice != 2){
-
-                        return new SequentialCommandGroup(
-                                new InstantCommand(() -> swerveSubsystem.resetOdometry(m_trajectory.getInitialPose())),
-                                swerveControllerCommand,
-                                new InstantCommand(() -> swerveSubsystem.stopModules()));
-                } else {
-                        BalanceCmd m_BalanceCmd = new BalanceCmd(swerveSubsystem);
-                        return new SequentialCommandGroup(
-                                new InstantCommand(() -> swerveSubsystem.resetOdometry(m_trajectory.getInitialPose())),
-                                swerveControllerCommand,
-                                m_BalanceCmd,
-                                new InstantCommand(() -> swerveSubsystem.stopModules()));
-                }     
+                 return m_chooser.getSelected();
         }
 }
