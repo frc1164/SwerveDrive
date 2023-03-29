@@ -30,6 +30,8 @@ public class Gripper extends SubsystemBase {
   private static CANifier m_canifier;
 
 
+
+
   /** Creates a new Gripper. */
   public Gripper() {
     rightDrive = new CANSparkMax(GripperC.rightMotor, MotorType.kBrushless);
@@ -38,7 +40,6 @@ public class Gripper extends SubsystemBase {
     leftDrive.setInverted(GripperC.leftMotorReversed);
     clasp = new CANSparkMax(GripperC.GripperMotor, MotorType.kBrushless);
     ToF = new TimeOfFlight(GripperC.TimeOfFlightSensor);
-    
 
     m_canifier = new CANifier(GripperC.GripperCANifier);
 
@@ -52,14 +53,10 @@ public class Gripper extends SubsystemBase {
   }
   
   public void Intake(double speed) {
-    if (ToF.getRange()<130){
-      rightDrive.set(0);
-      leftDrive.set(0);
-    }else{
       rightDrive.set(speed);
       leftDrive.set(speed);
     }
-  }
+  
   
   
   public void setClasp(double speed) {
@@ -109,7 +106,9 @@ public class Gripper extends SubsystemBase {
     setClasp(gripPID.calculate(gripPosition));
   }
 
-
+  public double ToFDistance() {
+    return ToF.getRange();
+  }
 
 
   @Override

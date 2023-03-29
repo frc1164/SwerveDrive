@@ -4,23 +4,20 @@
 
 package frc.robot.commands;
 
+
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import frc.robot.Constants.GripperC;
 import frc.robot.subsystems.Gripper;
-import edu.wpi.first.wpilibj.DigitalInput;
 
-
-public class intake extends CommandBase {
+public class AutoIntake extends CommandBase {
   private final Gripper m_subsystem;
-
-  /** Creates a new Intake. */
-  public intake(Gripper subsystem) {
+  private final Timer m_timer;
+  private boolean cmdFinish;
+  /** Creates a new AutoIntake. */
+  public AutoIntake(Gripper subsystem) {
     m_subsystem = subsystem;
+    m_timer = new Timer();
+    cmdFinish = false;
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -28,23 +25,30 @@ public class intake extends CommandBase {
   @Override
   public void initialize() {
     m_subsystem.Intake(0);
+    m_timer.reset();
+    cmdFinish = false;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_subsystem.Intake(.75);
+    if(m_subsystem.ToFDistance()<130 || m_timer.get() >= 2) {
+      m_subsystem.Intake(0);
+      cmdFinish = true;
+    }else{
+      m_subsystem.Intake(.75);
+    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_subsystem.Intake(0);
+    m_timer.stop();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return cmdFinish;
   }
 }
