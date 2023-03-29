@@ -13,8 +13,9 @@ public class Setpoint {
     public double Y_Cube;
     public ClaspState claspCube;
     public ArmState state;
+    public double armSpeed;
    
-    public Setpoint(double X_Cone, double Y_Cone, ClaspState claspCone, double X_Cube, double Y_Cube, ClaspState claspCube, ArmState state) {
+    public Setpoint(double X_Cone, double Y_Cone, ClaspState claspCone, double X_Cube, double Y_Cube, ClaspState claspCube, ArmState state, double armSpeed) {
         this.X_Cone = X_Cone;
         this.Y_Cone = Y_Cone;
         this.claspCone = claspCone;
@@ -22,6 +23,7 @@ public class Setpoint {
         this.Y_Cube = Y_Cube;
         this.claspCube = claspCube;
         this.state = state;
+        this.armSpeed = armSpeed;
     }
 
     // Enumerated type ArmState

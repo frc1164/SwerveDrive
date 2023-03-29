@@ -85,6 +85,8 @@ public class RobotContainer {
                                 armSubsystem,
                                 armController));
 
+                GamePiece.setGamePiece(GamePieceType.Cone);
+
                 // Autonomous stuff
                 // Read in Autonomous trajectories as multiple paths
                 List<PathPlannerTrajectory> trajectory5 = PathPlanner.loadPathGroup("Middle Long", 2, 1);

@@ -4,8 +4,7 @@
 
 package frc.robot.commands;
 
-import java.util.concurrent.TimeUnit;
-
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ArmSetpoints;
 import frc.robot.subsystems.ArmSubsystem;
@@ -14,11 +13,13 @@ import frc.robot.subsystems.Gripper;
 public class Score_Grid_High extends CommandBase {
   private final ArmSubsystem m_arm;
   private final Gripper m_gripper;
-  private boolean setpoint1_finished, setpoint2_finished, m_end;
+  private boolean setpoint1_finished, setpoint2_finished, setpoint3_finished, setpoint4_finished, m_end;
+  private Timer delayTimer;
 
   /** Creates a new Score_Grid_High. */
   public Score_Grid_High(ArmSubsystem arm, Gripper gripper) {
     // Use addRequirements() here to declare subsystem dependencies.
+    delayTimer = new Timer();
     m_arm = arm;
     m_gripper = gripper;
     addRequirements(arm);
@@ -27,8 +28,12 @@ public class Score_Grid_High extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    delayTimer.reset();
+    delayTimer.start();
     setpoint1_finished = false;
     setpoint2_finished = false;
+    setpoint3_finished = false;
+    setpoint4_finished = false;
     m_end = false;
   }
 
@@ -39,23 +44,51 @@ public class Score_Grid_High extends CommandBase {
     
     if (!setpoint1_finished) {
       //Set the first Setpoint, fall through when first setpoint within tolerance
-      m_arm.updateAllArmSetpoints(ArmSetpoints.TOP_NODE_PLACED);
-      m_gripper.updateAllGripperSetpoints(ArmSetpoints.TOP_NODE_PLACED);
+      m_arm.updateAllArmSetpoints(ArmSetpoints.TOP_NODE);
+      m_gripper.updateAllGripperSetpoints(ArmSetpoints.TOP_NODE);
       setpoint1_finished = m_arm.setpointTolerance();
       if (setpoint1_finished) {
         //Sleep some amount between setpoints
+        delayTimer.reset();
+        while(delayTimer.get() < 0.5) {}
       }
 
-    } else if (setpoint1_finished && !setpoint2_finished) {
+    } 
+    else if (setpoint1_finished && !setpoint2_finished) {
       // Set the second Setpoint, fall through when first two setpoints completed
-      m_arm.updateAllArmSetpoints(ArmSetpoints.TOP_NODE_PLACED_AND_SCORED);
-      m_gripper.updateAllGripperSetpoints(ArmSetpoints.TOP_NODE_PLACED_AND_SCORED);
+      m_arm.updateAllArmSetpoints(ArmSetpoints.TOP_NODE_PLACED);
+      m_gripper.updateAllGripperSetpoints(ArmSetpoints.TOP_NODE_PLACED);
       setpoint2_finished = m_arm.setpointTolerance();
       if (setpoint2_finished) {
         // Sleep some amount between setpoints
+        delayTimer.reset();
+        while(delayTimer.get() < 0.5) {}
       }
 
-    } else if (setpoint1_finished && setpoint2_finished && !m_end) {
+    }
+    else if (setpoint2_finished && !setpoint3_finished) {
+      // Set the second Setpoint, fall through when first two setpoints completed
+      m_arm.updateAllArmSetpoints(ArmSetpoints.TOP_NODE_PLACED_AND_SCORED);
+      m_gripper.updateAllGripperSetpoints(ArmSetpoints.TOP_NODE_PLACED_AND_SCORED);
+      setpoint3_finished = m_arm.setpointTolerance();
+      if (setpoint3_finished) {
+        // Sleep some amount between setpoints
+        delayTimer.reset();
+        while(delayTimer.get() < 0.5) {}
+      }
+
+    } if (setpoint3_finished && !setpoint4_finished) {
+      //Set the first Setpoint, fall through when first setpoint within tolerance
+      m_arm.updateAllArmSetpoints(ArmSetpoints.TOP_NODE);
+      m_gripper.updateAllGripperSetpoints(ArmSetpoints.TOP_NODE);
+      setpoint1_finished = m_arm.setpointTolerance();
+      if (setpoint4_finished) {
+        //Sleep some amount between setpoints
+        delayTimer.reset();
+        while(delayTimer.get() < 0.5) {}
+      }
+
+    } else if (setpoint1_finished && setpoint2_finished && setpoint3_finished && setpoint3_finished && !m_end) {
     // Set the third Setpoint, fall through when third setpoint completed
       m_arm.updateAllArmSetpoints(ArmSetpoints.STOWED);
       m_gripper.updateAllGripperSetpoints(ArmSetpoints.STOWED);

@@ -93,8 +93,12 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
   public boolean setpointTolerance() {
+    theta = getShoulderPosition();
+    r = getArmLength();
     double x = r * Math.cos(theta);
     double y = r * Math.sin(theta);
+    SmartDashboard.putNumber("Tol. x", x - setpointX);
+    SmartDashboard.putNumber("Tol. y", y - setpointY);
     if((setpointX + ArmConstants.setpointTolerance >= x) && (setpointX - ArmConstants.setpointTolerance <= x) && (setpointY + ArmConstants.setpointTolerance >= y) && (setpointY - ArmConstants.setpointTolerance <= y)) {
       return true;
     }
@@ -168,6 +172,7 @@ public class ArmSubsystem extends SubsystemBase {
     TelescopeEncoder.setPosition(0);
   }
 
+
   public void setArmVelocity(double theta, double r) {
     // Read in system data
     tNew = System.nanoTime() / Math.pow(10, 9);
@@ -228,10 +233,11 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void setArmSetpoint(double x, double y) {
-    double setpointTheta, setpointR, vTheta, vR;
+    double setpointTheta, setpointR, vTheta, vThetaPid, vR, vRPid, thetaLimit;
     setpointX = x;
     setpointY = y;
-
+    setpointRadiusPid.reset();
+    setpointThetaPid.reset();
     if(!armSetpoint){
       armSetpoint = true;
     }
@@ -239,15 +245,52 @@ public class ArmSubsystem extends SubsystemBase {
     setpointTheta = Math.atan(y / x);
     setpointR = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
 
-    vTheta = setpointThetaPid.calculate((setpointTheta - getShoulderPosition()));
-    vR = setpointRadiusPid.calculate(setpointR - getArmLength());
+    vThetaPid = setpointThetaPid.calculate((setpointTheta - getShoulderPosition()));
+    vRPid = setpointRadiusPid.calculate(setpointR - getArmLength());
+
+    vTheta = vThetaPid;
+    vR = vRPid;
+    // Soft Limits - Retracted
+    if(vRPid > 5 * (r - ArmConstants.armRetractedSoftStop)) {
+      vR = (r - ArmConstants.armRetractedSoftStop) * 5;
+    } 
+    // Soft Limits - Extended
+    else if(vRPid < 5 * (r - ArmConstants.armExtendedSoftStop)) {
+      vR = (r - ArmConstants.armExtendedSoftStop) * 5;
+    } 
+    else {
+      vR = vRPid;
+    }
+    
+    // Soft Limits - Floor/Bumper - Find Limit Position
+    if (r < (ArmConstants.yBumper / Math.sin(ArmConstants.thetaBumper))) {
+      thetaLimit = Math.asin(ArmConstants.yBumper / r); // Bumper Limit
+    }
+    else if (r > (ArmConstants.yFloor / Math.sin(ArmConstants.thetaBumper))) {
+      thetaLimit = Math.asin(ArmConstants.yFloor / r); //Floor Limit
+    }
+    else {
+      thetaLimit = ArmConstants.thetaBumper; // In-between Limit
+    }
+    SmartDashboard.putNumber("Theta Limit", thetaLimit);
+
+    // Soft Limits - Floor/Bumper - Set Speed
+    if(vThetaPid > 5 * (theta - thetaLimit)) {   
+      vTheta = (theta - thetaLimit) * 5;  // floor/bumper limit speed
+    } 
+
+    // Soft Limit - Top
+    if(vThetaPid < 5 * (theta - ArmConstants.TopShoulderSoftStop)) {
+      vTheta = (theta - ArmConstants.TopShoulderSoftStop) * 5;
+    } 
+
+
     if(Math.abs(vTheta) > 1) {
       vTheta = Math.signum(vTheta);
     }
-    // if(Math.abs(vR) > 15) {
-    //   vTheta = Math.signum(vTheta)*15;
-    // }
-      vR=0;
+    if(Math.abs(vR) > 15) {
+      vR = Math.signum(vR)*15;
+    }
     setArmVelocity(vTheta, vR);
   }
 }

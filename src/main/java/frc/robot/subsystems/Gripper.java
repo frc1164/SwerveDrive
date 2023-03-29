@@ -140,11 +140,11 @@ public class Gripper extends SubsystemBase {
     
     //Note: These numbers are almost certainly wrong
     switch (m_Claspstate) {
-      case PRELOAD:  this.setgripPID(-16.5);
+      case PRELOAD:  this.setgripPID(-82);
                break;
-      case SET:  this.setgripPID(-82);
+      case SET:  this.setgripPID(-16.5);
                break;
-      case OPEN:  this.setgripPID(-82);
+      case OPEN:  this.setgripPID(-1);
                break;
       default: break;
     }
