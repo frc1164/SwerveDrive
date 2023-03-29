@@ -5,14 +5,8 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import frc.robot.Constants.GripperC;
 import frc.robot.subsystems.Gripper;
-import edu.wpi.first.wpilibj.DigitalInput;
 
 
 public class intake extends CommandBase {

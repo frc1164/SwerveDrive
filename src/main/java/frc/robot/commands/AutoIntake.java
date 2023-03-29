@@ -35,7 +35,7 @@ public class AutoIntake extends CommandBase {
   @Override
   public void execute() {
     SmartDashboard.putNumber("Timer", m_timer.get());
-    if(m_subsystem.ToFDistance()<130 || m_timer.get() >= 2) {
+    if(m_subsystem.ToFDistance()<130 || m_timer.get() >= 3) {
       m_subsystem.Intake(0);
       cmdFinish = true;
     }else{
