@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Gripper;
 
@@ -26,12 +27,14 @@ public class AutoIntake extends CommandBase {
   public void initialize() {
     m_subsystem.Intake(0);
     m_timer.reset();
+    m_timer.start();
     cmdFinish = false;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    SmartDashboard.putNumber("Timer", m_timer.get());
     if(m_subsystem.ToFDistance()<130 || m_timer.get() >= 2) {
       m_subsystem.Intake(0);
       cmdFinish = true;
@@ -44,6 +47,7 @@ public class AutoIntake extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     m_timer.stop();
+    m_subsystem.Intake(0);
   }
 
   // Returns true when the command should end.

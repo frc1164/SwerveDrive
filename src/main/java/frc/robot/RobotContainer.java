@@ -40,6 +40,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import com.pathplanner.lib.PathPlanner;
+import frc.robot.commands.AutoIntake;
 
 public class RobotContainer {
 
