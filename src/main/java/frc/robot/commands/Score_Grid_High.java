@@ -69,7 +69,7 @@ public class Score_Grid_High extends CommandBase {
     else if (setpoint2_finished && !setpoint3_finished) {
       // Set the second Setpoint, fall through when first two setpoints completed
       m_arm.updateAllArmSetpoints(ArmSetpoints.TOP_NODE_PLACED_AND_SCORED);
-      m_gripper.updateAllGripperSetpoints(ArmSetpoints.TOP_NODE_PLACED_AND_SCORED);
+      m_gripper.resetandScore();
       setpoint3_finished = m_arm.setpointTolerance();
       if (setpoint3_finished) {
         // Sleep some amount between setpoints
