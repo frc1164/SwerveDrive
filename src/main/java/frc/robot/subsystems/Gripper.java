@@ -123,10 +123,17 @@ public class Gripper extends SubsystemBase {
       claspEncoder.setPosition(0);
   }
 
+  public void resetandScore() {
+    setClasp(.1);
+    while(!getGripperOPENLimitSwitch()){}
+    claspEncoder.setPosition(0);
+    setClasp(0);
+  }
+
   // Note: This is incomplete. It may make more sense to just call an input or eject method depending GamePieceType... Talk to Eric
   public void updateAllGripperSetpoints(Setpoint setpoint) {
     m_setPoint = setpoint;
-    try{
+   /* try{
     if (GamePiece.getGamePiece().equals(GamePieceType.Cone)) {
       //Get the gripper state
       m_Claspstate = m_setPoint.claspCone;
@@ -137,7 +144,10 @@ public class Gripper extends SubsystemBase {
     } catch (NullPointerException npe){
      System.out.println(npe);
     }
+    */
     
+    m_Claspstate = ClaspState.OPEN;
+
     //Note: These numbers are almost certainly wrong
     switch (m_Claspstate) {
       case PRELOAD:  this.setgripPID(-82);
