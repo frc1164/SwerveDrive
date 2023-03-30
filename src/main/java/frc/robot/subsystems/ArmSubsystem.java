@@ -132,7 +132,64 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void setArmVelocity(double theta, double r) {
-    tNew = System.nanoTime()/Math.pow(10, 9);
+    // Read in Sensors
+    thetaJoystickReading = theta;
+    radiusJoystickReading = r;
+
+    theta = m_subsystem.getShoulderPosition();
+    r = m_subsystem.getArmLength();
+    x = r * Math.cos(theta);
+    y = r * Math.sin(theta);
+    SmartDashboard.putNumber("Arm Theta", theta);
+    SmartDashboard.putNumber("Arm r", r);
+    SmartDashboard.putNumber("Arm x", x);
+    SmartDashboard.putNumber("Arm y", y);
+
+
+
+    // Soft Limits - Retracted
+    if(radiusJoystickReading > 5 * (r - ArmConstants.armRetractedSoftStop)) {
+      vRadius = (r - ArmConstants.armRetractedSoftStop) * 5;
+    } 
+
+    // Soft Limits - Extended
+    else if(radiusJoystickReading < 5 * (r - ArmConstants.armExtendedSoftStop)) {
+      vRadius = (r - ArmConstants.armExtendedSoftStop) * 5;
+    } 
+    else {
+      vRadius = radiusJoystickReading;
+    }
+    
+    // Soft Limits - Floor/Bumper - Find Limit Position
+    if (r < (ArmConstants.yBumper / Math.sin(ArmConstants.thetaBumper))) {
+      thetaLimit = Math.asin(ArmConstants.yBumper / r); // Bumper Limit
+    }
+    else if (r > (ArmConstants.yFloor / Math.sin(ArmConstants.thetaBumper))) {
+      thetaLimit = Math.asin(ArmConstants.yFloor / r); //Floor Limit
+    }
+    else {
+      thetaLimit = ArmConstants.thetaBumper; // In-between Limit
+    }
+    SmartDashboard.putNumber("Theta Limit", thetaLimit);
+
+    // Soft Limits - Floor/Bumper - Set Speed
+    if(thetaJoystickReading > 5 * (theta - thetaLimit)) {   
+      vTheta = (theta - thetaLimit) * 5;  // floor/bumper limit speed
+    } 
+
+    // Soft Limit - Top
+    if(thetaJoystickReading < 5 * (theta - ArmConstants.TopShoulderSoftStop)) {
+      vTheta = (theta - ArmConstants.TopShoulderSoftStop) * 5;
+    } 
+
+    
+    // Reset variable names to work with below code (yes we should have just made names consistant, but i'm out of time)
+    r = vRadius;
+    theta = vTheta;
+
+
+    // Read in system data
+    tNew = System.nanoTime() / Math.pow(10, 9);
     rNew = getArmLength();
     thetaNew = getShoulderPosition();
 
@@ -161,5 +218,75 @@ public class ArmSubsystem extends SubsystemBase {
     setExtensionMotorSpeed(radiusOutput);
     SmartDashboard.putNumber("Theta output", thetaOutput);
     setRotationMotorSpeed(thetaOutput);
+  }
+
+  public void armControl(double theta, double r) {
+    if(m_setPoint != null && (Math.abs(theta) > 0 || Math.abs(r) > 0)){
+      armSetpoint = false;
+      m_setPoint = null;
+    }
+    setArmVelocity(theta, r);
+  }
+
+  public void setArmSetpoint(double x, double y) {
+    double setpointTheta, setpointR, vTheta, vThetaPid, vR, vRPid, thetaLimit;
+    setpointX = x;
+    setpointY = y;
+    setpointRadiusPid.reset();
+    setpointThetaPid.reset();
+    if(!armSetpoint){
+      armSetpoint = true;
+    }
+
+    setpointTheta = Math.atan(y / x);
+    setpointR = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+
+    vThetaPid = setpointThetaPid.calculate((setpointTheta - getShoulderPosition()));
+    vRPid = setpointRadiusPid.calculate(setpointR - getArmLength());
+
+    vTheta = vThetaPid;
+    vR = vRPid;
+    // Soft Limits - Retracted
+    if(vRPid > 5 * (r - ArmConstants.armRetractedSoftStop)) {
+      vR = (r - ArmConstants.armRetractedSoftStop) * 5;
+    } 
+    // Soft Limits - Extended
+    else if(vRPid < 5 * (r - ArmConstants.armExtendedSoftStop)) {
+      vR = (r - ArmConstants.armExtendedSoftStop) * 5;
+    } 
+    else {
+      vR = vRPid;
+    }
+    
+    // Soft Limits - Floor/Bumper - Find Limit Position
+    if (r < (ArmConstants.yBumper / Math.sin(ArmConstants.thetaBumper))) {
+      thetaLimit = Math.asin(ArmConstants.yBumper / r); // Bumper Limit
+    }
+    else if (r > (ArmConstants.yFloor / Math.sin(ArmConstants.thetaBumper))) {
+      thetaLimit = Math.asin(ArmConstants.yFloor / r); //Floor Limit
+    }
+    else {
+      thetaLimit = ArmConstants.thetaBumper; // In-between Limit
+    }
+    SmartDashboard.putNumber("Theta Limit", thetaLimit);
+
+    // Soft Limits - Floor/Bumper - Set Speed
+    if(vThetaPid > 5 * (theta - thetaLimit)) {   
+      vTheta = (theta - thetaLimit) * 5;  // floor/bumper limit speed
+    } 
+
+    // Soft Limit - Top
+    if(vThetaPid < 5 * (theta - ArmConstants.TopShoulderSoftStop)) {
+      vTheta = (theta - ArmConstants.TopShoulderSoftStop) * 5;
+    } 
+
+
+    if(Math.abs(vTheta) > 1) {
+      vTheta = Math.signum(vTheta);
+    }
+    if(Math.abs(vR) > 15) {
+      vR = Math.signum(vR)*15;
+    }
+    setArmVelocity(vTheta, vR);
   }
 }
