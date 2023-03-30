@@ -4,47 +4,48 @@
 
 package frc.robot.commands;
 
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.ArmSetpoints;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.Gripper;
 
-
-public class CubePickup extends CommandBase {
-  private final Gripper m_subsystem;
-
-  /** Creates a new CubePickup. */
-  public CubePickup(Gripper subsystem) {
-    m_subsystem = subsystem;
+public class Arm_to_ground_intake extends CommandBase {
+  private final ArmSubsystem m_arm;
+  private final Gripper m_gripper;
+  private boolean m_end;
   
+  /** Creates a new Arm_to_ground. */
+  public Arm_to_ground_intake(ArmSubsystem arm, Gripper gripper) {
     // Use addRequirements() here to declare subsystem dependencies.
+    m_arm = arm;
+    m_gripper = gripper;
+    addRequirements(arm);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_subsystem.Intake(0);
-    m_subsystem.setgripPID(-16.5);
+    m_end = false;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_subsystem.runGripPID(m_subsystem.gripPosition());
-    m_subsystem.Intake(.75);
+    if (!m_end) {
+      // Set the Setpoint, fall through when setpoint is completed
+        m_arm.updateAllArmSetpoints(ArmSetpoints.FLOOR_INTAKING);
+        m_gripper.updateAllGripperSetpoints(ArmSetpoints.FLOOR_INTAKING);
+        m_end = m_arm.setpointTolerance();
+      }
   }
-   // SmartDashboard.putBoolean("Y_BUTTON", m_controller.getYButton());
-  
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    m_subsystem.Intake(0);
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-   // return m_subsystem.gripPID.atSetpoint();
-    return false;
+    return m_end;
   }
 }
