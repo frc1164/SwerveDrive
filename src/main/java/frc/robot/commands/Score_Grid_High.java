@@ -50,7 +50,7 @@ public class Score_Grid_High extends CommandBase {
       if (setpoint1_finished) {
         //Sleep some amount between setpoints
         delayTimer.reset();
-        while(delayTimer.get() < 0.5) {}
+        // while(delayTimer.get() < 0.5) {}
       }
 
     } 
@@ -62,7 +62,7 @@ public class Score_Grid_High extends CommandBase {
       if (setpoint2_finished) {
         // Sleep some amount between setpoints
         delayTimer.reset();
-        while(delayTimer.get() < 0.5) {}
+        // while(delayTimer.get() < 0.5) {}
       }
 
     }
@@ -74,19 +74,19 @@ public class Score_Grid_High extends CommandBase {
       if (setpoint3_finished) {
         // Sleep some amount between setpoints
         delayTimer.reset();
-        while(delayTimer.get() < 0.5) {}
+        // while(delayTimer.get() < 0.5) {}
       }
 
-    } if (setpoint3_finished && !setpoint4_finished) {
+    } else if (setpoint3_finished && !setpoint4_finished) {
       //Set the first Setpoint, fall through when first setpoint within tolerance
       m_arm.updateAllArmSetpoints(ArmSetpoints.TOP_NODE);
       m_gripper.updateAllGripperSetpoints(ArmSetpoints.TOP_NODE);
-      setpoint1_finished = m_arm.setpointTolerance();
-      if (setpoint4_finished) {
+      setpoint4_finished = m_arm.setpointTolerance();
+     /*  if (setpoint4_finished) {
         //Sleep some amount between setpoints
         delayTimer.reset();
-        while(delayTimer.get() < 0.5) {}
-      }
+        // while(delayTimer.get() < 0.5) {}
+      } */
 
     } else if (setpoint1_finished && setpoint2_finished && setpoint3_finished && setpoint3_finished && !m_end) {
     // Set the third Setpoint, fall through when third setpoint completed

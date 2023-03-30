@@ -55,7 +55,7 @@ public class ArmSubsystem extends SubsystemBase {
     radiusPID = new PIDController(ArmConstants.radiusP, ArmConstants.radiusI, ArmConstants.radiusD);
     //radiusPID = new PIDController(ArmConstants.radiusP, ArmConstants.radiusI, ArmConstants.radiusD);
     setpointThetaPid = new PIDController(2, 0, 0);
-    setpointRadiusPid = new PIDController(10, 0, 0);
+    setpointRadiusPid = new PIDController(10, 0.1, 0);
     radiusOutput = 0;
     thetaOutput = 0;
     //Set m_setPoint to null so joystick works
