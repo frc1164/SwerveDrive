@@ -96,7 +96,6 @@ public class Gripper extends SubsystemBase {
       claspEncoder.setPosition(0);
   }
   
-  public static boolean getGripperCLSDLimitSwitch() {
   // Note: This is incomplete. It may make more sense to just call an input or eject method depending GamePieceType... Talk to Eric
   public void updateAllGripperSetpoints(Setpoint setpoint) {
     m_setPoint = setpoint;
