@@ -7,10 +7,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import frc.robot.Setpoint.ArmState;
-import frc.robot.Setpoint.ClaspState;
-import edu.wpi.first.wpilibj2.command.Command;
-import java.util.HashMap;
 
 
 public final class Constants {
@@ -110,27 +106,8 @@ public final class Constants {
                 new TrapezoidProfile.Constraints(
                         kMaxAngularSpeedRadiansPerSecond,
                         kMaxAngularAccelerationRadiansPerSecondSquared);
-    
     }
 
-        // Predefined Arm/clasp setpoints. NOTE: These are placeholders and need real numbers assigned!!! Do not use them as-is.
-        public static final class ArmSetpoints{
-            public static final Setpoint TEST_SETPOINT_HIGHER = new Setpoint(60, -10, ClaspState.SET, 60, -10, ClaspState.SET, ArmState.OTHER, 1);
-            public static final Setpoint TEST_SETPOINT_LOWER = new Setpoint(50, -20, ClaspState.SET, 50, -20, ClaspState.SET, ArmState.OTHER, 1);
-        
-            public static final Setpoint STOWED = new Setpoint(30, -36, ClaspState.SET, 30, -36, ClaspState.SET, ArmState.STOWED, 1);
-            public static final Setpoint FLOOR = new Setpoint(0, 0, ClaspState.SET, 0, 0, ClaspState.SET, ArmState.FLOOR, 1);
-            public static final Setpoint MID_NODE = new Setpoint(0, 0, ClaspState.SET, 0, 0, ClaspState.SET, ArmState.MID_NODE, 1);
-            public static final Setpoint MID_NODE_PLACED = new Setpoint(0, 0, ClaspState.SET, 0, 0, ClaspState.SET, ArmState.MID_NODE_PLACED, 1);
-            public static final Setpoint MID_NODE_PLACED_AND_SCORED = new Setpoint(0, 0, ClaspState.OPEN, 0, 0, ClaspState.OPEN, ArmState.MID_NODE_PLACED, 1);
-            public static final Setpoint TOP_NODE = new Setpoint(46.5, 4.5, ClaspState.SET, 46.5, 4.5, ClaspState.SET, ArmState.TOP_NODE, 1);
-            public static final Setpoint TOP_NODE_PLACED = new Setpoint(70.5, 0.5, ClaspState.SET, 70.5, 0.5, ClaspState.SET, ArmState.TOP_NODE_PLACED, 1);
-            public static final Setpoint TOP_NODE_PLACED_AND_SCORED = new Setpoint(70.5, 0.5, ClaspState.OPEN, 70.5, 0.5, ClaspState.OPEN, ArmState.TOP_NODE_PLACED, 1);
-            public static final Setpoint SUBSTATION = new Setpoint(0, 0, ClaspState.SET, 0, 0, ClaspState.SET, ArmState.SUBSTATION, 1);
-            public static final Setpoint FLOOR_HOVER = new Setpoint(0, 0, ClaspState.SET, 0, 0, ClaspState.SET, ArmState.OTHER, 1);
-            public static final Setpoint FLOOR_INTAKING = new Setpoint(0, 0, ClaspState.SET, 0, 0, ClaspState.SET, ArmState.FLOOR, 1);
-        }
-          
     public static final class OIConstants {
         public static final int kDriverControllerPort = 0;
 
@@ -166,10 +143,8 @@ public final class Constants {
         //Shoulder Soft Limit Stuff
         public static final double ShoulderEncoderOffset = 263 * Math.PI/180;
         //public static final double TopShoulderLimit = -0.05;
-        public static final double TopShoulderLimit = 0.22;
-        public static final double TopShoulderSoftStop = 0.1;
+        public static final double TopShoulderLimit = 0.1;
         public static final double BottomShoulderLimit = -1.12;
-        public static final double BottomShoulderSoftStop = -1.17;
         public static final boolean ShoulderEncoderRevsersed = false;
 
         //Telescope Limits
@@ -177,11 +152,9 @@ public final class Constants {
         public static final double BottomTelescopeLimit = -0.95 /* 10 * 360 * Math.PI/180 */ ;
     
         //Telescope Lenghts
-        public static final double armR0 = 46;
-        public static final double armRetractedSoftStop = 46.5;
-        public static final double maxArmLength = 72;
-        public static final double armExtendedSoftStop = 71.5;
+        public static final double armR0 = 32; // 47
         public static final double extensionPerRotation = 0.206;
+        public static final double maxArmLength = 58;
 
         // Arm control PID. Yay!
         public static final double thetaP = 0.1;
@@ -191,16 +164,11 @@ public final class Constants {
         public static final double radiusI = 0.05;
         public static final double radiusD = 0;
 
-        // Arm Soft Limit Locations
         public static final double radiusOutputMax = 20;
         public static final double thetaOutputMax = 20;
 
-        public static final double thetaBumper = -0.88;
-        public static final double yFloor = -41;
-        public static final double yBumper = -36.0;
-
-        // Setpoints
-        public static final double setpointTolerance = 0.5;
+        public static final double pivotPointXDistanceFromFrame = /* 25.5 */ 29; // I don't know yet
+        public static final double pivotPointXDistanceFromBumper = 29; // I don't know yet
     }
 
     public static final class BalanceConstants {

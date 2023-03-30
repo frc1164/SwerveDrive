@@ -20,7 +20,7 @@ public class ConePickup extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_subsystem.setgripPID(-82);
+    m_subsystem.setgripPID(-78);
     m_subsystem.Intake(0);
   }
 
@@ -28,7 +28,7 @@ public class ConePickup extends CommandBase {
   @Override
   public void execute() {
     m_subsystem.runGripPID(m_subsystem.gripPosition());
-    m_subsystem.Intake(0);
+    m_subsystem.Intake(.5);
   }
 
   // Called once the command ends or is interrupted.

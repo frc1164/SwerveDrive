@@ -23,14 +23,14 @@ public class CubePickup extends CommandBase {
   @Override
   public void initialize() {
     m_subsystem.Intake(0);
-    m_subsystem.setgripPID(-16.5);
+    m_subsystem.setgripPID(-5);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     m_subsystem.runGripPID(m_subsystem.gripPosition());
-    m_subsystem.Intake(.75);
+    m_subsystem.Intake(.5);
   }
    // SmartDashboard.putBoolean("Y_BUTTON", m_controller.getYButton());
   
