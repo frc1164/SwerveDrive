@@ -9,13 +9,13 @@ import frc.robot.Constants.ArmSetpoints;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.Gripper;
 
-public class Arm_to_ground_intake extends CommandBase {
+public class Arm_to_Floor_intake extends CommandBase {
   private final ArmSubsystem m_arm;
   private final Gripper m_gripper;
   private boolean m_end;
   
   /** Creates a new Arm_to_ground. */
-  public Arm_to_ground_intake(ArmSubsystem arm, Gripper gripper) {
+  public Arm_to_Floor_intake(ArmSubsystem arm, Gripper gripper) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_arm = arm;
     m_gripper = gripper;
@@ -34,7 +34,7 @@ public class Arm_to_ground_intake extends CommandBase {
     if (!m_end) {
       // Set the Setpoint, fall through when setpoint is completed
         m_arm.updateAllArmSetpoints(ArmSetpoints.FLOOR_INTAKING);
-        m_gripper.updateAllGripperSetpoints(ArmSetpoints.FLOOR_INTAKING);
+//        m_gripper.updateAllGripperSetpoints(ArmSetpoints.FLOOR_INTAKING);
         m_end = m_arm.setpointTolerance();
       }
   }
