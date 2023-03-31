@@ -31,7 +31,6 @@ public class ArmSubsystem extends SubsystemBase {
   private PIDController thetaPID, radiusPID, setpointThetaPid, setpointRadiusPid;
   private static double tOld, tNew;
   private static double thetaLimit, thetaJoystickReading, radiusJoystickReading, x, y, vTheta, vRadius, rOld, rNew, thetaOld, thetaNew, radiusOutput, thetaOutput, rError, thetaError, theta, r, setpointX, setpointY;
-  private static boolean armSetpoint;
   private static boolean limitSwitchTrigered = false;
   private static double sysStartTime = System.nanoTime() / Math.pow(10, 9);
 
@@ -283,7 +282,6 @@ public class ArmSubsystem extends SubsystemBase {
 
   public void armControl(double theta, double r) {
     if(m_setPoint != null && (Math.abs(theta) > 0 || Math.abs(r) > 0)){
-      armSetpoint = false;
       m_setPoint = null;
     }
     setArmVelocity(theta, r);
@@ -293,10 +291,6 @@ public class ArmSubsystem extends SubsystemBase {
     double setpointTheta, setpointR, vTheta, vR;
     setpointX = x;
     setpointY = y;
-
-    if(!armSetpoint){
-      armSetpoint = true;
-    }
 
     setpointTheta = Math.atan(y / x);
     setpointR = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
