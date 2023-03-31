@@ -124,10 +124,11 @@ public class Gripper extends SubsystemBase {
   }
 
   public void resetandScore() {
-    setClasp(.1);
-    while(!getGripperOPENLimitSwitch()){}
-    claspEncoder.setPosition(0);
+    while(!getGripperOPENLimitSwitch()) {
+      setClasp(.1);
+    }
     setClasp(0);
+    claspEncoder.setPosition(0);
   }
 
   // Note: This is incomplete. It may make more sense to just call an input or eject method depending GamePieceType... Talk to Eric
