@@ -49,11 +49,6 @@ public class SwerveModule {
         driveEncoder = driveMotor.getEncoder();
         turningEncoder = turningMotor.getEncoder();
 
-        //turningEncoder.setPositionConversionFactor(turningEncoder.getCountsPerRevolution()/(2*Math.PI));
-        //turningEncoder.setVelocityConversionFactor(turningEncoder.getCountsPerRevolution()/(2*Math.PI));
-        //driveEncoder.setPositionConversionFactor(driveEncoder.getCountsPerRevolution()/(2*Math.PI));
-        //driveEncoder.setVelocityConversionFactor(driveEncoder.getCountsPerRevolution()/(2*Math.PI));
-
         driveEncoder.setPositionConversionFactor(ModuleConstants.kDriveEncoderRot2Meter);
         driveEncoder.setVelocityConversionFactor(ModuleConstants.kDriveEncoderRPM2MeterPerSec);
         turningEncoder.setPositionConversionFactor(ModuleConstants.kTurningEncoderRot2Rad);

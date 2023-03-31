@@ -2,18 +2,19 @@ package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 // import com.kauailabs.navx.AHRSProtocol;
-import com.kauailabs.navx.IMUProtocol.GyroUpdate;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.RobotOdometry;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort;
 
 public class SwerveSubsystem extends SubsystemBase {
@@ -54,11 +55,22 @@ public class SwerveSubsystem extends SubsystemBase {
             DriveConstants.kBackRightDriveAbsoluteEncoderReversed);
 
     private final AHRS gyro = new AHRS(SerialPort.Port.kUSB);
-    private final Pose2d poseThis = new Pose2d();
-    private final SwerveModulePosition[] Position = {frontLeft.getPosition(), frontRight.getPosition(), 
-                                                     backLeft.getPosition(), backRight.getPosition()};
-    private final SwerveDrivePoseEstimator odometer = new SwerveDrivePoseEstimator(DriveConstants.kDriveKinematics,
-            new Rotation2d(0), Position, poseThis);
+
+    // This is no longer needed since odometry was moved outside this subsystem. Delete if successful
+    // private final Pose2d poseThis = new Pose2d();
+
+    //private final SwerveDrivePoseEstimator odometer = new SwerveDrivePoseEstimator(DriveConstants.kDriveKinematics,
+    //        new Rotation2d(0), Position, poseThis);
+
+    // Get new singleton odometry class for tracking robot pose
+    RobotOdometry odometer = RobotOdometry.getInstance();
+
+    //This is now defined and used in the periodic() method and can possibly be deleted
+    //private final SwerveModulePosition[] positions = {frontLeft.getPosition(), frontRight.getPosition(), 
+    //  backLeft.getPosition(), backRight.getPosition()};
+
+    // Create a new Field2d object for plotting pose
+    private final Field2d m_field = new Field2d();
 
     // Create two new SimpleMotorFeedforwards (one right and one left) with gains kS, kV, and kA from SysID characterization
     private SimpleMotorFeedforward feedforwardRight = new SimpleMotorFeedforward(DriveConstants.kSRight, DriveConstants.kVRight, DriveConstants.kARight);
@@ -71,6 +83,8 @@ public class SwerveSubsystem extends SubsystemBase {
                 zeroHeading();
             } catch (Exception e) {
             }
+            //This is new. Added to initialize the odometry. Not sure about the getPose() call... It feels a little recursive...
+            //resetOdometry(getPose());
         }).start();
     }
 
@@ -78,29 +92,37 @@ public class SwerveSubsystem extends SubsystemBase {
         gyro.reset();
     }
 
+    // Gets the robot heading in degrees
     public double getHeading() {
         return Math.IEEEremainder(gyro.getAngle(), 360);
     }
 
+    // Gets the robot heading as a Rotation2d
     public Rotation2d getRotation2d() {
         return Rotation2d.fromDegrees(getHeading());
     }
 
+    // Gets the estimated pose from the odometer
     public Pose2d getPose() {
-        return odometer.getEstimatedPosition();
+        return odometer.getPoseEstimator().getEstimatedPosition();
     }
 
     public void resetOdometry(Pose2d pose) {
         SwerveModulePosition[] state = {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
-        odometer.resetPosition(getRotation2d(), state, pose);
+        odometer.getPoseEstimator().resetPosition(getRotation2d(), state, pose);
     }
 
     @Override
     public void periodic() {
         getChassisPitchError();
 
-        SwerveModulePosition[] state = {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
-        odometer.update(getRotation2d(), state);
+        SwerveModulePosition[] positions = {frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(), backRight.getPosition()};
+        odometer.getPoseEstimator().update(getRotation2d(), positions);
+
+        SmartDashboard.putString("Alliance Color", DriverStation.getAlliance().name());
+        m_field.setRobotPose(this.getPose());
+        SmartDashboard.putData(m_field);
+        
         // SmartDashboard.putNumber("Robot Heading", getHeading());
         // SmartDashboard.putString("Robot Rotation", getPose().getRotation().toString());
         // SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
