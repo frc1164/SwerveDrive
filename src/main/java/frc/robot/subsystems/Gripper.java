@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import frc.robot.Constants.GripperC;
 import edu.wpi.first.math.controller.PIDController;
@@ -42,8 +43,10 @@ public class Gripper extends SubsystemBase {
   public Gripper() {
     rightDrive = new CANSparkMax(GripperC.rightMotor, MotorType.kBrushless);
     rightDrive.setInverted(GripperC.rightMotorReversed);
+    rightDrive.setIdleMode(IdleMode.kBrake);
     leftDrive = new CANSparkMax(GripperC.leftMotor, MotorType.kBrushless);
     leftDrive.setInverted(GripperC.leftMotorReversed);
+    leftDrive.setIdleMode(IdleMode.kBrake);
     clasp = new CANSparkMax(GripperC.GripperMotor, MotorType.kBrushless);
 
     m_canifier = new CANifier(GripperC.GripperCANifier);
