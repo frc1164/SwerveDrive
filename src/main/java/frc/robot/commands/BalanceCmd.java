@@ -48,7 +48,7 @@ public class BalanceCmd extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    float pitch = swerveSubsystem.getChassisPitch();
+    float pitch = -swerveSubsystem.getChassisPitch();
     double xSpeed = balancePID.calculate(-pitch);
     SmartDashboard.putNumber("PID Output", xSpeed);
     double ySpeed = 0;
