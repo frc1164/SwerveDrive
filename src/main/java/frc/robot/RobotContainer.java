@@ -36,6 +36,7 @@ import frc.robot.commands.output;
 import frc.robot.Constants.GripperC;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.subsystems.Gripper;
+import frc.robot.subsystems.LED;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -54,7 +55,7 @@ public class RobotContainer {
 
         private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
         private final ArmSubsystem armSubsystem = new ArmSubsystem();
-
+        private final LED m_led;
         private final Gripper m_gripper;
         private final CommandXboxController m_controller;
 
@@ -71,7 +72,7 @@ public class RobotContainer {
 
                 m_gripper = new Gripper();
                 m_controller = new CommandXboxController(OperatorConstants.kOperatorControllerPort);
-
+                m_led = new LED();
                 m_gripper.setDefaultCommand(new Clasp(m_gripper, m_controller));
 
                 swerveSubsystem.setDefaultCommand(new SwerveJoystickCmd(

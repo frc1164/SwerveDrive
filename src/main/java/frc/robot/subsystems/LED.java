@@ -69,13 +69,13 @@ private void setBLUE(int startPos, int Length) {
   }
 }
 
-private ledMode setPURPLE(int startPos, int Length) {
+private void setPURPLE(int startPos, int Length) {
   for (var i = startPos; i < startPos + Length; i++) {
     m_ledBuffer.setRGB(i, 135, 0, 211);
   }
 }
 
-private ledMode setYELLOW(int startPos, int Length) {
+private void setYELLOW(int startPos, int Length) {
   for (var i = startPos; i < startPos + Length; i++) {
     m_ledBuffer.setRGB(i, 255, 255, 0);
   }
