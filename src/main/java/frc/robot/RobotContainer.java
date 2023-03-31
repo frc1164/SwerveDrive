@@ -32,6 +32,7 @@ import frc.robot.commands.Clasp;
 import frc.robot.commands.ConePickup;
 import frc.robot.commands.CubePickup;
 import frc.robot.commands.Erics_sequential_pickup;
+import frc.robot.commands.Erics_sequential_score_High;
 import frc.robot.commands.Liams_sequential_score_grid_high;
 import frc.robot.commands.ScoreGridTop;
 import frc.robot.commands.Score_Grid_High;
@@ -146,7 +147,7 @@ public class RobotContainer {
                 lDPad.onTrue(new Score_Grid_High(armSubsystem, m_gripper));                     // Old old - working(ish)
                 dDPad.onTrue(new Erics_sequential_pickup(armSubsystem, m_gripper));             // Old (Tursday) - forgot status
                 rDPad.onTrue(new Liams_sequential_score_grid_high(armSubsystem, m_gripper));    // New, not tested
-
+                uDPad.onTrue(new Erics_sequential_score_High(armSubsystem, m_gripper));
                 /*
                  * new JoystickButton(driverJoytick, 2).whenPressed(() ->
                  * swerveSubsystem.zeroHeading());
