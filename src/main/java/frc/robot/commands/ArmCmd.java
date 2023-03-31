@@ -97,12 +97,11 @@ public class ArmCmd extends CommandBase {
       vTheta = (theta - thetaLimit) * 5;  // floor/bumper limit speed
     } 
 
-    // Soft Limit - Top
-    if(thetaJoystickReading < 5 * (theta - ArmConstants.TopShoulderSoftStop)) {
-      vTheta = (theta - ArmConstants.TopShoulderSoftStop) * 5;
-    } 
+    // // Soft Limit - Top
+    // if(thetaJoystickReading < 3 * (theta - ArmConstants.TopShoulderSoftStop)) {
+    //   vTheta = (theta - ArmConstants.TopShoulderSoftStop) * 3;
+    // } 
 
-    
     m_subsystem.armControl(vTheta, vRadius);
   }
 

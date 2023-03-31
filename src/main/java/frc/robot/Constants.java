@@ -150,8 +150,8 @@ public final class Constants {
         //Shoulder Soft Limit Stuff
         public static final double ShoulderEncoderOffset = 263 * Math.PI/180;
         //public static final double TopShoulderLimit = -0.05;
-        public static final double TopShoulderLimit = 0.22;
-        public static final double TopShoulderSoftStop = 0.1;
+        public static final double TopShoulderLimit = 0.09;
+        public static final double TopShoulderSoftStop = 0.04;
         public static final double BottomShoulderLimit = -1.12;
         public static final double BottomShoulderSoftStop = -1.17;
         public static final boolean ShoulderEncoderRevsersed = false;
@@ -169,7 +169,7 @@ public final class Constants {
 
         // Arm control PID. Yay!
         public static final double thetaP = 0.1;
-        public static final double thetaI = 0.05;
+        public static final double thetaI = 0;
         public static final double thetaD = 0;
         public static final double radiusP = 0.01;
         public static final double radiusI = 0.05;
