@@ -136,6 +136,10 @@ public final class Constants {
      public static final int kOperatorControllerPort = 1;
     }
 
+    public static final class LEDConstants{
+        public static int LEDport = 0;
+    }
+
     public static final class ArmConstants {
         //CAN Values for Arm Hardware
         public static final int armCANifier = 53;
