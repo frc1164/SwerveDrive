@@ -213,8 +213,8 @@ public static boolean getGripperOPENLimitSwitch() {
     //gripper range is (85.0272 units to other end as is -need to check polarity-)
 
     //Drive to a Clasp setpoint for Autonomous. Note: We should probably test for Autonomous mode here to keep this from messing with Teleop behavior.
-    if(m_setPoint != null) {
-      this.runGripPID(this.gripPosition());
-    }
+    //if(m_setPoint != null) {
+    //  this.runGripPID(this.gripPosition());
+    //}
   }
 }
