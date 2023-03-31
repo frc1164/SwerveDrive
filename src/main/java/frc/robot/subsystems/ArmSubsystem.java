@@ -89,7 +89,7 @@ public class ArmSubsystem extends SubsystemBase {
        }
     } catch (NullPointerException npe){
        System.out.println(npe);
-    }
+      }
     }
 
   public boolean setpointTolerance() {

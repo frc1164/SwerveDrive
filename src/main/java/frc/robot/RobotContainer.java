@@ -140,7 +140,7 @@ public class RobotContainer {
                 rBumper.whileTrue(new ConePickup(m_gripper));
                 xButton.whileTrue(new intake(m_gripper));
                 aButton.whileTrue(new output(m_gripper));
-                dDPad.whileTrue(new Erics_sequential_pickup(armSubsystem, m_gripper));
+                dDPad.onTrue(new Erics_sequential_pickup(armSubsystem, m_gripper));
                 
                 //Temporarily bind autonomous commands. For testing commands only!
                 lDPad.onTrue(new Score_Grid_High(armSubsystem, m_gripper));

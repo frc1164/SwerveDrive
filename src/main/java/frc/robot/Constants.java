@@ -128,7 +128,7 @@ public final class Constants {
             public static final Setpoint TOP_NODE_PLACED_AND_SCORED = new Setpoint(70.5, 0.5, ClaspState.OPEN, 70.5, 0.5, ClaspState.OPEN, ArmState.TOP_NODE_PLACED, 1);
             public static final Setpoint SUBSTATION = new Setpoint(0, 0, ClaspState.SET, 0, 0, ClaspState.SET, ArmState.SUBSTATION, 1);
             public static final Setpoint FLOOR_HOVER = new Setpoint(0, 0, ClaspState.SET, 0, 0, ClaspState.SET, ArmState.OTHER, 1);
-            public static final Setpoint FLOOR_INTAKING = new Setpoint(0, 0, ClaspState.SET, 0, 0, ClaspState.SET, ArmState.FLOOR, 1);
+            public static final Setpoint FLOOR_INTAKING = new Setpoint(38, -41, ClaspState.SET, 38, -41, ClaspState.SET, ArmState.FLOOR, 1);
         }
           
     public static final class OIConstants {
