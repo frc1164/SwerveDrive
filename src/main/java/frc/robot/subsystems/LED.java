@@ -20,7 +20,7 @@ private AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(48);
 private AddressableLED m_led = new AddressableLED(LEDConstants.LEDport);
 
 public enum ledMode {
-  RED, GREEN, RAINBOW, TEAM
+  RED, GREEN, RAINBOW, TEAM, BLUE
 }
   
 public LED() {
@@ -41,6 +41,8 @@ switch (m_mode) {
   break;
   case TEAM: setTEAM(0, 48);
   break;
+  case BLUE: setBLUE(0, 48);
+  break;
   default:break;
 }
 }
@@ -54,6 +56,12 @@ private void setRED(int startPos, int Length) {
 private void setGREEN(int startPos, int Length) {
   for (var i = startPos; i < startPos + Length; i++) {
     m_ledBuffer.setRGB(i, 0, 255, 0);
+  }
+}
+
+private void setBLUE(int startPos, int Length) {
+  for (var i = startPos; i < startPos + Length; i++) {
+    m_ledBuffer.setRGB(i, 0, 0, 255);
   }
 }
 
