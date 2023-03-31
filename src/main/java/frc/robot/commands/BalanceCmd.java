@@ -49,7 +49,7 @@ public class BalanceCmd extends CommandBase {
   @Override
   public void execute() {
     float pitch = -swerveSubsystem.getChassisPitch();
-    double xSpeed = balancePID.calculate(-pitch);
+    double xSpeed = balancePID.calculate(pitch);
     SmartDashboard.putNumber("PID Output", xSpeed);
     double ySpeed = 0;
     double turningSpeed = 0;
