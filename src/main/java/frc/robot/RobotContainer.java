@@ -92,7 +92,11 @@ public class RobotContainer {
                 List<PathPlannerTrajectory> trajectory6 = PathPlanner.loadPathGroup("Middle Short", 2, 1);
                 List<PathPlannerTrajectory> trajectory7 = PathPlanner.loadPathGroup("Right Path", 2, 1);
                 List<PathPlannerTrajectory> trajectory8 = PathPlanner.loadPathGroup("Left Path", 2, 1);
-
+                List<PathPlannerTrajectory> trajectory9 = PathPlanner.loadPathGroup("Left Score Two", 2, 1);
+                List<PathPlannerTrajectory> trajectory10 = PathPlanner.loadPathGroup("Right Score Two", 2, 1); 
+                List<PathPlannerTrajectory> trajectory11 = PathPlanner.loadPathGroup("Left Pick Up", 2, 1);  
+                List<PathPlannerTrajectory> trajectory12 = PathPlanner.loadPathGroup("Right Pick Up", 2, 1); 
+                List<PathPlannerTrajectory> trajectory13 = PathPlanner.loadPathGroup("Middle Pick Up Balance", 2, 1);                           
                 // Populate the Event Map (PathPlanner labels paired with commands)
                 eventMap.put("balance", new BalanceCmd(swerveSubsystem));
 
@@ -113,6 +117,11 @@ public class RobotContainer {
                 m_chooser.addOption("Middle Short", autoBuilder.fullAuto(trajectory6));
                 m_chooser.addOption("Right Path", autoBuilder.fullAuto(trajectory7));
                 m_chooser.addOption("Left Path", autoBuilder.fullAuto(trajectory8));
+                m_chooser.addOption("Left Score Two", autoBuilder.fullAuto(trajectory9));
+                m_chooser.addOption("Right Score Two", autoBuilder.fullAuto(trajectory10));
+                m_chooser.addOption("Left Pick Up", autoBuilder.fullAuto(trajectory11));
+                m_chooser.addOption("Right Pick Up", autoBuilder.fullAuto(trajectory12));
+                m_chooser.addOption("Middle Pick Up Balance", autoBuilder.fullAuto(trajectory13));
                 m_chooser.addOption("None", null);
                 Shuffleboard.getTab("Auto").add(m_chooser);
 
