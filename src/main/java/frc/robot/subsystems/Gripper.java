@@ -125,9 +125,9 @@ public class Gripper extends SubsystemBase {
 
   public void resetandScore() {
     while(!getGripperOPENLimitSwitch()) {
-      setClasp(.1);
+      clasp.set(.1);
     }
-    setClasp(0);
+    clasp.set(0);
     claspEncoder.setPosition(0);
   }
 
