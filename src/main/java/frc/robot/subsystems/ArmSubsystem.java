@@ -66,8 +66,8 @@ public class ArmSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     // SmartDashboard.putBoolean("Upper Limit Switch", getArmShoulderUpperLimitSwitch());
     // SmartDashboard.putBoolean("Lower Limit Switch", getArmShoulderLowerLimitSwitch());
-    // SmartDashboard.putBoolean("Extended Limit Switch", getArmExtensionExtendedLimitSwitch());
-    // SmartDashboard.putBoolean("Retracted Limit Switch", getArmExtensionRetractedLimitSwitch());
+    SmartDashboard.putNumber("Extended Limit Switch", getArmExtensionExtendedLimitSwitch() ? 1 : 0);
+    SmartDashboard.putNumber("Retracted Limit Switch", getArmExtensionRetractedLimitSwitch() ? 1 : 0);
     // SmartDashboard.putNumber("Telescope Position", getTelescopePosition());
     // SmartDashboard.putNumber("Shoulder Position", getShoulderPosition());
     if(m_setPoint != null) {
@@ -96,8 +96,8 @@ public class ArmSubsystem extends SubsystemBase {
     r = getArmLength();
     double x = r * Math.cos(theta);
     double y = r * Math.sin(theta);
-    SmartDashboard.putNumber("Tol. x", x - setpointX);
-    SmartDashboard.putNumber("Tol. y", y - setpointY);
+    // SmartDashboard.putNumber("Tol. x", x - setpointX);
+    // SmartDashboard.putNumber("Tol. y", y - setpointY);
     if((setpointX + ArmConstants.setpointTolerance >= x) && (setpointX - ArmConstants.setpointTolerance <= x) && (setpointY + ArmConstants.setpointTolerance >= y) && (setpointY - ArmConstants.setpointTolerance <= y)) {
       return true;
     }
@@ -181,10 +181,10 @@ public class ArmSubsystem extends SubsystemBase {
     r = getArmLength();
     x = r * Math.cos(theta);
     y = r * Math.sin(theta);
-    SmartDashboard.putNumber("Arm Theta", theta);
-    SmartDashboard.putNumber("Arm r", r);
-    SmartDashboard.putNumber("Arm x", x);
-    SmartDashboard.putNumber("Arm y", y);
+    // SmartDashboard.putNumber("Arm Theta", theta);
+    // SmartDashboard.putNumber("Arm r", r);
+    // SmartDashboard.putNumber("Arm x", x);
+    // SmartDashboard.putNumber("Arm y", y);
 
     vRadius = radiusJoystickReading;
     vTheta = thetaJoystickReading;
@@ -212,7 +212,7 @@ public class ArmSubsystem extends SubsystemBase {
     else {
       thetaLimit = ArmConstants.thetaBumper; // In-between Limit
     }
-    SmartDashboard.putNumber("Theta Limit", thetaLimit);
+    // SmartDashboard.putNumber("Theta Limit", thetaLimit);
 
     // Soft Limits - Floor/Bumper - Set Speed
     if(thetaJoystickReading > 5 * (theta - thetaLimit)) {   
@@ -228,8 +228,8 @@ public class ArmSubsystem extends SubsystemBase {
     // Reset variable names to work with below code (yes we should have just made names consistant, but i'm out of time)
     r = vRadius;
     theta = vTheta;
-    SmartDashboard.putNumber("R out", r);
-    SmartDashboard.putNumber("Theta out", theta);
+    // SmartDashboard.putNumber("R out", r);
+    // SmartDashboard.putNumber("Theta out", theta);
     // Read in system data
     tNew = System.nanoTime() / Math.pow(10, 9);
     rNew = getArmLength();
@@ -237,8 +237,8 @@ public class ArmSubsystem extends SubsystemBase {
 
 
     // Check if Limit switch has ever been hit - 5 second time limit
-    SmartDashboard.putBoolean("Limit Switch Trigger", limitSwitchTrigered);
-    SmartDashboard.putNumber("sysStartTime", sysStartTime);
+    // SmartDashboard.putBoolean("Limit Switch Trigger", limitSwitchTrigered);
+    // SmartDashboard.putNumber("sysStartTime", sysStartTime);
     if (limitSwitchTrigered == false){
       if (getArmExtensionRetractedLimitSwitch()) {
         limitSwitchTrigered = true;
@@ -261,11 +261,14 @@ public class ArmSubsystem extends SubsystemBase {
     // Control arm speed
     rError = r - velocityR;
     thetaError = velocityTheta - theta;
-    SmartDashboard.putNumber("Vr - Error", rError);
-    SmartDashboard.putNumber("Vtheta - Error", thetaError);
-    radiusOutput = radiusOutput + radiusPID.calculate(rError);
-    thetaOutput = thetaOutput + thetaPID.calculate(thetaError);
-   
+    // SmartDashboard.putNumber("Vr - Error", rError);
+    // SmartDashboard.putNumber("Vtheta - Error", thetaError);
+    double ro = radiusPID.calculate(rError);
+    double to = thetaPID.calculate(thetaError);
+    radiusOutput = radiusOutput + ro;
+    thetaOutput = thetaOutput + to;
+    SmartDashboard.putNumber("Rad. out", ro);
+    SmartDashboard.putNumber("Theta out", to);
     // Motor Limit
     if(Math.abs(radiusOutput) > 1) radiusOutput = Math.signum(radiusOutput);
     if(Math.abs(thetaOutput) > 1) thetaOutput = Math.signum(thetaOutput);
@@ -276,7 +279,7 @@ public class ArmSubsystem extends SubsystemBase {
 		//   thetaOutput = Math.signum(radiusOutput) * ArmConstants.thetaOutputMax;
     // }
     setExtensionMotorSpeed(radiusOutput);
-    SmartDashboard.putNumber("Theta output", thetaOutput);
+    // SmartDashboard.putNumber("Theta output", thetaOutput);
     setRotationMotorSpeed(thetaOutput);
   }
 
