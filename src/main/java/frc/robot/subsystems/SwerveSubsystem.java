@@ -10,12 +10,14 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.RobotOdometry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 
 public class SwerveSubsystem extends SubsystemBase {
     private final SwerveModule frontLeft = new SwerveModule(
@@ -56,6 +58,10 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private final AHRS gyro = new AHRS(SerialPort.Port.kUSB);
 
+    //Used for Setting a speed limit
+    SendableChooser<Integer> m_speedChooser = new SendableChooser<>();
+
+
     // This is no longer needed since odometry was moved outside this subsystem. Delete if successful
     // private final Pose2d poseThis = new Pose2d();
 
@@ -86,6 +92,12 @@ public class SwerveSubsystem extends SubsystemBase {
             //This is new. Added to initialize the odometry. Not sure about the getPose() call... It feels a little recursive...
             //resetOdometry(getPose());
         }).start();
+
+     //Speed Limit Options
+     m_speedChooser.addOption("Full Speed", 1);
+     m_speedChooser.addOption("Half Speed", 2);
+     m_speedChooser.addOption("Quarter Speed", 4);
+     Shuffleboard.getTab("Speed Limit").add(m_speedChooser);
     }
 
     public void zeroHeading() {
