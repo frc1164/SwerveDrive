@@ -52,9 +52,9 @@ public class ArmCmd extends CommandBase {
     // m_subsystem.setArmVelocity(thetaJoystickReading, radiusJoystickReading);
     radiusJoystickReading *= 15;
     // An attempt at accurate arm extension distance
-    if(m_subsystem.getArmExtensionRetractedLimitSwitch()) {
-      m_subsystem.resetArmExtension();
-    }
+    // if(m_subsystem.getArmExtensionRetractedLimitSwitch()) {
+    //   m_subsystem.resetArmExtension();
+    // }
 
     // Get arm position
     theta = m_subsystem.getShoulderPosition();
