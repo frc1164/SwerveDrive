@@ -59,7 +59,7 @@ public class SwerveSubsystem extends SubsystemBase {
     private final AHRS gyro = new AHRS(SerialPort.Port.kUSB);
 
     //Used for Setting a speed limit
-    SendableChooser<Integer> m_speedChooser = new SendableChooser<>();
+    public SendableChooser<Double> m_speedChooser = new SendableChooser<>();
 
 
     // This is no longer needed since odometry was moved outside this subsystem. Delete if successful
@@ -94,9 +94,9 @@ public class SwerveSubsystem extends SubsystemBase {
         }).start();
 
      //Speed Limit Options
-     m_speedChooser.addOption("Full Speed", 1);
-     m_speedChooser.addOption("Half Speed", 2);
-     m_speedChooser.addOption("Quarter Speed", 4);
+     m_speedChooser.addOption("Full Speed", 1.0);
+     m_speedChooser.addOption("Half Speed", 2.0);
+     m_speedChooser.addOption("Quarter Speed", 4.0);
      Shuffleboard.getTab("Speed Limit").add(m_speedChooser);
     }
 
