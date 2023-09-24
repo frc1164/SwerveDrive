@@ -10,7 +10,10 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.GamePiece;
+import frc.robot.Setpoint;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.GamePiece.GamePieceType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import com.ctre.phoenix.CANifier;
@@ -27,11 +30,12 @@ public class ArmSubsystem extends SubsystemBase {
   private static CANCoder ShoulderEncoder;
   private PIDController thetaPID, radiusPID, setpointThetaPid, setpointRadiusPid;
   private static double tOld, tNew;
-  private static double rOld, rNew, thetaOld, thetaNew, radiusOutput, thetaOutput, rError, thetaError, theta, r, setpointX, setpointY;
-  private static boolean armSetpoint;
+  private static double thetaLimit, thetaJoystickReading, radiusJoystickReading, x, y, vTheta, vRadius, rOld, rNew, thetaOld, thetaNew, radiusOutput, thetaOutput, rError, thetaError, theta, r, setpointX, setpointY;
   private static boolean limitSwitchTrigered = false;
   private static double sysStartTime = System.nanoTime() / Math.pow(10, 9);
-  
+
+  //Setpoint variables
+  private static Setpoint m_setPoint;
 
   /** Creates a new ArmShoulder. */
   public ArmSubsystem() {
@@ -49,10 +53,12 @@ public class ArmSubsystem extends SubsystemBase {
     //thetaPID = new PIDController(ArmConstants.thetaP, ArmConstants.thetaI, ArmConstants.thetaD);
     radiusPID = new PIDController(ArmConstants.radiusP, ArmConstants.radiusI, ArmConstants.radiusD);
     //radiusPID = new PIDController(ArmConstants.radiusP, ArmConstants.radiusI, ArmConstants.radiusD);
-    setpointThetaPid = new PIDController(2, 0, 0);
-    setpointRadiusPid = new PIDController(10, 0, 0);
+    setpointThetaPid = new PIDController(2.5, 0, 0.2);
+    setpointRadiusPid = new PIDController(10, 0, 1);
     radiusOutput = 0;
     thetaOutput = 0;
+    //Set m_setPoint to null so joystick works
+    m_setPoint = null;
   }
 
   @Override
@@ -60,15 +66,44 @@ public class ArmSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     // SmartDashboard.putBoolean("Upper Limit Switch", getArmShoulderUpperLimitSwitch());
     // SmartDashboard.putBoolean("Lower Limit Switch", getArmShoulderLowerLimitSwitch());
-    // SmartDashboard.putBoolean("Extended Limit Switch", getArmExtensionExtendedLimitSwitch());
-    // SmartDashboard.putBoolean("Retracted Limit Switch", getArmExtensionRetractedLimitSwitch());
+    SmartDashboard.putNumber("Extended Limit Switch", getArmExtensionExtendedLimitSwitch() ? 1 : 0);
+    SmartDashboard.putNumber("Retracted Limit Switch", getArmExtensionRetractedLimitSwitch() ? 1 : 0);
     // SmartDashboard.putNumber("Telescope Position", getTelescopePosition());
     // SmartDashboard.putNumber("Shoulder Position", getShoulderPosition());
-    if(armSetpoint) {
+    if(m_setPoint != null) {
       setArmSetpoint(setpointX, setpointY);
     }
   }
 
+    // This extracts Cone or Cube-specific setpoints from the Setpoint object. Use Liam's setArmSetpoint (setPointX, setPointY) to drive to them.
+    public void updateAllArmSetpoints(Setpoint setpoint) {
+      m_setPoint = setpoint;
+      try{
+        if (GamePiece.getGamePiece().equals(GamePieceType.Cone)) {
+         setpointX = m_setPoint.X_Cone;
+         setpointY = m_setPoint.Y_Cone;
+       } else if (GamePiece.getGamePiece().equals(GamePieceType.Cube)) {
+         setpointX = m_setPoint.X_Cube;
+         setpointY = m_setPoint.Y_Cube;
+       }
+    } catch (NullPointerException npe){
+       System.out.println(npe);
+      }
+    }
+
+  public boolean setpointTolerance() {
+    theta = getShoulderPosition();
+    r = getArmLength();
+    double x = r * Math.cos(theta);
+    double y = r * Math.sin(theta);
+    // SmartDashboard.putNumber("Tol. x", x - setpointX);
+    // SmartDashboard.putNumber("Tol. y", y - setpointY);
+    if((setpointX + ArmConstants.setpointTolerance >= x) && (setpointX - ArmConstants.setpointTolerance <= x) && (setpointY + ArmConstants.setpointTolerance >= y) && (setpointY - ArmConstants.setpointTolerance <= y)) {
+      return true;
+    }
+    return false;  
+  }
+    
   public void setRotationMotorSpeed(double speed) {
 
     if(/*!getArmShoulderUpperLimitSwitch() &&*/ (speed < 0) &&(getShoulderPosition() >= ArmConstants.TopShoulderLimit)){
@@ -136,7 +171,65 @@ public class ArmSubsystem extends SubsystemBase {
     TelescopeEncoder.setPosition(0);
   }
 
+
   public void setArmVelocity(double theta, double r) {
+    // Read in Sensors
+    thetaJoystickReading = theta;
+    radiusJoystickReading = r;
+
+    theta = getShoulderPosition();
+    r = getArmLength();
+    x = r * Math.cos(theta);
+    y = r * Math.sin(theta);
+    // SmartDashboard.putNumber("Arm Theta", theta);
+    // SmartDashboard.putNumber("Arm r", r);
+    // SmartDashboard.putNumber("Arm x", x);
+    // SmartDashboard.putNumber("Arm y", y);
+
+    vRadius = radiusJoystickReading;
+    vTheta = thetaJoystickReading;
+
+    // Soft Limits - Retracted
+    if(radiusJoystickReading > 5 * (r - ArmConstants.armRetractedSoftStop)) {
+      vRadius = (r - ArmConstants.armRetractedSoftStop) * 5;
+    } 
+
+    // Soft Limits - Extended
+    else if(radiusJoystickReading < 5 * (r - ArmConstants.armExtendedSoftStop)) {
+      vRadius = (r - ArmConstants.armExtendedSoftStop) * 5;
+    } 
+    else {
+      vRadius = radiusJoystickReading;
+    }
+    
+    // Soft Limits - Floor/Bumper - Find Limit Position
+    if (r < (ArmConstants.yBumper / Math.sin(ArmConstants.thetaBumper))) {
+      thetaLimit = Math.asin(ArmConstants.yBumper / r); // Bumper Limit
+    }
+    else if (r > (ArmConstants.yFloor / Math.sin(ArmConstants.thetaBumper))) {
+      thetaLimit = Math.asin(ArmConstants.yFloor / r); //Floor Limit
+    }
+    else {
+      thetaLimit = ArmConstants.thetaBumper; // In-between Limit
+    }
+    // SmartDashboard.putNumber("Theta Limit", thetaLimit);
+
+    // Soft Limits - Floor/Bumper - Set Speed
+    if(thetaJoystickReading > 5 * (theta - thetaLimit)) {   
+      vTheta = (theta - thetaLimit) * 5;  // floor/bumper limit speed
+    } 
+
+    // Soft Limit - Top
+    if(thetaJoystickReading < 5 * (theta - ArmConstants.TopShoulderSoftStop)) {
+      vTheta = (theta - ArmConstants.TopShoulderSoftStop) * 5;
+    } 
+
+    
+    // Reset variable names to work with below code (yes we should have just made names consistant, but i'm out of time)
+    r = vRadius;
+    theta = vTheta;
+    // SmartDashboard.putNumber("R out", r);
+    // SmartDashboard.putNumber("Theta out", theta);
     // Read in system data
     tNew = System.nanoTime() / Math.pow(10, 9);
     rNew = getArmLength();
@@ -144,8 +237,8 @@ public class ArmSubsystem extends SubsystemBase {
 
 
     // Check if Limit switch has ever been hit - 5 second time limit
-    SmartDashboard.putBoolean("Limit Switch Trigger", limitSwitchTrigered);
-    SmartDashboard.putNumber("sysStartTime", sysStartTime);
+    // SmartDashboard.putBoolean("Limit Switch Trigger", limitSwitchTrigered);
+    // SmartDashboard.putNumber("sysStartTime", sysStartTime);
     if (limitSwitchTrigered == false){
       if (getArmExtensionRetractedLimitSwitch()) {
         limitSwitchTrigered = true;
@@ -168,11 +261,14 @@ public class ArmSubsystem extends SubsystemBase {
     // Control arm speed
     rError = r - velocityR;
     thetaError = velocityTheta - theta;
-    SmartDashboard.putNumber("Vr - Error", rError);
-    SmartDashboard.putNumber("Vtheta - Error", thetaError);
-    radiusOutput = radiusOutput + radiusPID.calculate(rError);
-    thetaOutput = thetaOutput + thetaPID.calculate(thetaError);
-   
+    // SmartDashboard.putNumber("Vr - Error", rError);
+    // SmartDashboard.putNumber("Vtheta - Error", thetaError);
+    double ro = radiusPID.calculate(rError);
+    double to = thetaPID.calculate(thetaError);
+    radiusOutput = radiusOutput + ro;
+    thetaOutput = thetaOutput + to;
+    SmartDashboard.putNumber("Rad. out", ro);
+    SmartDashboard.putNumber("Theta out", to);
     // Motor Limit
     if(Math.abs(radiusOutput) > 1) radiusOutput = Math.signum(radiusOutput);
     if(Math.abs(thetaOutput) > 1) thetaOutput = Math.signum(thetaOutput);
@@ -183,13 +279,13 @@ public class ArmSubsystem extends SubsystemBase {
 		//   thetaOutput = Math.signum(radiusOutput) * ArmConstants.thetaOutputMax;
     // }
     setExtensionMotorSpeed(radiusOutput);
-    SmartDashboard.putNumber("Theta output", thetaOutput);
+    // SmartDashboard.putNumber("Theta output", thetaOutput);
     setRotationMotorSpeed(thetaOutput);
   }
 
   public void armControl(double theta, double r) {
-    if(armSetpoint && (Math.abs(theta) > 0 || Math.abs(r) > 0)){
-      armSetpoint = false;
+    if(m_setPoint != null && (Math.abs(theta) > 0 || Math.abs(r) > 0)){
+      m_setPoint = null;
     }
     setArmVelocity(theta, r);
   }
@@ -199,10 +295,6 @@ public class ArmSubsystem extends SubsystemBase {
     setpointX = x;
     setpointY = y;
 
-    if(!armSetpoint){
-      armSetpoint = true;
-    }
-
     setpointTheta = Math.atan(y / x);
     setpointR = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
 
@@ -211,10 +303,9 @@ public class ArmSubsystem extends SubsystemBase {
     if(Math.abs(vTheta) > 1) {
       vTheta = Math.signum(vTheta);
     }
-    // if(Math.abs(vR) > 15) {
-    //   vTheta = Math.signum(vTheta)*15;
-    // }
-      vR=0;
+    if(Math.abs(vR) > 15) {
+      vR = Math.signum(vR)*15;
+    }
     setArmVelocity(vTheta, vR);
   }
 }

@@ -8,7 +8,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import frc.robot.GamePiece;
+import frc.robot.Setpoint;
 import frc.robot.Constants.GripperC;
+import frc.robot.GamePiece.GamePieceType;
+import frc.robot.Setpoint.ClaspState;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.XboxController;
@@ -31,7 +36,8 @@ public class Gripper extends SubsystemBase {
 
   public PIDController gripPID;
 
-
+  private Setpoint m_setPoint;
+  private ClaspState m_Claspstate;
 
   private static CANifier m_canifier;
   private boolean m_openSwitch;
@@ -117,6 +123,44 @@ public class Gripper extends SubsystemBase {
       claspEncoder.setPosition(0);
   }
 
+  public void resetandScore() {
+    while(!getGripperOPENLimitSwitch()) {
+      clasp.set(.1);
+    }
+    clasp.set(0);
+    claspEncoder.setPosition(0);
+  }
+
+  // Note: This is incomplete. It may make more sense to just call an input or eject method depending GamePieceType... Talk to Eric
+  public void updateAllGripperSetpoints(Setpoint setpoint) {
+    m_setPoint = setpoint;
+   /* try{
+    if (GamePiece.getGamePiece().equals(GamePieceType.Cone)) {
+      //Get the gripper state
+      m_Claspstate = m_setPoint.claspCone;
+    } 
+    else if (GamePiece.getGamePiece().equals(GamePieceType.Cube)) {
+      m_Claspstate = m_setPoint.claspCube;
+    }
+    } catch (NullPointerException npe){
+     System.out.println(npe);
+    }
+    */
+    
+    m_Claspstate = ClaspState.OPEN;
+
+    //Note: These numbers are almost certainly wrong
+    switch (m_Claspstate) {
+      case PRELOAD:  this.setgripPID(-82);
+               break;
+      case SET:  this.setgripPID(-16.5);
+               break;
+      case OPEN:  this.setgripPID(-1);
+               break;
+      default: break;
+    }
+  }
+  
   // public static void gripToggle() {
   // while (true) {
   //   if (!getGripperCLSDLimitSwitch()){
@@ -168,5 +212,10 @@ public static boolean getGripperOPENLimitSwitch() {
     SmartDashboard.putBoolean("OPEN Limit Switch", getGripperOPENLimitSwitch());
     setgripEncoder();
     //gripper range is (85.0272 units to other end as is -need to check polarity-)
+
+    //Drive to a Clasp setpoint for Autonomous. Note: We should probably test for Autonomous mode here to keep this from messing with Teleop behavior.
+    //if(m_setPoint != null) {
+    //  this.runGripPID(this.gripPosition());
+    //}
   }
 }

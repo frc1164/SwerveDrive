@@ -7,8 +7,9 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import frc.robot.Setpoint.ArmState;
+import frc.robot.Setpoint.ClaspState;
 import edu.wpi.first.wpilibj2.command.Command;
-
 import java.util.HashMap;
 
 
@@ -112,6 +113,24 @@ public final class Constants {
     
     }
 
+        // Predefined Arm/clasp setpoints. NOTE: These are placeholders and need real numbers assigned!!! Do not use them as-is.
+        public static final class ArmSetpoints{
+            public static final Setpoint TEST_SETPOINT_HIGHER = new Setpoint(60, -10, ClaspState.SET, 60, -10, ClaspState.SET, ArmState.OTHER, 1);
+            public static final Setpoint TEST_SETPOINT_LOWER = new Setpoint(50, -20, ClaspState.SET, 50, -20, ClaspState.SET, ArmState.OTHER, 1);
+        
+            public static final Setpoint STOWED = new Setpoint(30, -36, ClaspState.SET, 30, -36, ClaspState.SET, ArmState.STOWED, 1);
+            public static final Setpoint FLOOR = new Setpoint(0, 0, ClaspState.SET, 0, 0, ClaspState.SET, ArmState.FLOOR, 1);
+            public static final Setpoint MID_NODE = new Setpoint(0, 0, ClaspState.SET, 0, 0, ClaspState.SET, ArmState.MID_NODE, 1);
+            public static final Setpoint MID_NODE_PLACED = new Setpoint(0, 0, ClaspState.SET, 0, 0, ClaspState.SET, ArmState.MID_NODE_PLACED, 1);
+            public static final Setpoint MID_NODE_PLACED_AND_SCORED = new Setpoint(0, 0, ClaspState.OPEN, 0, 0, ClaspState.OPEN, ArmState.MID_NODE_PLACED, 1);
+            public static final Setpoint TOP_NODE = new Setpoint(46.5, 4.5, ClaspState.SET, 46.5, 4.5, ClaspState.SET, ArmState.TOP_NODE, 1);
+            public static final Setpoint TOP_NODE_PLACED = new Setpoint(70.5, 0.5, ClaspState.SET, 70.5, 0.5, ClaspState.SET, ArmState.TOP_NODE_PLACED, 1);
+            public static final Setpoint TOP_NODE_PLACED_AND_SCORED = new Setpoint(70.5, 0.5, ClaspState.OPEN, 70.5, 0.5, ClaspState.OPEN, ArmState.TOP_NODE_PLACED, 1);
+            public static final Setpoint SUBSTATION = new Setpoint(0, 0, ClaspState.SET, 0, 0, ClaspState.SET, ArmState.SUBSTATION, 1);
+            public static final Setpoint FLOOR_HOVER = new Setpoint(0, 0, ClaspState.SET, 0, 0, ClaspState.SET, ArmState.OTHER, 1);
+            public static final Setpoint FLOOR_INTAKING = new Setpoint(38, -41, ClaspState.SET, 38, -41, ClaspState.SET, ArmState.FLOOR, 1);
+        }
+          
     public static final class OIConstants {
         public static final int kDriverControllerPort = 0;
 
@@ -178,7 +197,9 @@ public final class Constants {
         public static final double thetaBumper = -0.88;
         public static final double yFloor = -41;
         public static final double yBumper = -36.0;
- 
+
+        // Setpoints
+        public static final double setpointTolerance = 0.5;
     }
 
     public static final class BalanceConstants {

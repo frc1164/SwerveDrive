@@ -21,6 +21,8 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.GamePiece;
+import frc.robot.GamePiece.GamePieceType;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -29,7 +31,11 @@ import frc.robot.commands.BalanceCmd;
 import frc.robot.commands.Clasp;
 import frc.robot.commands.ConePickup;
 import frc.robot.commands.CubePickup;
+import frc.robot.commands.Erics_sequential_pickup;
+import frc.robot.commands.Erics_sequential_score_High;
+import frc.robot.commands.Liams_sequential_score_grid_high;
 import frc.robot.commands.ScoreGridTop;
+import frc.robot.commands.Score_Grid_High;
 import frc.robot.commands.intake;
 import frc.robot.commands.output;
 import frc.robot.Constants.GripperC;
@@ -81,6 +87,8 @@ public class RobotContainer {
                 armSubsystem.setDefaultCommand(new ArmCmd(
                                 armSubsystem,
                                 armController));
+
+                GamePiece.setGamePiece(GamePieceType.Cone);
 
                 // Autonomous stuff
                 // Read in Autonomous trajectories as multiple paths
@@ -134,8 +142,12 @@ public class RobotContainer {
                 rBumper.whileTrue(new ConePickup(m_gripper));
                 xButton.whileTrue(new intake(m_gripper));
                 aButton.whileTrue(new output(m_gripper));
-                lDPad.onTrue(new ScoreGridTop(armSubsystem));
-
+                
+                //Temporarily bind autonomous commands. For testing commands only!
+                lDPad.onTrue(new Score_Grid_High(armSubsystem, m_gripper));                     // Old old - working(ish)
+                dDPad.onTrue(new Erics_sequential_pickup(armSubsystem, m_gripper));             // Old (Tursday) - forgot status
+                rDPad.onTrue(new Liams_sequential_score_grid_high(armSubsystem, m_gripper));    // New, not tested
+                uDPad.onTrue(new Erics_sequential_score_High(armSubsystem, m_gripper));
                 /*
                  * new JoystickButton(driverJoytick, 2).whenPressed(() ->
                  * swerveSubsystem.zeroHeading());
