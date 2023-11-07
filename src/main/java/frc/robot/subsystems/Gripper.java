@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import frc.robot.Constants.GripperC;
 import edu.wpi.first.math.controller.PIDController;
@@ -18,6 +19,8 @@ import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.CANifier.GeneralPin;
 import com.ctre.phoenix.CANifier.PinValues;
 import com.ctre.phoenix.sensors.*;
+import com.playingwithfusion.TimeOfFlight;
+
 
 
 public class Gripper extends SubsystemBase {
@@ -36,6 +39,8 @@ public class Gripper extends SubsystemBase {
   private static CANifier m_canifier;
   private boolean m_openSwitch;
   private boolean m_closedSwitch;
+  private static TimeOfFlight ToF;
+
 
 
   /** Creates a new Gripper. */
@@ -45,6 +50,7 @@ public class Gripper extends SubsystemBase {
     leftDrive = new CANSparkMax(GripperC.leftMotor, MotorType.kBrushless);
     leftDrive.setInverted(GripperC.leftMotorReversed);
     clasp = new CANSparkMax(GripperC.GripperMotor, MotorType.kBrushless);
+    clasp.setIdleMode(IdleMode.kBrake);
 
     m_canifier = new CANifier(GripperC.GripperCANifier);
 
@@ -53,6 +59,9 @@ public class Gripper extends SubsystemBase {
     claspEncoder = clasp.getEncoder();
 
     gripPID = new PIDController(0.08, 0.008, 0);
+
+    ToF = new TimeOfFlight(GripperC.TimeOfFlightSensor);
+
   }
 
   public void resetEncoders() {
@@ -159,6 +168,9 @@ public static boolean getGripperOPENLimitSwitch() {
     setClasp(gripPID.calculate(gripPosition));
   }
 
+  public double ToFDistance() {
+    return ToF.getRange();
+  }
 
   @Override
   public void periodic() {
@@ -166,7 +178,9 @@ public static boolean getGripperOPENLimitSwitch() {
     SmartDashboard.putNumber("Gripper Encoder", claspEncoder.getPosition());
     SmartDashboard.putBoolean("CLSD Limit Switch", getGripperCLSDLimitSwitch());
     SmartDashboard.putBoolean("OPEN Limit Switch", getGripperOPENLimitSwitch());
+    SmartDashboard.putNumber("ToF Distance", ToF.getRange());
+
     setgripEncoder();
-    //gripper range is (85.0272 units to other end as is -need to check polarity-)
+    //gripper range is 85.0272 units
   }
 }
