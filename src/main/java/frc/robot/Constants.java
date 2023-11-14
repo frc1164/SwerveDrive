@@ -130,6 +130,7 @@ public final class Constants {
         public static final int GripperCANifier = 59;
         public static boolean leftMotorReversed = false;
         public static boolean rightMotorReversed = true;
+        public static final int TimeOfFlightSensor = 63;
     }
      
     public static class OperatorConstants {

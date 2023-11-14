@@ -10,15 +10,11 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import frc.robot.Constants.GripperC;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.ctre.phoenix.CANifier;
 import com.ctre.phoenix.CANifier.GeneralPin;
-import com.ctre.phoenix.CANifier.PinValues;
-import com.ctre.phoenix.sensors.*;
-
+import com.playingwithfusion.TimeOfFlight;
 
 public class Gripper extends SubsystemBase {
   private static CANSparkMax rightDrive;
@@ -34,8 +30,8 @@ public class Gripper extends SubsystemBase {
 
 
   private static CANifier m_canifier;
-  private boolean m_openSwitch;
-  private boolean m_closedSwitch;
+  private static TimeOfFlight ToF;
+
 
 
   /** Creates a new Gripper. */
@@ -53,6 +49,7 @@ public class Gripper extends SubsystemBase {
     claspEncoder = clasp.getEncoder();
 
     gripPID = new PIDController(0.08, 0.008, 0);
+    ToF = new TimeOfFlight(GripperC.TimeOfFlightSensor);
   }
 
   public void resetEncoders() {
@@ -159,6 +156,9 @@ public static boolean getGripperOPENLimitSwitch() {
     setClasp(gripPID.calculate(gripPosition));
   }
 
+  public double ToFDistance() {
+    return ToF.getRange();
+  }
 
   @Override
   public void periodic() {
@@ -167,6 +167,7 @@ public static boolean getGripperOPENLimitSwitch() {
     SmartDashboard.putBoolean("CLSD Limit Switch", getGripperCLSDLimitSwitch());
     SmartDashboard.putBoolean("OPEN Limit Switch", getGripperOPENLimitSwitch());
     setgripEncoder();
+    SmartDashboard.putNumber("ToF Distance", ToF.getRange());
     //gripper range is (85.0272 units to other end as is -need to check polarity-)
   }
 }
