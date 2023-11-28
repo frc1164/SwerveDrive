@@ -119,7 +119,7 @@ public class ArmSubsystem extends SubsystemBase {
     return TelescopeEncoder.getPosition();
   }
 
-  public double getShoulderPosition() {
+  public static double getShoulderPosition() {
     double angle = ShoulderEncoder.getAbsolutePosition() * Math.PI/180.0;
     angle -= ArmConstants.ShoulderEncoderOffset;
     if (angle > Math.PI) {

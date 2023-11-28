@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import frc.robot.Constants.GripperC;
+import frc.robot.commands.CubePickup;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -23,7 +24,7 @@ public class Gripper extends SubsystemBase {
 
   private static RelativeEncoder rightEncoder;
   private static RelativeEncoder leftEncoder;
-  private static RelativeEncoder claspEncoder;
+  public static RelativeEncoder claspEncoder;
 
   public PIDController gripPID;
 
@@ -168,6 +169,7 @@ public static boolean getGripperOPENLimitSwitch() {
     SmartDashboard.putBoolean("OPEN Limit Switch", getGripperOPENLimitSwitch());
     setgripEncoder();
     SmartDashboard.putNumber("ToF Distance", ToF.getRange());
+    SmartDashboard.putNumber("CubeTimer",CubePickup.m_timer.get());
     //gripper range is (85.0272 units to other end as is -need to check polarity-)
   }
 }

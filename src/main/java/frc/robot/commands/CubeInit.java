@@ -6,15 +6,17 @@ package frc.robot.commands;
 
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.Gripper;
 
-public class CubePickup extends CommandBase {
+public class CubeInit extends CommandBase {
   private final Gripper m_subsystem;
   public static Timer m_timer;
 
-  /** Creates a new CubePickup. */
-  public CubePickup(Gripper subsystem) {
+  /** Creates a new CubeInit. */
+  public CubeInit(Gripper subsystem) {
     m_subsystem = subsystem;
     m_timer = new Timer();
     // Use addRequirements() here to declare subsystem dependencies.
@@ -24,15 +26,16 @@ public class CubePickup extends CommandBase {
   @Override
   public void initialize() {
     m_timer.start();
-    m_subsystem.Intake(0);
     m_subsystem.setgripPID(0); //was -16.5
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_subsystem.runGripPID(m_subsystem.gripPosition());
-    m_subsystem.Intake(.75);
+    SmartDashboard.putNumber("Should Pos",ArmSubsystem.getShoulderPosition() );
+    if (ArmSubsystem.getShoulderPosition() >= (-.9))
+      m_subsystem.runGripPID(m_subsystem.gripPosition());
+      
   }
    // SmartDashboard.putBoolean("Y_BUTTON", m_controller.getYButton());
   
@@ -40,7 +43,6 @@ public class CubePickup extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_subsystem.Intake(0);
     m_timer.stop();
     m_timer.reset();
   }
@@ -48,7 +50,7 @@ public class CubePickup extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(( m_subsystem.ToFDistance() <= 200) & (Gripper.claspEncoder.getPosition() > -70) || (m_timer.get() >= 5)){
+    if(( m_subsystem.ToFDistance() <= 200) & (Gripper.claspEncoder.getPosition() > -70) || (m_timer.get() >= 3)){
       return true;
     } else {
       return false;
